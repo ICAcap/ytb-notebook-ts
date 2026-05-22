@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ------------------- models --------------------
+model User {
+  userId      String @id @default(cuid())
+  email       String @unique @db.VarChar(255)
+  displayName String @db.VarChar(255)
+
+  isActive Boolean @default(true)
+  isSuper  Boolean @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  lastLoginAt DateTime @default(now())
+
+  //reverse relationships
+  videos      Video[]
+  notes       Note[]
+  collections Collection[]
+
+  @@index([isActive])
+  @@index([lastLoginAt])
+}
+
+model Video {
+  videoId String @id @default(cuid())
+  userId  String // FK
+  user    User   @relation(fields: [userId], references: [userId]) // related user
+  url     String @db.VarChar(2048)
+  title   String @db.VarChar(255)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  notes       Note[] // reverse relationship
+  collections Collection[] // many-to-many
+
+  @@index([userId])
+}
+
+// a video to belong to many collections 
+// and a collection to have many videos. (many-to-many)
+model Collection {
+  collectionId   String @id @default(cuid())
+  collectionName String @db.VarChar(100)
+
+  userId String // FK
+  user   User   @relation(fields: [userId], references: [userId])
+
+  videos Video[] // many-to-many
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Note {
+  noteId    String @id @default(cuid())
+  userId    String // FK
+  user      User   @relation(fields: [userId], references: [userId])
+  videoId   String // FK
+  video     Video  @relation(fields: [videoId], references: [videoId], onDelete: Cascade)
+  timestamp Int
+  content   Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([videoId])
+  @@index([userId])
+}
