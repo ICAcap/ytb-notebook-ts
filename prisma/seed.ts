@@ -214,7 +214,7 @@ async function main() {
 	await prisma.note.deleteMany();
 	await prisma.video.deleteMany();
 	await prisma.user.deleteMany();
-	console.log("...Deleting Existing Data Finished...");
+	console.log("( •̀ ω •́ )y -- Deleting Existing Data Finished...");
 	console.log("( •̀ ω •́ )y -- Seeding database...");
 
 	await Promise.all([seedAlice(), seedBob(), seedClara()]);
