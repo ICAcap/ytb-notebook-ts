@@ -48,6 +48,7 @@ model Video {
   collections Collection[] // many-to-many
 
   @@index([userId])
+  @@index([userId, createdAt])
 }
 
 // a video to belong to many collections 
@@ -65,6 +66,7 @@ model Collection {
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+  @@index([userId, createdAt])
 }
 
 model Note {
