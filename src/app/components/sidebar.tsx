@@ -1,4 +1,11 @@
-import { BarChart3, Tv, Plus, FolderBookmark, Settings } from "lucide-react";
+import {
+	NotebookPen,
+	BarChart3,
+	Tv,
+	Plus,
+	FolderBookmark,
+	Settings,
+} from "lucide-react";
 import Link from "next/link";
 
 export default function Sidebar({
@@ -17,8 +24,8 @@ export default function Sidebar({
 		<div className="fixed left-0 top-0 bg-gray-900 text-white w-64 min-h-screen p-6 z-10">
 			<div className="mb-8">
 				<div className="flex items-center space-x-2 mb-4">
-					<BarChart3 className="w-7 h-7" />
-					<span className="text-lg font-semibold">YTB Notebook</span>
+					<NotebookPen className="w-7 h-7 text-amber-300" />
+					<span className="text-2xl font-semibold">YTB Notebook</span>
 				</div>
 			</div>
 
