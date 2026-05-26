@@ -1,15 +1,19 @@
-import React from "react";
-import Sidebar from "../components/sidebar";
+import Sidebar from "../../../components/sidebar";
+import { SignOutButton } from "../../../components/SignOutButton";
 
-const DashboardPage = () => {
+import requireSession from "@/lib/requireSession";
+
+export default async function DashboardPage() {
+	const session = await requireSession();
+
 	return (
 		<div>
 			<Sidebar currentPath="/dashboard" />
 			<main className="ml-64 p-6">
-				<h1 className="text-blue-300">Dashboard Page</h1>
+				<h1 className="text-blue-300 text-5xl text-center">Dashboard Page</h1>
+				<p className="mt-2"> You have signed in</p>
+				<SignOutButton />
 			</main>
 		</div>
 	);
-};
-
-export default DashboardPage;
+}

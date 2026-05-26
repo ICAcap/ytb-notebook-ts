@@ -13,6 +13,7 @@ datasource db {
 }
 
 // ------------------- models --------------------
+
 model User {
   userId      String @id @default(cuid())
   email       String @unique @db.VarChar(255)
@@ -30,8 +31,16 @@ model User {
   notes       Note[]
   collections Collection[]
 
+  // BetterAuth needed
+  name          String
+  emailVerified Boolean   @default(false)
+  image         String?
+  sessions      Session[]
+  accounts      Account[]
+
   @@index([isActive])
   @@index([lastLoginAt])
+  @@map("user")
 }
 
 model Video {
@@ -48,10 +57,12 @@ model Video {
   collections Collection[] // many-to-many
 
   @@index([userId])
+  @@index([userId, createdAt])
 }
 
 // a video to belong to many collections 
 // and a collection to have many videos. (many-to-many)
+
 model Collection {
   collectionId   String @id @default(cuid())
   collectionName String @db.VarChar(100)
@@ -65,6 +76,7 @@ model Collection {
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+  @@index([userId, createdAt])
 }
 
 model Note {
@@ -81,4 +93,55 @@ model Note {
 
   @@index([videoId])
   @@index([userId])
+}
+
+// BetterAuth needed
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+// BetterAuth needed
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+// BetterAuth needed
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
 }
