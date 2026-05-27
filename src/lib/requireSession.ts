@@ -7,6 +7,5 @@ export default async function requireSession() {
 
 	if (!session) redirect("/sign-in");
 
-	console.log(session);
 	return session;
 }

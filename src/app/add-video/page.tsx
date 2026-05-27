@@ -1,6 +1,9 @@
+import requireSession from "@/lib/requireSession";
 import Sidebar from "../../../components/sidebar";
 
-const AddVideoPage = () => {
+export default async function AddVideoPage() {
+	await requireSession();
+
 	return (
 		<div>
 			<Sidebar currentPath="/add-video" />
@@ -9,6 +12,4 @@ const AddVideoPage = () => {
 			</main>
 		</div>
 	);
-};
-
-export default AddVideoPage;
+}

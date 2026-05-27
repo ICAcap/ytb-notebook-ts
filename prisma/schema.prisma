@@ -15,16 +15,14 @@ datasource db {
 // ------------------- models --------------------
 
 model User {
-  userId      String @id @default(cuid())
+  id      String @id @default(cuid())
   email       String @unique @db.VarChar(255)
-  displayName String @db.VarChar(255)
 
   isActive Boolean @default(true)
   isSuper  Boolean @default(false)
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  lastLoginAt DateTime @default(now())
 
   //reverse relationships
   videos      Video[]
@@ -39,14 +37,13 @@ model User {
   accounts      Account[]
 
   @@index([isActive])
-  @@index([lastLoginAt])
   @@map("user")
 }
 
 model Video {
   videoId String @id @default(cuid())
   userId  String // FK
-  user    User   @relation(fields: [userId], references: [userId]) // related user
+  user    User   @relation(fields: [userId], references: [id]) // related user
   url     String @db.VarChar(2048)
   title   String @db.VarChar(255)
 
@@ -68,7 +65,7 @@ model Collection {
   collectionName String @db.VarChar(100)
 
   userId String // FK
-  user   User   @relation(fields: [userId], references: [userId])
+  user   User   @relation(fields: [userId], references: [id])
 
   videos Video[] // many-to-many
 
@@ -82,7 +79,7 @@ model Collection {
 model Note {
   noteId    String @id @default(cuid())
   userId    String // FK
-  user      User   @relation(fields: [userId], references: [userId])
+  user      User   @relation(fields: [userId], references: [id])
   videoId   String // FK
   video     Video  @relation(fields: [videoId], references: [videoId], onDelete: Cascade)
   timestamp Int
@@ -105,7 +102,7 @@ model Session {
   ipAddress String?
   userAgent String?
   userId    String
-  user      User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([token])
   @@index([userId])
@@ -118,7 +115,7 @@ model Account {
   accountId             String
   providerId            String
   userId                String
-  user                  User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
   refreshToken          String?
   idToken               String?

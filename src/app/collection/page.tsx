@@ -1,6 +1,8 @@
+import requireSession from "@/lib/requireSession";
 import Sidebar from "../../../components/sidebar";
 
-const CollectionPage = () => {
+export default async function CollectionPage() {
+	await requireSession();
 	return (
 		<div>
 			<Sidebar currentPath="/collection" />
@@ -9,6 +11,4 @@ const CollectionPage = () => {
 			</main>
 		</div>
 	);
-};
-
-export default CollectionPage;
+}
