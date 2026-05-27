@@ -1,6 +1,9 @@
+import requireSession from "@/lib/requireSession";
 import Sidebar from "../../../components/sidebar";
 
-const SettingPage = () => {
+export default async function SettingPage() {
+	await requireSession();
+
 	return (
 		<div>
 			<Sidebar currentPath="/setting" />
@@ -9,6 +12,4 @@ const SettingPage = () => {
 			</main>
 		</div>
 	);
-};
-
-export default SettingPage;
+}
