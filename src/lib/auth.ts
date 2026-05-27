@@ -6,7 +6,7 @@ import "dotenv/config";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { inferAdditionalFields } from "better-auth/client/plugins";
-import { prisma } from "./src/lib/prisma";
+import { prisma } from "./prisma";
 
 if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
 	throw new Error("Google OAuth credentials missing");
