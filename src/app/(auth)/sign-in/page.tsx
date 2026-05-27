@@ -1,11 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 
 export default function SignIn() {
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
+	const router = useRouter();
+	const { data: session, isPending } = authClient.useSession();
+
+	useEffect(() => {
+		if (!isPending && session) {
+			router.replace("/dashboard");
+		}
+	}, [session, isPending, router]); // redirect to dashboard if already signed in
 
 	const handleLogin = async () => {
 		try {
