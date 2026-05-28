@@ -16,12 +16,12 @@ export default function Sidebar({
 	const navigation = [
 		{ name: "Dashboard", href: "/dashboard", icon: BarChart3 },
 		{ name: "Add Video", href: "/add-video", icon: Plus },
-		{ name: "Video", href: "/video", icon: Tv },
+		{ name: "Videos", href: "/videos", icon: Tv },
 		{ name: "Collection", href: "/collection", icon: FolderBookmark },
 		{ name: "Setting", href: "/setting", icon: Settings },
 	];
 	return (
-		<div className="fixed left-0 top-0 bg-gray-900 text-white w-64 min-h-screen p-6 z-10">
+		<div className="fixed flex-col left-0 top-0 bg-gray-900 text-white w-64 min-h-screen p-6 z-10">
 			<div className="mb-8">
 				<div className="flex items-center space-x-2 mb-4">
 					<NotebookPen className="w-7 h-7 text-amber-300" />
