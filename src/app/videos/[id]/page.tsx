@@ -39,8 +39,8 @@ export default async function VidViewPage({
 }: {
 	params: { id: string };
 }) {
-	const param = await params;
-	const video = await getVideoById(param.id);
+	const videoId = (await params).id;
+	const video = await getVideoById(videoId);
 
 	return (
 		<div>
