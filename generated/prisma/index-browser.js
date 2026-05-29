@@ -137,6 +137,7 @@ exports.Prisma.VideoScalarFieldEnum = {
   userId: 'userId',
   url: 'url',
   title: 'title',
+  lastPlayedTime: 'lastPlayedTime',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

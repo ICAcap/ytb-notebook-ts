@@ -6,4 +6,17 @@ const nextConfig: NextConfig = {
 	reactCompiler: true,
 };
 
+// next.config.js
+module.exports = {
+	images: {
+		remotePatterns: [
+			{
+				protocol: "https",
+				hostname: "img.youtube.com",
+				pathname: "/vi/**",
+			},
+		],
+	},
+};
+
 export default nextConfig;
