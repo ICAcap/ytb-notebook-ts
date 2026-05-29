@@ -8,7 +8,7 @@ export default async function VideoPage() {
 		<div>
 			<Sidebar currentPath="/videos" />
 			<main className="ml-64 p-6">
-				<h1 className="text-blue-300">Video Page</h1>
+				<h1 className="text-3xl text-center">Video Page</h1>
 			</main>
 		</div>
 	);
