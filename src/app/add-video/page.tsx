@@ -1,5 +1,11 @@
 import requireSession from "../../../lib/requireSession";
 import Sidebar from "../../../components/sidebar";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Add Video",
+	description: "This is the page for adding new videos",
+};
 
 export default async function AddVideoPage() {
 	await requireSession();

@@ -1,7 +1,12 @@
 import Sidebar from "../../../components/sidebar";
 import requireSession from "../../../lib/requireSession";
-
 import VideoCard from "./_components/VideoCard";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Videos",
+	description: "This is the page showing all the videos",
+};
 
 export default async function VideoPage() {
 	await requireSession();

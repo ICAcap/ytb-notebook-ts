@@ -1,4 +1,10 @@
 import SignIn from "./(auth)/sign-in/page";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "YTB NoteBook Home",
+	description: "This is the home page for YTB Notebook",
+};
 
 export default function Home() {
 	return (

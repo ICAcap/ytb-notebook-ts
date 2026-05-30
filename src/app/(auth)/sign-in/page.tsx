@@ -11,6 +11,11 @@ export default function SignIn() {
 	const { data: session, isPending } = authClient.useSession();
 
 	useEffect(() => {
+		// Manually update the browser tab title
+		document.title = "Sign In - YTB Notebook";
+	}, []);
+
+	useEffect(() => {
 		if (!isPending && session) {
 			router.replace("/dashboard");
 		}
