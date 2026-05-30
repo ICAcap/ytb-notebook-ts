@@ -3,6 +3,8 @@ import { auth } from "./auth";
 import { headers } from "next/headers";
 import { cache } from "react";
 
+//https://tomdekan.com/articles/google-sign-in-nextjs
+
 export default cache(async function requireSession() {
 	const session = await auth.api.getSession({ headers: await headers() });
 
