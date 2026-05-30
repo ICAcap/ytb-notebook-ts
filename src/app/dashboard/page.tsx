@@ -1,6 +1,11 @@
 import Sidebar from "../../../components/sidebar";
 import requireSession from "../../../lib/requireSession";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+	title: "YTB Dashboard",
+	description: "This is the dashboard page after signing in",
+};
 export default async function DashboardPage() {
 	const session = await requireSession();
 

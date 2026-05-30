@@ -1,6 +1,11 @@
 import requireSession from "../../../lib/requireSession";
 import Sidebar from "../../../components/sidebar";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+	title: "Collections",
+	description: "This is the page showing all your video collections",
+};
 export default async function CollectionPage() {
 	await requireSession();
 	return (

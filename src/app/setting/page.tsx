@@ -1,5 +1,11 @@
 import requireSession from "../../../lib/requireSession";
 import Sidebar from "../../../components/sidebar";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Settings",
+	description: "This is the page for managing your account settings",
+};
 
 export default async function SettingPage() {
 	await requireSession();
