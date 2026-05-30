@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "../../../../lib/auth-client";
 
 export default function SignIn() {
 	const [error, setError] = useState<string | null>(null);

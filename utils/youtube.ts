@@ -1,6 +1,6 @@
 export function getYoutubeId(url: string): string | null {
 	const regExpr =
-		/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+		/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
 	const match = url.match(regExpr);
 	return match && match[2].length === 11 ? match[2] : null;
 }

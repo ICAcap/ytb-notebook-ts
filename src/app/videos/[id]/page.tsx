@@ -1,7 +1,7 @@
 import Sidebar from "../../../../components/sidebar";
 import VideoPlayer from "./_components/VideoPlayer";
-import { prisma } from "../../../lib/prisma";
-import requireSession from "@/lib/requireSession";
+import { prisma } from "../../../../lib/prisma";
+import requireSession from "../../../../lib/requireSession";
 import { notFound } from "next/navigation";
 
 type video = {
@@ -38,6 +38,7 @@ export default async function VidViewPage({
 	const session = await requireSession(); // unauthenticated users will be redirected to sign-in page, so session is guaranteed to be available here
 	const videoId = (await params).id;
 	const usrId = session.user.id;
+
 	const video = await getVideoById(usrId, videoId);
 
 	if (!video) {
@@ -45,9 +46,9 @@ export default async function VidViewPage({
 	}
 
 	return (
-		<div>
+		<div className="flex min-h-screen">
 			<Sidebar currentPath="/videos" />
-			<main className="ml-64 p-6">
+			<main className="flex-1 p-6">
 				<h1 className="text-4xl text-wrap">{`${video.title || "Unknown Title"}`}</h1>
 				<div className="mt-4 justify-evenly">
 					<h2 className="text-xl text-gray-400">Collections:</h2>

@@ -43,7 +43,7 @@ model User {
 model Video {
   videoId String @id @default(cuid())
   userId  String // FK
-  user    User   @relation(fields: [userId], references: [id]) // related user
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade) // related user
   url     String @db.VarChar(2048)
   title   String @db.VarChar(255)
 
@@ -67,7 +67,7 @@ model Collection {
   collectionName String @db.VarChar(100)
 
   userId String // FK
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   videos Video[] // many-to-many
 
@@ -81,7 +81,7 @@ model Collection {
 model Note {
   noteId    String @id @default(cuid())
   userId    String // FK
-  user      User   @relation(fields: [userId], references: [id])
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   videoId   String // FK
   video     Video  @relation(fields: [videoId], references: [videoId], onDelete: Cascade)
   timestamp Int

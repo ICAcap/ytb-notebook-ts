@@ -2,6 +2,7 @@
  * Client-side authentication configuration.
  * Provides the `authClient` instance for managing sessions,
  * authentication requests, and type-safe session data across the application.
+ * https://tomdekan.com/articles/google-sign-in-nextjs
  */
 
 import { inferAdditionalFields } from "better-auth/client/plugins";

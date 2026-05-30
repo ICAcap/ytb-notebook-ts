@@ -1,6 +1,7 @@
 /**
  * Configures the authentication system using better-auth with a Prisma adapter
  * and Google OAuth provider.
+ * https://tomdekan.com/articles/google-sign-in-nextjs
  */
 import "dotenv/config";
 import { betterAuth } from "better-auth";
