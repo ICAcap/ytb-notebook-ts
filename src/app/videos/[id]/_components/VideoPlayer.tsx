@@ -24,6 +24,13 @@ const VideoPlayer = ({
 	const playerRef = useRef<HTMLVideoElement | null>(null);
 	const timePlayedRef = useRef(lastPlayedTime);
 
+	// heartbeat saves position every 30s while playing
+	const heartbeat = useRef(
+		_.throttle(async (seconds: number) => {
+			await updateVideoPlayedTime(userId, videoId, seconds);
+		}, 30000),
+	).current;
+
 	// helper function to update the video played time
 	async function handleTimePlayedUpdate() {
 		if (playerRef.current) {
@@ -75,6 +82,13 @@ const VideoPlayer = ({
 					onPause={debouncedHandleTimePlayedUpdate}
 					onEnded={debouncedHandleTimePlayedUpdate}
 					onSeeked={debouncedHandleTimePlayedUpdate}
+					onTimeUpdate={() => {
+						if (playerRef.current) {
+							const seconds = Math.floor(playerRef.current.currentTime);
+							timePlayedRef.current = seconds;
+							heartbeat(seconds);
+						}
+					}}
 				/>
 			</div>
 		</div>
