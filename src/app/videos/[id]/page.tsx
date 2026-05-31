@@ -10,6 +10,7 @@ type video = {
 	vidId: string;
 	title: string;
 	url: string;
+	lastPlayedTime: number;
 	collections: string[];
 };
 
@@ -29,6 +30,7 @@ const getVideoById = cache(async function getVideoById(
 			vidId: video.videoId,
 			title: video.title,
 			url: video.url,
+			lastPlayedTime: video.lastPlayedTime,
 			collections: video.collections.map((c) => c.collectionName) || [],
 		};
 	}
@@ -57,6 +59,7 @@ export async function generateMetadata({
 	};
 }
 
+///////////////////////////////////////////////////////////////////////
 // async component
 export default async function VidViewPage({
 	params,
@@ -96,7 +99,12 @@ export default async function VidViewPage({
 							)}
 						</div>
 					</div>
-					<VideoPlayer url={video.url} />
+					<VideoPlayer
+						videoId={video.vidId}
+						userId={usrId}
+						url={video.url}
+						lastPlayedTime={video.lastPlayedTime}
+					/>
 				</main>
 			</div>
 		</>
