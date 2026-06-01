@@ -2,70 +2,78 @@ import { getYoutubeId, getThumbnailUrl } from "../../../../utils/youtube";
 import { formatTimeStamp } from "../../../../utils/formatTimeStamp";
 import Image from "next/image";
 import Link from "next/link";
-import { Trash2, Pencil, ImageDown } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 import { Suspense } from "react";
-
-interface VideoCardProps {
-	videoId: string;
-	videoUrl: string;
-	title: string;
-	timestamp: number;
-}
+import { VideoCardType } from "../page";
 
 export default function VideoCard({
 	videoId,
-	videoUrl,
+	url,
 	title,
-	timestamp,
-}: VideoCardProps) {
-	const youtubeId = getYoutubeId(videoUrl);
+	lastPlayedTime,
+	createdAt,
+}: VideoCardType) {
+	const youtubeId = getYoutubeId(url);
 	const thumbnailUrl = youtubeId ? getThumbnailUrl(youtubeId) : null;
 
 	return (
-		<div className="flex gap-3 p-2 m-2 shadow-md rounded-lg group">
-			{/* Thumbnail Container */}
-			<Link
-				href={`/videos/${videoId}`}
-				className="relative w-40 h-24 shrink-0 overflow-hidden rounded-lg bg-gray-200"
-			>
-				<Suspense fallback={<ImageDown size={100} />}>
-					{thumbnailUrl ? (
-						<Image
-							src={thumbnailUrl}
-							alt={title}
-							fill
-							sizes="(max-width: 768px) 160px, 160px"
-							className="object-cover cursor-pointer group-hover:scale-105 transition-transform duration-200"
-							loading="lazy"
-						/>
-					) : (
-						<div className="w-full h-full flex items-center justify-center p-2">
-							<p className="text-sm text-gray-500">No thumbnail available</p>
-						</div>
-					)}
-				</Suspense>
-			</Link>
-
-			{/* Details */}
-			<div className="flex flex-col justify-center overflow-hidden">
+		<>
+			{/* Thumbnail Frame */}
+			<div className="relative">
 				<Link
 					href={`/videos/${videoId}`}
-					className="text-shadow-mauve-100 text-2xl font-medium cursor-pointer line-clamp-2 leading-tight"
+					className="relative block group overflow-hidden rounded-lg border-2 border-gray-300 bg-gray-100 shadow-md hover:shadow-lg hover:border-gray-400 transition-all duration-200"
+				>
+					<Suspense fallback={<div className="w-24 h-14 bg-gray-200" />}>
+						{thumbnailUrl ? (
+							<Image
+								src={thumbnailUrl}
+								alt={title}
+								width={200}
+								height={113}
+								className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+								loading="lazy"
+							/>
+						) : (
+							<div className="w-full h-full bg-gray-300 flex items-center justify-center">
+								<span className="text-xs font-semibold text-gray-600">?</span>
+							</div>
+						)}
+					</Suspense>
+				</Link>
+			</div>
+
+			{/* Details */}
+			<div className="list-col-grow">
+				<Link
+					href={`/videos/${videoId}`}
+					className="font-semibold text-base hover:text-blue-600 transition-colors duration-150 line-clamp-2"
 				>
 					{title}
 				</Link>
-				<p className="text-xs mt-1">
-					Last Watched - {formatTimeStamp(timestamp)}
-				</p>
-				<div className="py-3 right-2 flex">
-					<button title="Delete Video">
-						<Trash2 className="w-6 h-6 cursor-pointer text-red-400 hover:text-red-700" />
-					</button>
-					<button title="Edit Video Properties">
-						<Pencil className="w-6 h-6 cursor-pointer text-red-400 hover:text-red-700 ml-2" />
-					</button>
+				<div className="text-xs font-medium text-gray-600 mt-1">
+					Last Watched: {formatTimeStamp(lastPlayedTime)}
+				</div>
+				<div className="text-xs text-gray-500 mt-0.5">
+					Added: {createdAt.toLocaleDateString()}
 				</div>
 			</div>
-		</div>
+
+			{/* Actions */}
+			<div className="flex gap-2">
+				<button
+					title="Delete Video"
+					className="p-2 hover:bg-red-100 rounded-lg transition-colors duration-150"
+				>
+					<Trash2 className="w-5 h-5 text-red-500 hover:text-red-700" />
+				</button>
+				<button
+					title="Edit Video"
+					className="p-2 hover:bg-blue-100 rounded-lg transition-colors duration-150"
+				>
+					<Pencil className="w-5 h-5 text-blue-500 hover:text-blue-700" />
+				</button>
+			</div>
+		</>
 	);
 }
