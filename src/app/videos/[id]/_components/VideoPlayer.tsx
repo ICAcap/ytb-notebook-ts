@@ -24,11 +24,11 @@ const VideoPlayer = ({
 	const playerRef = useRef<HTMLVideoElement | null>(null);
 	const timePlayedRef = useRef(lastPlayedTime);
 
-	// heartbeat saves position every 30s while playing
+	// heartbeat saves position every 15s while playing
 	const heartbeat = useRef(
 		_.throttle(async (seconds: number) => {
 			await updateVideoPlayedTime(userId, videoId, seconds);
-		}, 30000),
+		}, 15000),
 	).current;
 
 	// helper function to update the video played time

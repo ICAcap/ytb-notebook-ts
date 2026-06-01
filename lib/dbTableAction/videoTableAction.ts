@@ -13,9 +13,9 @@ export async function updateVideoPlayedTime(
 			data: { lastPlayedTime: playedTime },
 		});
 
-		console.log(
-			`Updated played time for video ${videoId} and user ${userId} to ${playedTime} seconds`,
-		);
+		// console.log(
+		// 	`Updated played time for video ${videoId} and user ${userId} to ${playedTime} seconds`,
+		// );
 	} catch (error) {
 		console.error("Error updating video played time:", error);
 	}
