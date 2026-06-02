@@ -1,12 +1,13 @@
 import { getYoutubeId, getThumbnailUrl } from "../../../../utils/youtube";
 import { formatTimeStamp } from "../../../../utils/formatTimeStamp";
+import { memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Trash2, Pencil } from "lucide-react";
 import { Suspense } from "react";
 import { VideoCardType } from "../page";
 
-export default function VideoCard({
+export default memo(function VideoCard({
 	videoId,
 	url,
 	title,
@@ -76,4 +77,4 @@ export default function VideoCard({
 			</div>
 		</>
 	);
-}
+});
