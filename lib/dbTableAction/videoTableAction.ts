@@ -8,19 +8,18 @@ import { cache } from "react";
 export const getVideoCardsWithPagination = cache(async function (
 	userId: string,
 	page: number = 1,
+	pageSize: number = 20,
 ): Promise<VideoCardType[]> {
-	const PAGE_SIZE = 30;
-
 	// Calculate how many items to skip
-	// Page 1: (1-1) * 30 = 0
-	// Page 2: (2-1) * 30 = 30
-	const skip = (page - 1) * PAGE_SIZE;
+	// Page 1: (1-1) * pageSize = 0
+	// Page 2: (2-1) * pageSize = pageSize
+	const skip = (page - 1) * pageSize;
 	try {
 		const videos = await prisma.video.findMany({
 			where: {
 				userId: userId,
 			},
-			take: PAGE_SIZE,
+			take: pageSize,
 			skip: skip,
 		});
 		return videos as VideoCardType[];
