@@ -1,10 +1,15 @@
 import Sidebar from "../../../components/sidebar";
+import Pagination from "../../../components/pagination";
 import requireSession from "../../../lib/requireSession";
 import VideoCard from "./_components/VideoCard";
 import { Metadata } from "next";
 import { Video } from "../../../generated/prisma";
-import { getVideoCardsWithPagination } from "../../../lib/dbTableAction/videoTableAction";
+import {
+	getVideoCardsWithSearchParam,
+	getVideoNumWithSearchParam,
+} from "../../../lib/dbTableAction/videoTableAction";
 import { Suspense } from "react";
+import { X } from "lucide-react";
 
 export const metadata: Metadata = {
 	title: "Videos",
@@ -18,18 +23,57 @@ export type VideoCardType = Pick<
 >;
 
 // page component
-export default async function VideoPage() {
+export default async function VideoPage({
+	searchParams,
+}: {
+	searchParams: Promise<{ q?: string; page?: string }>;
+}) {
 	const session = await requireSession();
 	const usrId = session.user.id;
 
-	const videoCards = await getVideoCardsWithPagination(usrId, 1);
+	const params = await searchParams;
+	const q = (params.q ?? "").trim();
+	const page = Math.max(1, Number(params.page ?? 1)); // Prevent negative or zero page indices.
+	const pageSize = 15;
+
+	// fetch data from db video table
+	const [totalCount, videoCards] = await Promise.all([
+		getVideoNumWithSearchParam(usrId, q),
+		getVideoCardsWithSearchParam(usrId, page, pageSize, q),
+	]);
+
+	const totalPagesNum = Math.max(1, Math.ceil(totalCount / pageSize)); // Ensure at least one page exists for the UI.
 
 	return (
 		<div className="flex min-h-screen">
 			<Sidebar currentPath="/videos" />
 
 			<main className="flex-1 p-6">
-				<h1 className="text-3xl text-center mb-6">Your Videos</h1>
+				<h1 className="text-3xl text-center mb-8">Your Videos</h1>
+
+				{/* Search bar */}
+				<div className="mb-8">
+					<form className="join w-full" action="/videos" method="GET">
+						<input
+							name="q"
+							defaultValue={q}
+							placeholder="Search Video Title..."
+							className="join-item input input-bordered flex-1 focus:outline-none"
+						/>
+						<button className="join-item btn btn-primary">Search</button>
+						{q && (
+							<a
+								href="/videos"
+								className="join-item btn btn-ghost"
+								title="Clear search"
+							>
+								<X size={25} />
+							</a>
+						)}
+					</form>
+				</div>
+
+				{/* Videocard List */}
 				<Suspense
 					fallback={
 						<span className="loading loading-spinner loading-xl"></span>
@@ -43,6 +87,21 @@ export default async function VideoPage() {
 						))}
 					</ul>
 				</Suspense>
+
+				{/* Pagination bar */}
+				{totalPagesNum > 1 && (
+					<div className="mt-8 flex justify-center">
+						<Pagination
+							currentPage={page}
+							totalPages={totalPagesNum}
+							baseUrl="/videos"
+							searchParams={{
+								q,
+								pageSize: String(pageSize), // Convert to string to match expected API for URL params.
+							}}
+						/>
+					</div>
+				)}
 			</main>
 		</div>
 	);

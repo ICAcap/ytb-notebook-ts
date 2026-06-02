@@ -5,27 +5,52 @@ import { VideoCardType } from "@/app/videos/page";
 import { cache } from "react";
 
 // --------- GET ------------------------------------------------------------------
-export const getVideoCardsWithPagination = cache(async function (
+export const getVideoCardsWithSearchParam = cache(async function (
 	userId: string,
-	page: number = 1,
-	pageSize: number = 20,
+	page: number,
+	pageSize: number,
+	q: string,
 ): Promise<VideoCardType[]> {
 	// Calculate how many items to skip
 	// Page 1: (1-1) * pageSize = 0
 	// Page 2: (2-1) * pageSize = pageSize
-	const skip = (page - 1) * pageSize;
+	const skipItemNum = (page - 1) * pageSize;
+
+	const where = {
+		userId,
+		...(q ? { title: { contains: q, mode: "insensitive" as const } } : {}),
+	};
+
 	try {
 		const videos = await prisma.video.findMany({
-			where: {
-				userId: userId,
-			},
+			where: where,
 			take: pageSize,
-			skip: skip,
+			skip: skipItemNum,
 		});
 		return videos as VideoCardType[];
 	} catch (error) {
-		console.error("Error fetching videos with pagination:", error);
+		console.error("Error fetching video card data with searchParam:", error);
 		return [] as VideoCardType[];
+	}
+});
+
+export const getVideoNumWithSearchParam = cache(async function (
+	userId: string,
+	q: string,
+): Promise<number> {
+	const where = {
+		userId,
+		...(q ? { title: { contains: q, mode: "insensitive" as const } } : {}),
+	};
+
+	try {
+		const totalVideoAmount = await prisma.video.count({ where });
+		return totalVideoAmount;
+	} catch (error) {
+		console.error(
+			"Error fetching total video num with searchParam, fallback to 0",
+		);
+		return 0;
 	}
 });
 // --------- CREATE ------------------------------------------------------------------
