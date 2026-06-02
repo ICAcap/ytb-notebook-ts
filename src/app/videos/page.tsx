@@ -17,6 +17,7 @@ export type VideoCardType = Pick<
 	"url" | "title" | "lastPlayedTime" | "videoId" | "createdAt"
 >;
 
+// page component
 export default async function VideoPage() {
 	const session = await requireSession();
 	const usrId = session.user.id;
