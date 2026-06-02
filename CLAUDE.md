@@ -9,11 +9,12 @@ YouTube Notebook: A Next.js 16 application for managing video collections with t
 ## Core Architecture
 
 ### Authentication (better-auth)
-- **Setup**: `src/lib/auth.ts` configures BetterAuth with PostgreSQL + Prisma adapter
+- **Setup**: `lib/auth.ts` configures BetterAuth with PostgreSQL + Prisma adapter
 - **Google OAuth**: Requires `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `.env`
 - **API Handler**: `src/app/api/[...all]/route.ts` routes all auth requests via `toNextJsHandler(auth.handler)`
 - **Type**: Export `Session` type from auth config for type-safe session access
-- **Client**: `src/lib/auth-client.ts` provides client-side auth utilities
+- **Client**: `lib/auth-client.ts` provides client-side auth utilities
+- **Server-side checks**: `lib/requireSession.ts` validates session and redirects to sign-in if missing
 
 ### Database (PostgreSQL + Prisma)
 - **Schema**: `prisma/schema.prisma` — User, Video, Note, Collection models plus BetterAuth tables
@@ -26,14 +27,21 @@ YouTube Notebook: A Next.js 16 application for managing video collections with t
 - **Prisma Client**: Output to `generated/prisma` (generated location)
 
 ### Frontend Pages
-- `src/app/page.tsx` — Home/landing
-- `src/app/dashboard/page.tsx` — Main dashboard
-- `src/app/video/page.tsx` — Video view/edit
-- `src/app/add-video/page.tsx` — Add new video
-- `src/app/collection/page.tsx` — Collections management
-- `src/app/setting/page.tsx` — User settings
-- `src/app/(auth)/sign-in/page.tsx` — Auth entry point
+- `src/app/page.tsx` — Home/landing with sign-in form
+- `src/app/dashboard/page.tsx` — Main dashboard (protected)
+- `src/app/videos/page.tsx` — Video list with search and pagination (protected)
+- `src/app/videos/[id]/page.tsx` — Video player and notes view (protected)
+- `src/app/add-video/page.tsx` — Add new video form (protected)
+- `src/app/collection/page.tsx` — Collections management (protected)
+- `src/app/setting/page.tsx` — User settings (protected)
+- `src/app/(auth)/sign-in/page.tsx` — Sign-in form component
 - `src/app/layout.tsx` — Root layout with Tailwind + Geist font
+
+### Shared Components
+- `components/sidebar.tsx` — Navigation sidebar (requires auth)
+- `components/pagination.tsx` — Pagination controls
+- `src/app/videos/_components/VideoCard.tsx` — Video list item
+- `src/app/videos/[id]/_components/VideoPlayer.tsx` — React Player wrapper
 
 ## Commands
 
@@ -57,9 +65,12 @@ See `node_modules/next/dist/docs/` — this version has breaking changes in APIs
 - **React Compiler**: Enabled in `next.config.ts` (Babel plugin)
 - **React 19**: Uses new hooks; check React docs for deprecated patterns from earlier versions
 
-### Session Access
-- Use `src/lib/requireSession.ts` for server-side session checks
-- Client-side: Use auth-client from `src/lib/auth-client.ts`
+### Data Access Layer
+- **Database utility**: `lib/prisma.ts` exports singleton PrismaClient
+- **Video queries**: `lib/dbTableAction/videoTableAction.ts` — getVideoCardsWithSearchParam, getVideoNumWithSearchParam (handles search + pagination)
+- **Session access**:
+  - Server-side: `lib/requireSession.ts` validates session and throws redirect if missing
+  - Client-side: `lib/auth-client.ts` provides auth utilities (signIn, signOut, etc.)
 
 ### Database Migrations
 - Development: Use `npx prisma db push` or `npm run seed`
