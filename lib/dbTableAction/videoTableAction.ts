@@ -16,6 +16,7 @@ export const getVideoCardsWithSearchParam = cache(async function (
 	// Page 2: (2-1) * pageSize = pageSize
 	const skipItemNum = (page - 1) * pageSize;
 
+	// Build the where clause for the query, including the search filter if provided.
 	const where = {
 		userId,
 		...(q ? { title: { contains: q, mode: "insensitive" as const } } : {}),

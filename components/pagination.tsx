@@ -26,7 +26,7 @@ export default function Pagination({
 	};
 
 	const getVisiblePages = () => {
-		const delta = 3;
+		const delta = 2;
 		const range = [];
 		const rangeWithDots = [];
 
@@ -59,6 +59,7 @@ export default function Pagination({
 	};
 
 	const visiblePages = getVisiblePages();
+	const pagesNumArr = Array.from(Array(totalPages).keys()).map((x) => x + 1);
 
 	return (
 		<div className="join">
@@ -74,12 +75,32 @@ export default function Pagination({
 			</Link>
 
 			{visiblePages.map((page, key) => {
-				// Non-numeric values are treated as visual separators rather than links.
 				if (page === "...") {
 					return (
-						<span key={key} className="join-item btn btn-sm btn-disabled">
-							...
-						</span>
+						<div key={key} className="join-item dropdown dropdown-top">
+							<div
+								tabIndex={0}
+								role="button"
+								className="btn btn-sm" // Match size and style of page links.
+							>
+								...
+							</div>
+							<ul
+								tabIndex={-1}
+								className="dropdown-content dropdown-top menu bg-base-100 shadow-md rounded-box p-2 z-10 flex flex-row overflow-x-auto overflow-y-scroll whitespace-nowrap max-h-80"
+							>
+								{pagesNumArr.map((p) => (
+									<li key={p} className="inline-block">
+										<Link
+											href={getPageUrl(p)}
+											className={`text-xs ${p === currentPage ? "font-bold text-primary-content bg-primary" : ""}`}
+										>
+											Page {p}
+										</Link>
+									</li>
+								))}
+							</ul>
+						</div>
 					);
 				}
 
