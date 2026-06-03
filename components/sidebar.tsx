@@ -12,7 +12,7 @@ import {
 	Moon,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Sidebar({
 	currentPath = "/dashboard",
@@ -20,16 +20,32 @@ export default function Sidebar({
 	currentPath?: string;
 }) {
 	const [isCollapsed, setIsCollapsed] = useState(false);
-	const [isDark, setIsDark] = useState(false);
+	const [theme, setTheme] = useState(() => {
+		//getting stored theme value
+		if (typeof localStorage === "undefined") return "light";
+		const saved = localStorage.getItem("theme");
+		return saved || "light";
+	});
+
+	useEffect(() => {
+		localStorage.setItem("theme", theme);
+	}, [theme]);
+
+	useEffect(() => {
+		document.documentElement.setAttribute(
+			"data-theme",
+			theme === "light" ? "caramellatte" : "coffee",
+		);
+	}, []);
 
 	function toggleSidebar() {
 		setIsCollapsed((prev) => !prev);
 	}
 
 	function handleThemeToggle() {
-		const next = isDark ? "caramellatte" : "coffee";
+		const next = theme === "light" ? "coffee" : "caramellatte";
 		document.documentElement.setAttribute("data-theme", next);
-		setIsDark(!isDark);
+		setTheme(theme === "light" ? "dark" : "light");
 	}
 
 	const navigation = [
@@ -58,10 +74,9 @@ export default function Sidebar({
 				<div className="flex items-center gap-1">
 					<button
 						onClick={handleThemeToggle}
-						title={isDark ? "Switch to light" : "Switch to dark"}
 						className="p-1.5 hover:bg-gray-800 rounded-lg transition-all duration-200 shrink-0"
 					>
-						{isDark ? (
+						{theme === "light" ? (
 							<Sun className="h-5 w-5" />
 						) : (
 							<Moon className="h-5 w-5" />
