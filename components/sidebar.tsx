@@ -8,9 +8,10 @@ import {
 	Plus,
 	FolderBookmark,
 	Settings,
+	Sun,
+	Moon,
 } from "lucide-react";
 import Link from "next/link";
-import SignOutButton from "./SignOutButton";
 import { useState } from "react";
 
 export default function Sidebar({
@@ -19,9 +20,16 @@ export default function Sidebar({
 	currentPath?: string;
 }) {
 	const [isCollapsed, setIsCollapsed] = useState(false);
+	const [isDark, setIsDark] = useState(false);
 
 	function toggleSidebar() {
 		setIsCollapsed((prev) => !prev);
+	}
+
+	function handleThemeToggle() {
+		const next = isDark ? "caramellatte" : "coffee";
+		document.documentElement.setAttribute("data-theme", next);
+		setIsDark(!isDark);
 	}
 
 	const navigation = [
@@ -34,7 +42,7 @@ export default function Sidebar({
 
 	return (
 		<aside
-			className={`${isCollapsed ? "w-20" : "w-64"} flex flex-col bg-gray-900 text-white min-h-screen z-10 transition-all duration-300 ease-out`}
+			className={`${isCollapsed ? "w-20" : "w-80"} flex flex-col bg-gray-900 text-white min-h-screen z-10 transition-all duration-300 ease-out`}
 		>
 			<div
 				className={`flex items-center p-4 mb-2 ${
@@ -47,18 +55,31 @@ export default function Sidebar({
 						<span className="text-xl font-bold truncate">YTB Notebook</span>
 					</div>
 				)}
-				<button
-					onClick={toggleSidebar}
-					aria-label="Toggle Sidebar"
-					className="p-1.5 hover:bg-gray-800 rounded-lg transition-all duration-200 shrink-0"
-					title={isCollapsed ? "Expand" : "Collapse"}
-				>
-					<ChevronLeft
-						className={`h-5 w-5 transition-transform duration-300 ${
-							isCollapsed ? "rotate-180" : ""
-						}`}
-					/>
-				</button>
+				<div className="flex items-center gap-1">
+					<button
+						onClick={handleThemeToggle}
+						title={isDark ? "Switch to light" : "Switch to dark"}
+						className="p-1.5 hover:bg-gray-800 rounded-lg transition-all duration-200 shrink-0"
+					>
+						{isDark ? (
+							<Sun className="h-5 w-5" />
+						) : (
+							<Moon className="h-5 w-5" />
+						)}
+					</button>
+					<button
+						onClick={toggleSidebar}
+						aria-label="Toggle Sidebar"
+						className="p-1.5 hover:bg-gray-800 rounded-lg transition-all duration-200 shrink-0"
+						title={isCollapsed ? "Expand" : "Collapse"}
+					>
+						<ChevronLeft
+							className={`h-5 w-5 transition-transform duration-300 ${
+								isCollapsed ? "rotate-180" : ""
+							}`}
+						/>
+					</button>
+				</div>
 			</div>
 
 			<nav
@@ -94,12 +115,9 @@ export default function Sidebar({
 
 			<div className="p-3 space-y-2">
 				{!isCollapsed && (
-					<>
-						<SignOutButton />
-						<p className="text-xs text-gray-400 text-center">
-							© {new Date().getFullYear()} YTB Notebook
-						</p>
-					</>
+					<p className="text-xs text-gray-400 text-center">
+						© {new Date().getFullYear()} YTB Notebook
+					</p>
 				)}
 			</div>
 		</aside>
