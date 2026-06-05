@@ -11,7 +11,7 @@ interface VideoPlayerProps {
 	lastPlayedTime?: number;
 }
 
-const _ = require("lodash"); // for debounce
+const _ = require("lodash"); // for debounce purpose
 
 // Component
 const VideoPlayer = ({
@@ -22,13 +22,12 @@ const VideoPlayer = ({
 }: VideoPlayerProps) => {
 	const playerAlreadyMounted = useRef(false);
 	const playerRef = useRef<HTMLVideoElement | null>(null);
-	const timePlayedRef = useRef(lastPlayedTime);
 
 	// heartbeat saves position every 15s while playing
 	const heartbeat = useRef(
 		_.throttle(async (seconds: number) => {
 			await updateVideoPlayedTime(userId, videoId, seconds);
-		}, 15000),
+		}, 30000),
 	).current;
 
 	// helper function to update the video played time
@@ -41,9 +40,8 @@ const VideoPlayer = ({
 					Math.floor(playerRef.current.duration),
 				),
 			);
-			timePlayedRef.current = currentTimeSeconds;
 			// console.log(`${currentTimeSeconds}`);
-			await updateVideoPlayedTime(userId, videoId, timePlayedRef.current);
+			await updateVideoPlayedTime(userId, videoId, currentTimeSeconds);
 		}
 	}
 
@@ -55,17 +53,17 @@ const VideoPlayer = ({
 
 	return (
 		<div className="w-full max-w-4xl mx-auto mt-6">
-			<div className="relative w-full pb-[56.25%]">
+			<div className="aspect-video">
 				<ReactPlayer
 					ref={playerRef}
 					src={url}
 					controls={true}
 					width="100%"
 					height="100%"
-					className="absolute top-0 left-0"
 					playing={false}
 					onReady={() => {
-						// Set the player's current time to the last played time when it's ready, but only on the initial mount
+						// Set the player's current time to the last played time when it's ready,
+						// but only on the initial player mount
 						if (playerRef.current && !playerAlreadyMounted.current) {
 							playerRef.current.currentTime = lastPlayedTime;
 							playerAlreadyMounted.current = true;
@@ -85,7 +83,6 @@ const VideoPlayer = ({
 					onTimeUpdate={() => {
 						if (playerRef.current) {
 							const seconds = Math.floor(playerRef.current.currentTime);
-							timePlayedRef.current = seconds;
 							heartbeat(seconds);
 						}
 					}}

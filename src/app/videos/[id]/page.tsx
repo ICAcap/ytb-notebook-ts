@@ -5,6 +5,7 @@ import requireSession from "../../../../lib/requireSession";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { cache } from "react";
+import { ArrowLeft } from "lucide-react";
 
 type video = {
 	vidId: string;
@@ -81,7 +82,16 @@ export default async function VidViewPage({
 			<div className="flex min-h-screen">
 				<Sidebar currentPath="/videos" />
 				<main className="flex-1 p-6">
-					<h1 className="text-4xl text-wrap">{`${video.title || "Unknown Video"}`}</h1>
+					<a
+						href="/videos"
+						className="flex items-center gap-2 hover:font-bold transition-all"
+					>
+						<ArrowLeft className="rounded-full border-accent border-4 size-8 hover:stroke-3 transition-transform" />
+						Back to Videos
+					</a>
+					<div className="flex items-center gap-4 mb-6">
+						<h1 className="text-4xl text-wrap">{`${video.title || "Unknown Video"}`}</h1>
+					</div>
 					<div className="mt-4 justify-evenly">
 						<h2 className="text-xl text-gray-400">Collections:</h2>
 						<div className="flex flex-wrap gap-2 mt-2">

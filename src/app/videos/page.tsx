@@ -49,7 +49,7 @@ export default async function VideoPage({
 			<Sidebar currentPath="/videos" />
 
 			<main className="flex-1 p-6">
-				<h1 className="text-3xl text-center mb-8">Your Videos</h1>
+				<h1 className="text-2xl font-bold text-center mb-8">Your Videos</h1>
 
 				{/* Search bar */}
 				<div className="mb-8">

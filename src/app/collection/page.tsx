@@ -12,7 +12,7 @@ export default async function CollectionPage() {
 		<div className="flex min-h-screen">
 			<Sidebar currentPath="/collection" />
 			<main className="flex-1 p-6">
-				<h1 className="text-blue-300">Collection Page</h1>
+				<h1 className="text-2xl font-bold">Collection Page</h1>
 			</main>
 		</div>
 	);

@@ -33,7 +33,7 @@ export default memo(function VideoCard({
 								width={200}
 								height={113}
 								className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-								loading="lazy"
+								loading="eager"
 							/>
 						) : (
 							<div className="w-full h-full bg-gray-300 flex items-center justify-center">
