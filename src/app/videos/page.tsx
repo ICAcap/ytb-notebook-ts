@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 // a type that only takes data we need for video card from the Video model
 export type VideoCardType = Pick<
 	Video,
-	"url" | "title" | "lastPlayedTime" | "videoId" | "createdAt"
+	"youtubeVidID" | "title" | "lastPlayedTime" | "videoId" | "createdAt"
 >;
 
 // page component

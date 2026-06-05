@@ -41,11 +41,11 @@ model User {
 }
 
 model Video {
-  videoId String @id @default(cuid())
-  userId  String // FK
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade) // related user
-  url     String @db.VarChar(2048)
-  title   String @db.VarChar(255)
+  videoId      String @id @default(cuid())
+  userId       String // FK
+  user         User   @relation(fields: [userId], references: [id], onDelete: Cascade) // related user
+  youtubeVidID String @db.VarChar(25)
+  title        String @db.VarChar(255)
 
   lastPlayedTime Int @default(0)
 
@@ -55,7 +55,7 @@ model Video {
   notes       Note[] // reverse relationship
   collections Collection[] // many-to-many
 
-  @@unique([userId, url]) // Ensure a user can't have duplicate video entries
+  @@unique([userId, youtubeVidID]) // Ensure a user can't have duplicate video entries
   @@index([userId])
   @@index([userId, createdAt])
 }

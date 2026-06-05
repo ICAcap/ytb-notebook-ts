@@ -1,4 +1,4 @@
-import { getYoutubeId, getThumbnailUrl } from "../../../../utils/youtube";
+import { getThumbnailUrl } from "../../../../utils/youtube";
 import { formatTimeStamp } from "../../../../utils/formatTimeStamp";
 import { memo } from "react";
 import Image from "next/image";
@@ -9,13 +9,12 @@ import { VideoCardType } from "../page";
 
 export default memo(function VideoCard({
 	videoId,
-	url,
+	youtubeVidID,
 	title,
 	lastPlayedTime,
 	createdAt,
 }: VideoCardType) {
-	const youtubeId = getYoutubeId(url);
-	const thumbnailUrl = youtubeId ? getThumbnailUrl(youtubeId) : null;
+	const thumbnailUrl = youtubeVidID ? getThumbnailUrl(youtubeVidID) : null;
 
 	return (
 		<>

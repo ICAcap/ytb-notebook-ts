@@ -2811,7 +2811,7 @@ export namespace Prisma {
   export type VideoMinAggregateOutputType = {
     videoId: string | null
     userId: string | null
-    url: string | null
+    youtubeVidID: string | null
     title: string | null
     lastPlayedTime: number | null
     createdAt: Date | null
@@ -2821,7 +2821,7 @@ export namespace Prisma {
   export type VideoMaxAggregateOutputType = {
     videoId: string | null
     userId: string | null
-    url: string | null
+    youtubeVidID: string | null
     title: string | null
     lastPlayedTime: number | null
     createdAt: Date | null
@@ -2831,7 +2831,7 @@ export namespace Prisma {
   export type VideoCountAggregateOutputType = {
     videoId: number
     userId: number
-    url: number
+    youtubeVidID: number
     title: number
     lastPlayedTime: number
     createdAt: number
@@ -2851,7 +2851,7 @@ export namespace Prisma {
   export type VideoMinAggregateInputType = {
     videoId?: true
     userId?: true
-    url?: true
+    youtubeVidID?: true
     title?: true
     lastPlayedTime?: true
     createdAt?: true
@@ -2861,7 +2861,7 @@ export namespace Prisma {
   export type VideoMaxAggregateInputType = {
     videoId?: true
     userId?: true
-    url?: true
+    youtubeVidID?: true
     title?: true
     lastPlayedTime?: true
     createdAt?: true
@@ -2871,7 +2871,7 @@ export namespace Prisma {
   export type VideoCountAggregateInputType = {
     videoId?: true
     userId?: true
-    url?: true
+    youtubeVidID?: true
     title?: true
     lastPlayedTime?: true
     createdAt?: true
@@ -2968,7 +2968,7 @@ export namespace Prisma {
   export type VideoGroupByOutputType = {
     videoId: string
     userId: string
-    url: string
+    youtubeVidID: string
     title: string
     lastPlayedTime: number
     createdAt: Date
@@ -2997,7 +2997,7 @@ export namespace Prisma {
   export type VideoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     videoId?: boolean
     userId?: boolean
-    url?: boolean
+    youtubeVidID?: boolean
     title?: boolean
     lastPlayedTime?: boolean
     createdAt?: boolean
@@ -3011,7 +3011,7 @@ export namespace Prisma {
   export type VideoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     videoId?: boolean
     userId?: boolean
-    url?: boolean
+    youtubeVidID?: boolean
     title?: boolean
     lastPlayedTime?: boolean
     createdAt?: boolean
@@ -3022,7 +3022,7 @@ export namespace Prisma {
   export type VideoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     videoId?: boolean
     userId?: boolean
-    url?: boolean
+    youtubeVidID?: boolean
     title?: boolean
     lastPlayedTime?: boolean
     createdAt?: boolean
@@ -3033,14 +3033,14 @@ export namespace Prisma {
   export type VideoSelectScalar = {
     videoId?: boolean
     userId?: boolean
-    url?: boolean
+    youtubeVidID?: boolean
     title?: boolean
     lastPlayedTime?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type VideoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"videoId" | "userId" | "url" | "title" | "lastPlayedTime" | "createdAt" | "updatedAt", ExtArgs["result"]["video"]>
+  export type VideoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"videoId" | "userId" | "youtubeVidID" | "title" | "lastPlayedTime" | "createdAt" | "updatedAt", ExtArgs["result"]["video"]>
   export type VideoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     notes?: boolean | Video$notesArgs<ExtArgs>
@@ -3064,7 +3064,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       videoId: string
       userId: string
-      url: string
+      youtubeVidID: string
       title: string
       lastPlayedTime: number
       createdAt: Date
@@ -3497,7 +3497,7 @@ export namespace Prisma {
   interface VideoFieldRefs {
     readonly videoId: FieldRef<"Video", 'String'>
     readonly userId: FieldRef<"Video", 'String'>
-    readonly url: FieldRef<"Video", 'String'>
+    readonly youtubeVidID: FieldRef<"Video", 'String'>
     readonly title: FieldRef<"Video", 'String'>
     readonly lastPlayedTime: FieldRef<"Video", 'Int'>
     readonly createdAt: FieldRef<"Video", 'DateTime'>
@@ -9503,7 +9503,7 @@ export namespace Prisma {
   export const VideoScalarFieldEnum: {
     videoId: 'videoId',
     userId: 'userId',
-    url: 'url',
+    youtubeVidID: 'youtubeVidID',
     title: 'title',
     lastPlayedTime: 'lastPlayedTime',
     createdAt: 'createdAt',
@@ -9800,7 +9800,7 @@ export namespace Prisma {
     NOT?: VideoWhereInput | VideoWhereInput[]
     videoId?: StringFilter<"Video"> | string
     userId?: StringFilter<"Video"> | string
-    url?: StringFilter<"Video"> | string
+    youtubeVidID?: StringFilter<"Video"> | string
     title?: StringFilter<"Video"> | string
     lastPlayedTime?: IntFilter<"Video"> | number
     createdAt?: DateTimeFilter<"Video"> | Date | string
@@ -9813,7 +9813,7 @@ export namespace Prisma {
   export type VideoOrderByWithRelationInput = {
     videoId?: SortOrder
     userId?: SortOrder
-    url?: SortOrder
+    youtubeVidID?: SortOrder
     title?: SortOrder
     lastPlayedTime?: SortOrder
     createdAt?: SortOrder
@@ -9825,12 +9825,12 @@ export namespace Prisma {
 
   export type VideoWhereUniqueInput = Prisma.AtLeast<{
     videoId?: string
-    userId_url?: VideoUserIdUrlCompoundUniqueInput
+    userId_youtubeVidID?: VideoUserIdYoutubeVidIDCompoundUniqueInput
     AND?: VideoWhereInput | VideoWhereInput[]
     OR?: VideoWhereInput[]
     NOT?: VideoWhereInput | VideoWhereInput[]
     userId?: StringFilter<"Video"> | string
-    url?: StringFilter<"Video"> | string
+    youtubeVidID?: StringFilter<"Video"> | string
     title?: StringFilter<"Video"> | string
     lastPlayedTime?: IntFilter<"Video"> | number
     createdAt?: DateTimeFilter<"Video"> | Date | string
@@ -9838,12 +9838,12 @@ export namespace Prisma {
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     notes?: NoteListRelationFilter
     collections?: CollectionListRelationFilter
-  }, "videoId" | "userId_url">
+  }, "videoId" | "userId_youtubeVidID">
 
   export type VideoOrderByWithAggregationInput = {
     videoId?: SortOrder
     userId?: SortOrder
-    url?: SortOrder
+    youtubeVidID?: SortOrder
     title?: SortOrder
     lastPlayedTime?: SortOrder
     createdAt?: SortOrder
@@ -9861,7 +9861,7 @@ export namespace Prisma {
     NOT?: VideoScalarWhereWithAggregatesInput | VideoScalarWhereWithAggregatesInput[]
     videoId?: StringWithAggregatesFilter<"Video"> | string
     userId?: StringWithAggregatesFilter<"Video"> | string
-    url?: StringWithAggregatesFilter<"Video"> | string
+    youtubeVidID?: StringWithAggregatesFilter<"Video"> | string
     title?: StringWithAggregatesFilter<"Video"> | string
     lastPlayedTime?: IntWithAggregatesFilter<"Video"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Video"> | Date | string
@@ -10325,7 +10325,7 @@ export namespace Prisma {
 
   export type VideoCreateInput = {
     videoId?: string
-    url: string
+    youtubeVidID: string
     title: string
     lastPlayedTime?: number
     createdAt?: Date | string
@@ -10338,7 +10338,7 @@ export namespace Prisma {
   export type VideoUncheckedCreateInput = {
     videoId?: string
     userId: string
-    url: string
+    youtubeVidID: string
     title: string
     lastPlayedTime?: number
     createdAt?: Date | string
@@ -10349,7 +10349,7 @@ export namespace Prisma {
 
   export type VideoUpdateInput = {
     videoId?: StringFieldUpdateOperationsInput | string
-    url?: StringFieldUpdateOperationsInput | string
+    youtubeVidID?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     lastPlayedTime?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10362,7 +10362,7 @@ export namespace Prisma {
   export type VideoUncheckedUpdateInput = {
     videoId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    url?: StringFieldUpdateOperationsInput | string
+    youtubeVidID?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     lastPlayedTime?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10374,7 +10374,7 @@ export namespace Prisma {
   export type VideoCreateManyInput = {
     videoId?: string
     userId: string
-    url: string
+    youtubeVidID: string
     title: string
     lastPlayedTime?: number
     createdAt?: Date | string
@@ -10383,7 +10383,7 @@ export namespace Prisma {
 
   export type VideoUpdateManyMutationInput = {
     videoId?: StringFieldUpdateOperationsInput | string
-    url?: StringFieldUpdateOperationsInput | string
+    youtubeVidID?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     lastPlayedTime?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10393,7 +10393,7 @@ export namespace Prisma {
   export type VideoUncheckedUpdateManyInput = {
     videoId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    url?: StringFieldUpdateOperationsInput | string
+    youtubeVidID?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     lastPlayedTime?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10988,15 +10988,15 @@ export namespace Prisma {
     isNot?: UserWhereInput
   }
 
-  export type VideoUserIdUrlCompoundUniqueInput = {
+  export type VideoUserIdYoutubeVidIDCompoundUniqueInput = {
     userId: string
-    url: string
+    youtubeVidID: string
   }
 
   export type VideoCountOrderByAggregateInput = {
     videoId?: SortOrder
     userId?: SortOrder
-    url?: SortOrder
+    youtubeVidID?: SortOrder
     title?: SortOrder
     lastPlayedTime?: SortOrder
     createdAt?: SortOrder
@@ -11010,7 +11010,7 @@ export namespace Prisma {
   export type VideoMaxOrderByAggregateInput = {
     videoId?: SortOrder
     userId?: SortOrder
-    url?: SortOrder
+    youtubeVidID?: SortOrder
     title?: SortOrder
     lastPlayedTime?: SortOrder
     createdAt?: SortOrder
@@ -11020,7 +11020,7 @@ export namespace Prisma {
   export type VideoMinOrderByAggregateInput = {
     videoId?: SortOrder
     userId?: SortOrder
-    url?: SortOrder
+    youtubeVidID?: SortOrder
     title?: SortOrder
     lastPlayedTime?: SortOrder
     createdAt?: SortOrder
@@ -11938,7 +11938,7 @@ export namespace Prisma {
 
   export type VideoCreateWithoutUserInput = {
     videoId?: string
-    url: string
+    youtubeVidID: string
     title: string
     lastPlayedTime?: number
     createdAt?: Date | string
@@ -11949,7 +11949,7 @@ export namespace Prisma {
 
   export type VideoUncheckedCreateWithoutUserInput = {
     videoId?: string
-    url: string
+    youtubeVidID: string
     title: string
     lastPlayedTime?: number
     createdAt?: Date | string
@@ -12114,7 +12114,7 @@ export namespace Prisma {
     NOT?: VideoScalarWhereInput | VideoScalarWhereInput[]
     videoId?: StringFilter<"Video"> | string
     userId?: StringFilter<"Video"> | string
-    url?: StringFilter<"Video"> | string
+    youtubeVidID?: StringFilter<"Video"> | string
     title?: StringFilter<"Video"> | string
     lastPlayedTime?: IntFilter<"Video"> | number
     createdAt?: DateTimeFilter<"Video"> | Date | string
@@ -12442,7 +12442,7 @@ export namespace Prisma {
 
   export type VideoCreateWithoutCollectionsInput = {
     videoId?: string
-    url: string
+    youtubeVidID: string
     title: string
     lastPlayedTime?: number
     createdAt?: Date | string
@@ -12454,7 +12454,7 @@ export namespace Prisma {
   export type VideoUncheckedCreateWithoutCollectionsInput = {
     videoId?: string
     userId: string
-    url: string
+    youtubeVidID: string
     title: string
     lastPlayedTime?: number
     createdAt?: Date | string
@@ -12565,7 +12565,7 @@ export namespace Prisma {
 
   export type VideoCreateWithoutNotesInput = {
     videoId?: string
-    url: string
+    youtubeVidID: string
     title: string
     lastPlayedTime?: number
     createdAt?: Date | string
@@ -12577,7 +12577,7 @@ export namespace Prisma {
   export type VideoUncheckedCreateWithoutNotesInput = {
     videoId?: string
     userId: string
-    url: string
+    youtubeVidID: string
     title: string
     lastPlayedTime?: number
     createdAt?: Date | string
@@ -12646,7 +12646,7 @@ export namespace Prisma {
 
   export type VideoUpdateWithoutNotesInput = {
     videoId?: StringFieldUpdateOperationsInput | string
-    url?: StringFieldUpdateOperationsInput | string
+    youtubeVidID?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     lastPlayedTime?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12658,7 +12658,7 @@ export namespace Prisma {
   export type VideoUncheckedUpdateWithoutNotesInput = {
     videoId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    url?: StringFieldUpdateOperationsInput | string
+    youtubeVidID?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     lastPlayedTime?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12828,7 +12828,7 @@ export namespace Prisma {
 
   export type VideoCreateManyUserInput = {
     videoId?: string
-    url: string
+    youtubeVidID: string
     title: string
     lastPlayedTime?: number
     createdAt?: Date | string
@@ -12878,7 +12878,7 @@ export namespace Prisma {
 
   export type VideoUpdateWithoutUserInput = {
     videoId?: StringFieldUpdateOperationsInput | string
-    url?: StringFieldUpdateOperationsInput | string
+    youtubeVidID?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     lastPlayedTime?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12889,7 +12889,7 @@ export namespace Prisma {
 
   export type VideoUncheckedUpdateWithoutUserInput = {
     videoId?: StringFieldUpdateOperationsInput | string
-    url?: StringFieldUpdateOperationsInput | string
+    youtubeVidID?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     lastPlayedTime?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12900,7 +12900,7 @@ export namespace Prisma {
 
   export type VideoUncheckedUpdateManyWithoutUserInput = {
     videoId?: StringFieldUpdateOperationsInput | string
-    url?: StringFieldUpdateOperationsInput | string
+    youtubeVidID?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     lastPlayedTime?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13094,7 +13094,7 @@ export namespace Prisma {
 
   export type VideoUpdateWithoutCollectionsInput = {
     videoId?: StringFieldUpdateOperationsInput | string
-    url?: StringFieldUpdateOperationsInput | string
+    youtubeVidID?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     lastPlayedTime?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13106,7 +13106,7 @@ export namespace Prisma {
   export type VideoUncheckedUpdateWithoutCollectionsInput = {
     videoId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    url?: StringFieldUpdateOperationsInput | string
+    youtubeVidID?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     lastPlayedTime?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13117,7 +13117,7 @@ export namespace Prisma {
   export type VideoUncheckedUpdateManyWithoutCollectionsInput = {
     videoId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    url?: StringFieldUpdateOperationsInput | string
+    youtubeVidID?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     lastPlayedTime?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
