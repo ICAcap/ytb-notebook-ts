@@ -1,26 +1,25 @@
 import Sidebar from "../../../../components/sidebar";
 import VideoPlayer from "./_components/VideoPlayer";
 import { prisma } from "../../../../lib/prisma";
+import { Video } from "../../../../generated/prisma";
 import requireSession from "../../../../lib/requireSession";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { cache } from "react";
 import { ArrowLeft } from "lucide-react";
 
-type video = {
-	vidId: string;
-	title: string;
-	url: string;
-	lastPlayedTime: number;
-	collections: string[];
-};
+// a type that only takes data we need for video player from the Video model
+type videoPlayerProp = Pick<
+	Video,
+	"videoId" | "youtubeVidID" | "title" | "lastPlayedTime"
+> & { collections: string[] }; // intersection type with collections string array
 
 // helper function to fetch video details by id for the authenticated user,
 // cached for performance optimization
 const getVideoById = cache(async function getVideoById(
 	userId: string,
 	id: string,
-): Promise<video | null> {
+): Promise<videoPlayerProp | null> {
 	const video = await prisma.video.findFirst({
 		where: { userId, videoId: id },
 		include: { collections: true },
@@ -28,9 +27,9 @@ const getVideoById = cache(async function getVideoById(
 
 	if (video) {
 		return {
-			vidId: video.videoId,
+			videoId: video.videoId,
 			title: video.title,
-			url: video.url,
+			youtubeVidID: video.youtubeVidID,
 			lastPlayedTime: video.lastPlayedTime,
 			collections: video.collections.map((c) => c.collectionName) || [],
 		};
@@ -110,9 +109,9 @@ export default async function VidViewPage({
 						</div>
 					</div>
 					<VideoPlayer
-						videoId={video.vidId}
+						videoId={video.videoId}
 						userId={usrId}
-						url={video.url}
+						url={`https://www.youtube.com/watch?v=${video.youtubeVidID}`}
 						lastPlayedTime={video.lastPlayedTime}
 					/>
 				</main>

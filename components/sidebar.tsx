@@ -34,7 +34,7 @@ export default function Sidebar({
 	useEffect(() => {
 		document.documentElement.setAttribute(
 			"data-theme",
-			theme === "light" ? "caramellatte" : "coffee",
+			theme === "light" ? "bumblebee" : "coffee",
 		);
 	}, []);
 
@@ -43,7 +43,7 @@ export default function Sidebar({
 	}
 
 	function handleThemeToggle() {
-		const next = theme === "light" ? "coffee" : "caramellatte";
+		const next = theme === "light" ? "coffee" : "bumblebee";
 		document.documentElement.setAttribute("data-theme", next);
 		setTheme(theme === "light" ? "dark" : "light");
 	}

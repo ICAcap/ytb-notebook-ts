@@ -135,7 +135,7 @@ exports.Prisma.UserScalarFieldEnum = {
 exports.Prisma.VideoScalarFieldEnum = {
   videoId: 'videoId',
   userId: 'userId',
-  url: 'url',
+  youtubeVidID: 'youtubeVidID',
   title: 'title',
   lastPlayedTime: 'lastPlayedTime',
   createdAt: 'createdAt',
