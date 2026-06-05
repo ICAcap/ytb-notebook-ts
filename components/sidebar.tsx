@@ -19,7 +19,7 @@ export default function Sidebar({
 }: {
 	currentPath?: string;
 }) {
-	const [isCollapsed, setIsCollapsed] = useState(false);
+	const [isCollapsed, setIsCollapsed] = useState(true);
 	const [theme, setTheme] = useState(() => {
 		//getting stored theme value
 		if (typeof localStorage === "undefined") return "light";
