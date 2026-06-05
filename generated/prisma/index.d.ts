@@ -9825,6 +9825,7 @@ export namespace Prisma {
 
   export type VideoWhereUniqueInput = Prisma.AtLeast<{
     videoId?: string
+    userId_url?: VideoUserIdUrlCompoundUniqueInput
     AND?: VideoWhereInput | VideoWhereInput[]
     OR?: VideoWhereInput[]
     NOT?: VideoWhereInput | VideoWhereInput[]
@@ -9837,7 +9838,7 @@ export namespace Prisma {
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     notes?: NoteListRelationFilter
     collections?: CollectionListRelationFilter
-  }, "videoId">
+  }, "videoId" | "userId_url">
 
   export type VideoOrderByWithAggregationInput = {
     videoId?: SortOrder
@@ -9892,6 +9893,7 @@ export namespace Prisma {
 
   export type CollectionWhereUniqueInput = Prisma.AtLeast<{
     collectionId?: string
+    userId_collectionName?: CollectionUserIdCollectionNameCompoundUniqueInput
     AND?: CollectionWhereInput | CollectionWhereInput[]
     OR?: CollectionWhereInput[]
     NOT?: CollectionWhereInput | CollectionWhereInput[]
@@ -9901,7 +9903,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Collection"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     videos?: VideoListRelationFilter
-  }, "collectionId">
+  }, "collectionId" | "userId_collectionName">
 
   export type CollectionOrderByWithAggregationInput = {
     collectionId?: SortOrder
@@ -10986,6 +10988,11 @@ export namespace Prisma {
     isNot?: UserWhereInput
   }
 
+  export type VideoUserIdUrlCompoundUniqueInput = {
+    userId: string
+    url: string
+  }
+
   export type VideoCountOrderByAggregateInput = {
     videoId?: SortOrder
     userId?: SortOrder
@@ -11038,6 +11045,11 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type CollectionUserIdCollectionNameCompoundUniqueInput = {
+    userId: string
+    collectionName: string
   }
 
   export type CollectionCountOrderByAggregateInput = {
