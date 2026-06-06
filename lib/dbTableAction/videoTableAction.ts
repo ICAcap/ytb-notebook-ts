@@ -1,8 +1,14 @@
 "use server";
 
 import { prisma } from "../prisma";
-import { VideoCardType } from "@/app/videos/page";
 import { cache } from "react";
+import { Video } from "../../generated/prisma";
+
+// export types
+export type VideoCardType = Pick<
+	Video,
+	"youtubeVidID" | "title" | "lastPlayedTime" | "videoId" | "createdAt"
+>;
 
 // --------- GET ------------------------------------------------------------------
 export const getVideoCardsWithSearchParam = cache(async function (
@@ -53,6 +59,13 @@ export const getVideoNumWithSearchParam = cache(async function (
 		);
 		return 0;
 	}
+});
+
+export const checkVideoAlreadyExist = cache(async function (
+	userId: string,
+	youtubeVideoId: string,
+): Promise<any> {
+	return 0;
 });
 // --------- CREATE ------------------------------------------------------------------
 
