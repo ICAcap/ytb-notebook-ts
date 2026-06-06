@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Trash2, Pencil } from "lucide-react";
 import { Suspense } from "react";
-import { VideoCardType } from "../page";
+import { VideoCardType } from "../../../../lib/dbTableAction/videoTableAction";
 
 export default memo(function VideoCard({
 	videoId,

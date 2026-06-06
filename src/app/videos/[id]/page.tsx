@@ -68,9 +68,9 @@ export default async function VidViewPage({
 }) {
 	const session = await requireSession(); // unauthenticated users will be redirected to sign-in page, so session is guaranteed to be available here
 	const videoId = (await params).id;
-	const usrId = session.user.id;
+	const userId = session.user.id;
 
-	const video = await getVideoById(usrId, videoId);
+	const video = await getVideoById(userId, videoId);
 
 	if (!video) {
 		notFound();
@@ -110,7 +110,7 @@ export default async function VidViewPage({
 					</div>
 					<VideoPlayer
 						videoId={video.videoId}
-						userId={usrId}
+						userId={userId}
 						url={`https://www.youtube.com/watch?v=${video.youtubeVidID}`}
 						lastPlayedTime={video.lastPlayedTime}
 					/>

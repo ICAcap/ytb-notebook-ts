@@ -1,4 +1,4 @@
-const YOUTUBE_URL_REGEX =
+export const YOUTUBE_URL_REGEX =
 	/^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)[\w-]{11}(?:(?:\?|&).*)?$/; // Allow trailing query parameters like playlist IDs.
 
 export function getYoutubeId(url: string): string | null {

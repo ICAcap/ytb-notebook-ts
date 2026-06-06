@@ -3,7 +3,7 @@ import Pagination from "../../../components/pagination";
 import requireSession from "../../../lib/requireSession";
 import VideoCard from "./_components/VideoCard";
 import { Metadata } from "next";
-import { Video } from "../../../generated/prisma";
+import { VideoCardType } from "../../../lib/dbTableAction/videoTableAction";
 import {
 	getVideoCardsWithSearchParam,
 	getVideoNumWithSearchParam,
@@ -16,12 +16,6 @@ export const metadata: Metadata = {
 	description: "This is the page showing all the videos",
 };
 
-// a type that only takes data we need for video card from the Video model
-export type VideoCardType = Pick<
-	Video,
-	"youtubeVidID" | "title" | "lastPlayedTime" | "videoId" | "createdAt"
->;
-
 // page component
 export default async function VideoPage({
 	searchParams,
@@ -29,7 +23,7 @@ export default async function VideoPage({
 	searchParams: Promise<{ q?: string; page?: string }>;
 }) {
 	const session = await requireSession();
-	const usrId = session.user.id;
+	const userId = session.user.id;
 
 	const params = await searchParams;
 	const q = (params.q ?? "").trim();
@@ -38,8 +32,8 @@ export default async function VideoPage({
 
 	// fetch data from db video table
 	const [totalCount, videoCards] = await Promise.all([
-		getVideoNumWithSearchParam(usrId, q),
-		getVideoCardsWithSearchParam(usrId, page, pageSize, q),
+		getVideoNumWithSearchParam(userId, q),
+		getVideoCardsWithSearchParam(userId, page, pageSize, q),
 	]);
 
 	const totalPagesNum = Math.max(1, Math.ceil(totalCount / pageSize)); // Ensure at least one page exists for the UI.
