@@ -83,16 +83,16 @@ export default async function VidViewPage({
 				<main className="flex-1 p-6">
 					<a
 						href="/videos"
-						className="flex items-center gap-2 hover:font-bold transition-all"
+						className="btn btn-ghost gap-2"
 					>
-						<ArrowLeft className="rounded-full border-accent border-4 size-8 hover:stroke-3 transition-transform" />
+						<ArrowLeft className="rounded-full border-accent border-4 size-8" />
 						Back to Videos
 					</a>
 					<div className="flex items-center gap-4 mb-6">
 						<h1 className="text-4xl text-wrap">{`${video.title || "Unknown Video"}`}</h1>
 					</div>
 					<div className="mt-4 justify-evenly">
-						<h2 className="text-xl text-gray-400">Collections:</h2>
+						<h2 className="text-xl text-base-content/60">Collections:</h2>
 						<div className="flex flex-wrap gap-2 mt-2">
 							{video.collections && video.collections.length > 0 ? (
 								video.collections.map((collection, index) => (
@@ -101,7 +101,7 @@ export default async function VidViewPage({
 									</span>
 								))
 							) : (
-								<p className="text-gray-500">No collections available.</p>
+								<p className="text-base-content/50">No collections available.</p>
 							)}
 						</div>
 					</div>
