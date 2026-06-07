@@ -11,6 +11,17 @@ export type VideoCardType = Pick<
 >;
 
 // --------- GET ------------------------------------------------------------------
+
+/**
+ * Fetches a paginated list of video cards for a specific user,
+ * with optional case-insensitive search filtering by title.
+ *
+ * @param userId - The unique identifier of the user.
+ * @param page - The page number to retrieve (starts at 1).
+ * @param pageSize - The number of records to return per page.
+ * @param q - The search query string to filter video titles.
+ * @returns A promise that resolves to an array of VideoCardType objects.
+ */
 export const getVideoCardsWithSearchParam = cache(async function (
 	userId: string,
 	page: number,
@@ -41,6 +52,14 @@ export const getVideoCardsWithSearchParam = cache(async function (
 	}
 });
 
+/**
+ * Counts the total number of videos for a specific user,
+ * optionally filtered by a search query.
+ *
+ * @param userId - The unique identifier of the user.
+ * @param q - The search query string to filter video titles.
+ * @returns A promise that resolves to the total count of matching videos.
+ */
 export const getVideoNumWithSearchParam = cache(async function (
 	userId: string,
 	q: string,
@@ -61,15 +80,50 @@ export const getVideoNumWithSearchParam = cache(async function (
 	}
 });
 
-export const checkVideoAlreadyExist = cache(async function (
+/**
+ * Checks if a specific YouTube video has already been added to the user's collection.
+ *
+ * @param userId - The unique identifier of the user.
+ * @param youtubeVideoId - The unique ID of the video from YouTube.
+ * @returns A promise that resolves to a status indicating if the video exists.
+ */
+export const getExistingVideo = cache(async function (
 	userId: string,
 	youtubeVideoId: string,
-): Promise<any> {
-	return 0;
+): Promise<VideoCardType | null> {
+	try {
+		const v = await prisma.video.findUnique({
+			where: {
+				userId_youtubeVidID: { userId: userId, youtubeVidID: youtubeVideoId },
+			},
+			select: {
+				videoId: true,
+				youtubeVidID: true,
+				title: true,
+				lastPlayedTime: true,
+				createdAt: true,
+			},
+		});
+
+		return v as VideoCardType | null;
+	} catch (error) {
+		console.error("Error lookup user video table, fallback to null");
+		return null;
+	}
 });
+
 // --------- CREATE ------------------------------------------------------------------
 
 // --------- UPDATE ------------------------------------------------------------------
+
+/**
+ * Updates the last recorded playback time for a specific video.
+ *
+ * @param userId - The unique identifier of the user.
+ * @param videoId - The unique identifier of the video record.
+ * @param playedTime - The timestamp in seconds of the last played position.
+ * @returns A promise that resolves when the update operation completes.
+ */
 export const updateVideoPlayedTime = cache(async function (
 	userId: string,
 	videoId: string,
