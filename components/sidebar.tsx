@@ -39,7 +39,7 @@ export default function Sidebar({
 	useEffect(() => {
 		document.documentElement.setAttribute(
 			"data-theme",
-			theme === "light" ? "retro" : "dracula",
+			theme === "light" ? "retro" : "synthwave",
 		);
 	}, []);
 
@@ -48,7 +48,7 @@ export default function Sidebar({
 	}
 
 	function handleThemeToggle() {
-		const next = theme === "light" ? "dracula" : "retro";
+		const next = theme === "light" ? "synthwave" : "retro";
 		document.documentElement.setAttribute("data-theme", next);
 		setTheme(theme === "light" ? "dark" : "light");
 	}
