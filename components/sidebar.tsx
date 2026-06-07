@@ -39,7 +39,7 @@ export default function Sidebar({
 	useEffect(() => {
 		document.documentElement.setAttribute(
 			"data-theme",
-			theme === "light" ? "bumblebee" : "dracula",
+			theme === "light" ? "retro" : "dracula",
 		);
 	}, []);
 
@@ -48,7 +48,7 @@ export default function Sidebar({
 	}
 
 	function handleThemeToggle() {
-		const next = theme === "light" ? "dracula" : "bumblebee";
+		const next = theme === "light" ? "dracula" : "retro";
 		document.documentElement.setAttribute("data-theme", next);
 		setTheme(theme === "light" ? "dark" : "light");
 	}
@@ -63,7 +63,7 @@ export default function Sidebar({
 
 	return (
 		<aside
-			className={`${isCollapsed ? "w-20" : "w-80"} flex flex-col bg-gray-900 text-white min-h-screen z-10 transition-all duration-300 ease-out`}
+			className={`${isCollapsed ? "w-20" : "w-80"} flex flex-col bg-neutral text-neutral-content min-h-screen z-10 transition-all duration-300 ease-out`}
 		>
 			<div
 				className={`flex items-center p-4 mb-2 ${
@@ -79,7 +79,7 @@ export default function Sidebar({
 				<div className="flex items-center gap-1">
 					<button
 						onClick={handleThemeToggle}
-						className="p-1.5 hover:bg-gray-800 rounded-lg transition-all duration-200 shrink-0"
+						className="btn btn-ghost btn-sm btn-square"
 					>
 						{mounted ? (
 							theme === "light" ? (
@@ -94,7 +94,7 @@ export default function Sidebar({
 					<button
 						onClick={toggleSidebar}
 						aria-label="Toggle Sidebar"
-						className="p-1.5 hover:bg-gray-800 rounded-lg transition-all duration-200 shrink-0"
+						className="btn btn-ghost btn-sm btn-square"
 						title={isCollapsed ? "Expand" : "Collapse"}
 					>
 						<ChevronLeft
@@ -106,40 +106,37 @@ export default function Sidebar({
 				</div>
 			</div>
 
-			<nav
-				className={`flex-1 px-2 py-4 space-y-1 overflow-y-auto ${
+			<ul
+				className={`menu flex-1 px-2 py-4 overflow-y-auto ${
 					isCollapsed ? "flex flex-col items-center" : ""
 				}`}
 			>
-				{navigation.map((item, key) => {
+				{navigation.map((item) => {
 					const IconComponent = item.icon;
 					const isActive =
 						currentPath !== undefined && currentPath === item.href;
 					return (
-						<Link
-							href={item.href}
-							key={key}
-							title={isCollapsed ? item.name : undefined}
-							className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
-								isActive
-									? "bg-amber-500 text-gray-900"
-									: "text-gray-300 hover:bg-gray-800"
-							}`}
-						>
-							<IconComponent className="w-5 h-5 shrink-0" />
-							{!isCollapsed && (
-								<span className="text-sm font-medium truncate">
-									{item.name}
-								</span>
-							)}
-						</Link>
+						<li key={item.href}>
+							<Link
+								href={item.href}
+								title={isCollapsed ? item.name : undefined}
+								className={isActive ? "active" : ""}
+							>
+								<IconComponent className="w-5 h-5 shrink-0" />
+								{!isCollapsed && (
+									<span className="text-sm font-medium truncate">
+										{item.name}
+									</span>
+								)}
+							</Link>
+						</li>
 					);
 				})}
-			</nav>
+			</ul>
 
 			<div className="p-3 space-y-2">
 				{!isCollapsed && (
-					<p className="text-xs text-gray-400 text-center">
+					<p className="text-xs text-base-content/60 text-center">
 						© {new Date().getFullYear()} YTB Notebook
 					</p>
 				)}

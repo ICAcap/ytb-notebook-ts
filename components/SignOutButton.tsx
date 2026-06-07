@@ -15,7 +15,7 @@ export default function SignOutButton() {
 	return (
 		<button
 			onClick={handleSignOut}
-			className="flex items-center justify-center gap-2 my-3 w-full bg-amber-600 text-white text-sm font-medium p-2.5 rounded-lg transition-all duration-200 hover:bg-red-600 active:scale-95"
+			className="btn btn-warning w-full gap-2 my-3"
 		>
 			<LogOut size={18} />
 			<span>Sign Out</span>
