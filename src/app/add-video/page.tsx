@@ -17,9 +17,7 @@ export default async function AddVideoPage() {
 		<div className="flex h-screen overflow-hidden">
 			<Sidebar currentPath="/add-video" />
 			<main className="flex-1 overflow-y-auto p-6">
-				<h1 className="text-4xl font-bold text-center mb-8">
-					Add Video Welcome {session.user.name}
-				</h1>
+				<h1 className="text-4xl font-bold text-center mb-8">Add Video</h1>
 				<AddVideoForm userId={userId} />
 			</main>
 		</div>

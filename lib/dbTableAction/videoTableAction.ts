@@ -13,14 +13,14 @@ export type VideoCardType = Pick<
 // --------- GET ------------------------------------------------------------------
 
 /**
- * Fetches a paginated list of video cards for a specific user,
- * with optional case-insensitive search filtering by title.
+ * Retrieves a paginated list of videos for a specific user.
+ * Supports optional case-insensitive filtering of video titles via a search query.
  *
  * @param userId - The unique identifier of the user.
- * @param page - The page number to retrieve (starts at 1).
- * @param pageSize - The number of records to return per page.
- * @param q - The search query string to filter video titles.
- * @returns A promise that resolves to an array of VideoCardType objects.
+ * @param page - The page number to retrieve (1-indexed).
+ * @param pageSize - The maximum number of videos to return per page.
+ * @param q - The search string used to filter video titles.
+ * @returns A promise resolving to an array of video data matching the VideoCardType.
  */
 export const getVideoCardsWithSearchParam = cache(async function (
 	userId: string,
@@ -53,12 +53,12 @@ export const getVideoCardsWithSearchParam = cache(async function (
 });
 
 /**
- * Counts the total number of videos for a specific user,
- * optionally filtered by a search query.
+ * Retrieves the total count of videos associated with a specific user.
+ * The count can be filtered by a case-insensitive search query on the video title.
  *
  * @param userId - The unique identifier of the user.
- * @param q - The search query string to filter video titles.
- * @returns A promise that resolves to the total count of matching videos.
+ * @param q - The search string used to filter video titles.
+ * @returns A promise resolving to the total number of matching video records.
  */
 export const getVideoNumWithSearchParam = cache(async function (
 	userId: string,
@@ -81,11 +81,12 @@ export const getVideoNumWithSearchParam = cache(async function (
 });
 
 /**
- * Checks if a specific YouTube video has already been added to the user's collection.
+ * Checks if a video from YouTube is already present in the user's library.
+ * Uses a composite unique constraint of userId and youtubeVidID for the lookup.
  *
  * @param userId - The unique identifier of the user.
- * @param youtubeVideoId - The unique ID of the video from YouTube.
- * @returns A promise that resolves to a status indicating if the video exists.
+ * @param youtubeVideoId - The unique YouTube identifier for the video.
+ * @returns A promise resolving to the video record if found, otherwise null.
  */
 export const getExistingVideo = cache(async function (
 	userId: string,
@@ -112,17 +113,91 @@ export const getExistingVideo = cache(async function (
 	}
 });
 
+/**
+ * Retrieves a list of collection names and their corresponding identifiers owned by a specific user.
+ *
+ * @param userId - The unique identifier of the user.
+ * @returns A promise resolving to an array of collections formatted for react-select.
+ */
+export const getUserCollectionNameIDs = cache(async function (
+	userId: string,
+): Promise<{ label: string; value: string }[]> {
+	try {
+		const collections = await prisma.collection.findMany({
+			where: { userId },
+			select: { collectionName: true, collectionId: true },
+		});
+		return collections.map((c) => ({
+			label: c.collectionName,
+			value: c.collectionId,
+		}));
+	} catch (error) {
+		console.error(
+			"Error fetching user collection names and IDs, fallback to empty array",
+		);
+		return [];
+	}
+});
+
 // --------- CREATE ------------------------------------------------------------------
 
 // --------- UPDATE ------------------------------------------------------------------
+/**
+ * Creates a new video record or updates an existing one for a user.
+ * If the video exists, it links the video to the provided collection IDs.
+ *
+ * @param userId - The unique identifier of the user.
+ * @param youtubeVideoId - The unique YouTube identifier for the video.
+ * @param title - The title of the video.
+ * @param collectionsID - A list of collection IDs to associate with the video.
+ * @returns A promise resolving to the created or updated video record, or null on error.
+ */
+export const upsertYouTubeVideo = cache(async function (
+	userId: string,
+	youtubeVideoId: string,
+	title: string,
+	collectionsID: string[],
+): Promise<VideoCardType | null> {
+	try {
+		// Use upsert because of the @@unique([userId, youtubeVidID]) constraint
+		const video = await prisma.video.upsert({
+			where: {
+				userId_youtubeVidID: {
+					userId: userId,
+					youtubeVidID: youtubeVideoId,
+				},
+			},
+			update: {
+				// If the video already exists, we just add it to the new collections
+				collections: {
+					connect: collectionsID.map((id) => ({ collectionId: id })),
+				},
+			},
+			create: {
+				userId: userId,
+				youtubeVidID: youtubeVideoId,
+				title: title,
+				// Connect the video to the provided collection IDs
+				collections: {
+					connect: collectionsID.map((id) => ({ collectionId: id })),
+				},
+			},
+		});
+
+		return video as VideoCardType;
+	} catch (error) {
+		console.error("Error Adding Video to User Profile:", error);
+		return null;
+	}
+});
 
 /**
- * Updates the last recorded playback time for a specific video.
+ * Updates the playback progress (in seconds) for a specific video record.
  *
  * @param userId - The unique identifier of the user.
  * @param videoId - The unique identifier of the video record.
- * @param playedTime - The timestamp in seconds of the last played position.
- * @returns A promise that resolves when the update operation completes.
+ * @param playedTime - The current playback position in seconds.
+ * @returns A promise that resolves when the update operation is complete.
  */
 export const updateVideoPlayedTime = cache(async function (
 	userId: string,
