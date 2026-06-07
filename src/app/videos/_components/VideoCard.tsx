@@ -19,8 +19,8 @@ export default memo(function VideoCard({
 	return (
 		<>
 			{/* Thumbnail Frame */}
-			<div className="relative hover-3d cursor-pointer">
-				<Link href={`/videos/${videoId}`} className="link">
+			<Link href={`/videos/${videoId}`} className="relative hover-3d cursor-pointer">
+				<div>
 					<Suspense fallback={<div className="w-24 h-14 bg-gray-200" />}>
 						{thumbnailUrl ? (
 							<Image
@@ -28,7 +28,7 @@ export default memo(function VideoCard({
 								alt={title}
 								width={200}
 								height={113}
-								className="w-full h-full"
+								className="w-full h-full rounded-xl"
 								loading="eager"
 							/>
 						) : (
@@ -37,7 +37,7 @@ export default memo(function VideoCard({
 							</div>
 						)}
 					</Suspense>
-				</Link>
+				</div>
 				{/* 8 empty divs needed for the 3D effect */}
 				<div></div>
 				<div></div>
@@ -47,7 +47,7 @@ export default memo(function VideoCard({
 				<div></div>
 				<div></div>
 				<div></div>
-			</div>
+			</Link>
 
 			{/* Details */}
 			<div className="list-col-grow">
@@ -67,16 +67,10 @@ export default memo(function VideoCard({
 
 			{/* Actions */}
 			<div className="flex gap-2">
-				<button
-					title="Delete Video"
-					className="btn btn-ghost btn-sm"
-				>
+				<button title="Delete Video" className="btn btn-ghost btn-sm">
 					<Trash2 className="w-5 h-5 text-error" />
 				</button>
-				<button
-					title="Edit Video"
-					className="btn btn-ghost btn-sm"
-				>
+				<button title="Edit Video" className="btn btn-ghost btn-sm">
 					<Pencil className="w-5 h-5 text-info" />
 				</button>
 			</div>
