@@ -6,7 +6,6 @@ import requireSession from "../../../../lib/requireSession";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { cache } from "react";
-import { ArrowLeft } from "lucide-react";
 
 // a type that only takes data we need for video player from the Video model
 type videoPlayerProp = Pick<
@@ -81,13 +80,6 @@ export default async function VidViewPage({
 			<div className="flex min-h-screen">
 				<Sidebar currentPath="/videos" />
 				<main className="flex-1 p-6">
-					<a
-						href="/videos"
-						className="btn btn-ghost gap-2"
-					>
-						<ArrowLeft className="rounded-full border-accent border-4 size-8" />
-						Back to Videos
-					</a>
 					<div className="flex items-center gap-4 mb-6">
 						<h1 className="text-4xl text-wrap">{`${video.title || "Unknown Video"}`}</h1>
 					</div>
@@ -101,7 +93,9 @@ export default async function VidViewPage({
 									</span>
 								))
 							) : (
-								<p className="text-base-content/50">No collections available.</p>
+								<p className="text-base-content/50">
+									No collections available.
+								</p>
 							)}
 						</div>
 					</div>
