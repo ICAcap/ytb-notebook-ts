@@ -3,6 +3,7 @@ import Pagination from "../../../components/pagination";
 import requireSession from "../../../lib/requireSession";
 import VideoCard from "./_components/VideoCard";
 import { Metadata } from "next";
+import Link from "next/link";
 import {
 	getVideoCardsWithSearchParam,
 	getVideoNumWithSearchParam,
@@ -55,13 +56,13 @@ export default async function VideoPage({
 						/>
 						<button className="join-item btn btn-primary">Search</button>
 						{q && (
-							<a
+							<Link
 								href="/videos"
 								className="join-item btn btn-ghost"
 								title="Clear search"
 							>
-								<X size={25} />
-							</a>
+								<X size={25} strokeWidth={5} />
+							</Link>
 						)}
 					</form>
 				</div>
@@ -82,9 +83,7 @@ export default async function VideoPage({
 						</ul>
 					) : (
 						<div>
-							<h1 className="text-xl text-accent">
-								No Matching Video(s) Found
-							</h1>
+							<h1 className="text-xl">No Matching Video(s) Found</h1>
 						</div>
 					)}
 				</Suspense>
