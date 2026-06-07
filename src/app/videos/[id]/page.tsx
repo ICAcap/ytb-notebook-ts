@@ -96,10 +96,7 @@ export default async function VidViewPage({
 						<div className="flex flex-wrap gap-2 mt-2">
 							{video.collections && video.collections.length > 0 ? (
 								video.collections.map((collection, index) => (
-									<span
-										key={index}
-										className="bg-red-400 px-3 py-1 rounded-full text-sm"
-									>
+									<span key={index} className="badge badge-accent">
 										{collection}
 									</span>
 								))

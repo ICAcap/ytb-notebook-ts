@@ -1,61 +1,97 @@
 "use client";
 
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { getYoutubeId, YOUTUBE_URL_REGEX } from "../../../../utils/youtube";
 import { useState, useRef } from "react";
-import { RotateCcw, AlertCircle } from "lucide-react";
-import { getExistingVideo } from "../../../../lib/dbTableAction/videoTableAction";
+import AsyncSelect from "react-select/async";
+import {
+	RotateCcw,
+	AlertCircle,
+	Plus,
+	Save,
+	FolderBookmark,
+} from "lucide-react";
+import {
+	getExistingVideo,
+	getUserCollectionNameIDs,
+	upsertYouTubeVideo,
+} from "../../../../lib/dbTableAction/videoTableAction";
 import VideoCard from "@/app/videos/_components/VideoCard";
 import { VideoCardType } from "../../../../lib/dbTableAction/videoTableAction";
+import { redirect } from "next/navigation";
 
+// video addition type
 type AddVideo = {
 	youtubeUrl: string;
 	customTitle: string;
+	collections?: { label: string; value: string }[];
 };
 
 export default function AddVideoForm({ userId }: { userId: string }) {
 	// hooks
 	const [showStage2, setShowStage2] = useState(false);
-	const ytbIdValid = useRef(false);
+	const YouTubeIdToAdd = useRef("");
 	const foundExistingVid = useRef<VideoCardType>(null);
 
 	const {
 		register,
 		handleSubmit,
+		control,
 		formState: { errors, isSubmitting },
 	} = useForm<AddVideo>();
 
-	// handler
+	// form submit handler(s)
 	const onSubmitYoutubeUrl: SubmitHandler<AddVideo> = async (data) => {
 		const ytbId = getYoutubeId(data.youtubeUrl);
 
 		if (ytbId) {
-			setShowStage2(true);
-			ytbIdValid.current = true;
+			YouTubeIdToAdd.current = ytbId;
 			const existing = await getExistingVideo(userId, ytbId);
-
-			if (existing) {
-				foundExistingVid.current = existing;
-			} else {
-				foundExistingVid.current = null;
-			}
-			setShowStage2((prev) => !prev);
-			setShowStage2(true);
+			foundExistingVid.current = existing ?? null;
 		} else {
-			setShowStage2(true);
-			ytbIdValid.current = false;
+			YouTubeIdToAdd.current = "";
 		}
+		setShowStage2(true);
 	};
 
+	const onSubmitToBackend: SubmitHandler<AddVideo> = async (data) => {
+		const customTitle = data.customTitle;
+		// Extract only the IDs to match the expected backend payload structure.
+		const selectedCollectionIds = data.collections
+			? data.collections.map((c) => c.value)
+			: [];
+
+		const added = await upsertYouTubeVideo(
+			userId,
+			YouTubeIdToAdd.current,
+			customTitle,
+			selectedCollectionIds,
+		);
+
+		if (added) {
+			redirect(`/videos/${added.videoId}`);
+		}
+
+		console.log(data);
+	};
+
+	// ------------------ HTML form ------------------
 	return (
 		<form
-			onSubmit={handleSubmit(onSubmitYoutubeUrl)}
+			onSubmit={handleSubmit(
+				showStage2 ? onSubmitToBackend : onSubmitYoutubeUrl,
+			)}
 			className="w-full max-w-2xl mx-auto"
 		>
 			{!showStage2 && (
 				<div className="card bg-base-100 shadow-lg border border-base-200">
 					<div className="card-body space-y-6">
-						<h2 className="card-title text-2xl font-bold">Add YouTube Video</h2>
+						<div className="flex items-center gap-3">
+							<Plus size={28} className="text-primary" />
+							<h2 className="card-title text-2xl font-bold">
+								Add YouTube Video
+							</h2>
+						</div>
 
 						<div className="form-control w-full">
 							<label className="label">
@@ -106,8 +142,8 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 			)}
 
 			{/* if video id not valid */}
-			{showStage2 && !ytbIdValid.current && (
-				<div className="card bg-error/10 border-2 border-error shadow-md">
+			{showStage2 && !YouTubeIdToAdd.current && (
+				<div className="card bg-error/10 border-2 border-error shadow-lg">
 					<div className="card-body">
 						<div className="flex items-start gap-4">
 							<AlertCircle className="text-error shrink-0 mt-1" size={24} />
@@ -116,7 +152,7 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 									Invalid YouTube URL
 								</h3>
 								<p className="text-sm text-base-content">
-									The YouTube URL you provided cannot render a valid video ID.
+									The YouTube URL you provided cannot yield a valid video ID.
 									Please double-check and try again.
 								</p>
 							</div>
@@ -135,9 +171,9 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 			)}
 
 			{/* if video already exists for this user, place a Video Card here */}
-			{showStage2 && ytbIdValid.current && foundExistingVid.current && (
+			{showStage2 && YouTubeIdToAdd.current && foundExistingVid.current && (
 				<div className="space-y-4">
-					<div className="alert alert-warning shadow-md">
+					<div className="alert alert-warning shadow-lg">
 						<AlertCircle size={24} />
 						<div>
 							<h3 className="font-bold">Video Already Exists</h3>
@@ -160,18 +196,21 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 							href="/add-video"
 							className="btn btn-sm btn-outline btn-error gap-2"
 						>
-							<RotateCcw size={25} strokeWidth={3} />
-							Try Again
+							<Plus size={25} strokeWidth={4} />
+							Add Another Video
 						</a>
 					</div>
 				</div>
 			)}
 
-			{/* if not existing */}
-			{showStage2 && ytbIdValid.current && !foundExistingVid.current && (
+			{/* if not existing in user profile*/}
+			{showStage2 && YouTubeIdToAdd.current && !foundExistingVid.current && (
 				<div className="card bg-base-100 shadow-lg border border-base-200">
 					<div className="card-body space-y-6">
-						<h2 className="card-title text-2xl font-bold">Enter Video Title</h2>
+						<div className="flex items-center gap-3">
+							<Save size={28} className="text-success" />
+							<h2 className="card-title text-2xl font-bold">Almost There...</h2>
+						</div>
 
 						<div className="form-control w-full">
 							<label className="label">
@@ -181,7 +220,7 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 							</label>
 							<input
 								type="text"
-								placeholder="My awesome video title..."
+								placeholder="My Awesome Custom Video Title..."
 								className={`input input-bordered w-full ${
 									errors?.customTitle ? "input-error" : ""
 								}`}
@@ -203,15 +242,44 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 								</div>
 							)}
 						</div>
+						<div className="form-control w-full">
+							<label className="label">
+								<span className="label-text font-semibold flex items-center gap-2">
+									<FolderBookmark size={18} />
+									Add to Collection(s)
+								</span>
+								<span className="label-text-alt text-xs opacity-70">
+									Optional
+								</span>
+							</label>
+							<Controller
+								name="collections"
+								control={control}
+								render={({ field }) => (
+									<AsyncSelect
+										{...field}
+										isMulti
+										cacheOptions
+										isSearchable={true}
+										defaultOptions
+										loadOptions={() => getUserCollectionNameIDs(userId)}
+										placeholder="Select Collection(s)..."
+										classNamePrefix="react-select"
+									/>
+								)}
+							/>
+						</div>
 
 						<button
-							className="btn btn-primary w-full"
+							className="btn btn-primary w-full gap-2"
 							type="submit"
 							disabled={isSubmitting}
 						>
 							{isSubmitting ? (
 								<span className="loading loading-spinner loading-sm"></span>
-							) : null}
+							) : (
+								<Save size={20} />
+							)}
 							Save Video
 						</button>
 					</div>
