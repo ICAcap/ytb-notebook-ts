@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Sidebar from "../../../components/sidebar";
 import requireSession from "../../../lib/requireSession";
 import AddVideoForm from "./_components/AddVideoForm";
+import VideoCard from "../videos/_components/VideoCard";
 
 export const metadata: Metadata = {
 	title: "Add Video",
