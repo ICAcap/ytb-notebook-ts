@@ -3,7 +3,6 @@ import Pagination from "../../../components/pagination";
 import requireSession from "../../../lib/requireSession";
 import VideoCard from "./_components/VideoCard";
 import { Metadata } from "next";
-import { VideoCardType } from "../../../lib/dbTableAction/videoTableAction";
 import {
 	getVideoCardsWithSearchParam,
 	getVideoNumWithSearchParam,
@@ -67,19 +66,27 @@ export default async function VideoPage({
 					</form>
 				</div>
 
-				{/* Videocard List */}
+				{/* Video Card List */}
 				<Suspense
 					fallback={
 						<span className="loading loading-spinner loading-xl"></span>
 					}
 				>
-					<ul className="list bg-base-100 rounded-box shadow-md">
-						{videoCards.map((video) => (
-							<li key={video.videoId} className="list-row">
-								<VideoCard {...video} />
-							</li>
-						))}
-					</ul>
+					{videoCards.length > 0 ? (
+						<ul className="list bg-base-100 rounded-box shadow-md">
+							{videoCards.map((video) => (
+								<li key={video.videoId} className="list-row">
+									<VideoCard {...video} />
+								</li>
+							))}
+						</ul>
+					) : (
+						<div>
+							<h1 className="text-xl text-accent">
+								No Matching Video(s) Found
+							</h1>
+						</div>
+					)}
 				</Suspense>
 
 				{/* Pagination bar */}
