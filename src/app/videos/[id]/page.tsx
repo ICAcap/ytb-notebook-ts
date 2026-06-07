@@ -5,7 +5,9 @@ import { Video } from "../../../../generated/prisma";
 import requireSession from "../../../../lib/requireSession";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import Link from "next/link";
 import { cache } from "react";
+import { ArrowLeft } from "lucide-react";
 
 // a type that only takes data we need for video player from the Video model
 type videoPlayerProp = Pick<
@@ -80,8 +82,16 @@ export default async function VidViewPage({
 			<div className="flex min-h-screen">
 				<Sidebar currentPath="/videos" />
 				<main className="flex-1 p-6">
-					<div className="flex items-center gap-4 mb-6">
-						<h1 className="text-4xl text-wrap">{`${video.title || "Unknown Video"}`}</h1>
+					<Link
+						href={"/videos"}
+						className="btn btn-ghost btn-accent rounded-xl text-xl"
+					>
+						<ArrowLeft strokeWidth={3} /> Back to Videos
+					</Link>
+					<div className="flex justify-center mb-1">
+						<h1 className="text-3xl text-wrap font-semibold text-center">
+							{`${video.title || "Unknown Video"}`}
+						</h1>
 					</div>
 					<div className="mt-4 justify-evenly">
 						<h2 className="text-xl text-base-content/60">Collections:</h2>

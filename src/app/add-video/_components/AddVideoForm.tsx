@@ -3,6 +3,7 @@
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { getYoutubeId, YOUTUBE_URL_REGEX } from "../../../../utils/youtube";
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Select from "react-select";
 import {
 	RotateCcw,
@@ -18,7 +19,6 @@ import {
 } from "../../../../lib/dbTableAction/videoTableAction";
 import VideoCard from "@/app/videos/_components/VideoCard";
 import { VideoCardType } from "../../../../lib/dbTableAction/videoTableAction";
-import { redirect } from "next/navigation";
 
 // video addition type
 type AddVideo = {
@@ -29,6 +29,7 @@ type AddVideo = {
 
 export default function AddVideoForm({ userId }: { userId: string }) {
 	// hooks
+	const router = useRouter();
 	const [showStage2, setShowStage2] = useState(false);
 	const YouTubeIdToAdd = useRef("");
 	const foundExistingVid = useRef<VideoCardType>(null);
@@ -76,10 +77,8 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 		);
 
 		if (added) {
-			redirect(`/videos/${added.videoId}`);
+			router.push(`/videos/${added.videoId}`);
 		}
-
-		console.log(data);
 	};
 
 	// ------------------ HTML form ------------------
