@@ -2,8 +2,8 @@
 
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { getYoutubeId, YOUTUBE_URL_REGEX } from "../../../../utils/youtube";
-import { useState, useRef } from "react";
-import AsyncSelect from "react-select/async";
+import { useState, useRef, useEffect } from "react";
+import Select from "react-select";
 import {
 	RotateCcw,
 	AlertCircle,
@@ -32,6 +32,13 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 	const [showStage2, setShowStage2] = useState(false);
 	const YouTubeIdToAdd = useRef("");
 	const foundExistingVid = useRef<VideoCardType>(null);
+	const collectionOptions = useRef<{ label: string; value: string }[]>([]);
+
+	useEffect(() => {
+		getUserCollectionNameIDs(userId).then((options) => {
+			collectionOptions.current = options.toSorted();
+		});
+	}, [userId]); // load/store collection options BTS
 
 	const {
 		register,
@@ -128,7 +135,7 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 						</div>
 
 						<button
-							className="btn btn-primary w-full"
+							className="btn btn-accent w-full"
 							type="submit"
 							disabled={isSubmitting}
 						>
@@ -256,13 +263,11 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 								name="collections"
 								control={control}
 								render={({ field }) => (
-									<AsyncSelect
+									<Select
 										{...field}
 										isMulti
-										cacheOptions
-										isSearchable={true}
-										defaultOptions
-										loadOptions={() => getUserCollectionNameIDs(userId)}
+										isSearchable
+										options={collectionOptions.current}
 										placeholder="Select Collection(s)..."
 										classNamePrefix="react-select"
 									/>
