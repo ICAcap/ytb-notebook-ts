@@ -19,6 +19,7 @@ export default function Sidebar({
 }: {
 	currentPath?: string;
 }) {
+	const [mounted, setMounted] = useState(false);
 	const [isCollapsed, setIsCollapsed] = useState(true);
 	const [theme, setTheme] = useState(() => {
 		//getting stored theme value
@@ -26,6 +27,10 @@ export default function Sidebar({
 		const saved = localStorage.getItem("theme");
 		return saved || "light";
 	});
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
 
 	useEffect(() => {
 		localStorage.setItem("theme", theme);
@@ -76,10 +81,14 @@ export default function Sidebar({
 						onClick={handleThemeToggle}
 						className="p-1.5 hover:bg-gray-800 rounded-lg transition-all duration-200 shrink-0"
 					>
-						{theme === "light" ? (
-							<Sun className="h-5 w-5" />
+						{mounted ? (
+							theme === "light" ? (
+								<Sun className="h-5 w-5" />
+							) : (
+								<Moon className="h-5 w-5" />
+							)
 						) : (
-							<Moon className="h-5 w-5" />
+							<div className="animate-spin rounded-full h-5 w-5" />
 						)}
 					</button>
 					<button
