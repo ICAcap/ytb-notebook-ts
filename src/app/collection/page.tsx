@@ -1,7 +1,7 @@
 import requireSession from "../../../lib/requireSession";
 import Sidebar from "../../../components/sidebar";
 import { Metadata } from "next";
-import { getUserCollectionNameIDs } from "../../../lib/dbTableAction/videoTableAction";
+import { getUserCollectionNameIDs } from "../../../lib/dbTableAction/collectionTableActions";
 import { Folder, FolderOpen, Plus } from "lucide-react";
 import Link from "next/link";
 

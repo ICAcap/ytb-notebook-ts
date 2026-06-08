@@ -14,9 +14,9 @@ import {
 } from "lucide-react";
 import {
 	getExistingVideo,
-	getUserCollectionNameIDs,
 	upsertYouTubeVideo,
 } from "../../../../lib/dbTableAction/videoTableAction";
+import { getUserCollectionNameIDs } from "../../../../lib/dbTableAction/collectionTableActions";
 import VideoCard from "@/app/videos/_components/VideoCard";
 import { VideoCardType } from "../../../../lib/dbTableAction/videoTableAction";
 

@@ -113,32 +113,6 @@ export const getExistingVideo = cache(async function (
 	}
 });
 
-/**
- * Retrieves a list of collection names and their corresponding identifiers owned by a specific user.
- *
- * @param userId - The unique identifier of the user.
- * @returns A promise resolving to an array of collections formatted for react-select.
- */
-export const getUserCollectionNameIDs = cache(async function (
-	userId: string,
-): Promise<{ label: string; value: string }[]> {
-	try {
-		const collections = await prisma.collection.findMany({
-			where: { userId },
-			select: { collectionName: true, collectionId: true },
-		});
-		return collections.map((c) => ({
-			label: c.collectionName,
-			value: c.collectionId,
-		}));
-	} catch (error) {
-		console.error(
-			"Error fetching user collection names and IDs, fallback to empty array",
-		);
-		return [];
-	}
-});
-
 // --------- CREATE ------------------------------------------------------------------
 
 // --------- UPDATE ------------------------------------------------------------------
@@ -168,6 +142,8 @@ export const upsertYouTubeVideo = cache(async function (
 				},
 			},
 			update: {
+				// in case need to modify the title
+				title: title,
 				// If the video already exists, we just add it to the new collections
 				collections: {
 					connect: collectionsID.map((id) => ({ collectionId: id })),
@@ -186,7 +162,7 @@ export const upsertYouTubeVideo = cache(async function (
 
 		return video as VideoCardType;
 	} catch (error) {
-		console.error("Error Adding Video to User Profile:", error);
+		console.error("Error Upserting Video to User Profile:", error);
 		return null;
 	}
 });
