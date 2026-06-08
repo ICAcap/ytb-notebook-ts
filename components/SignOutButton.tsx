@@ -9,6 +9,7 @@ export default function SignOutButton() {
 
 	const handleSignOut = async () => {
 		await authClient.signOut();
+		localStorage.clear();
 		router.refresh();
 	};
 

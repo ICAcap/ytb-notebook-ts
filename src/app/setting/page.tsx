@@ -15,9 +15,14 @@ export default async function SettingPage() {
 		<div className="flex min-h-screen">
 			<Sidebar currentPath="/setting" />
 			<main className="flex-1 p-6">
-				<h1 className="text-2xl font-bold">Setting Page</h1>
-				<div className="mt-8">
-					<SignOutButton />
+				<div className="max-w-lg mx-auto">
+					<h1 className="text-3xl font-bold mb-8">Settings</h1>
+					<div className="card bg-base-100 border border-base-200 shadow-sm">
+						<div className="card-body">
+							<h2 className="card-title text-lg">Account</h2>
+							<SignOutButton />
+						</div>
+					</div>
 				</div>
 			</main>
 		</div>
