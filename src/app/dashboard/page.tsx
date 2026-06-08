@@ -2,10 +2,8 @@ import Sidebar from "../../../components/sidebar";
 import requireSession from "../../../lib/requireSession";
 import { Metadata } from "next";
 import Image from "next/image";
-import {
-	getVideoNumWithSearchParam,
-	getUserCollectionNameIDs,
-} from "../../../lib/dbTableAction/videoTableAction";
+import { getVideoNumWithSearchParam } from "../../../lib/dbTableAction/videoTableAction";
+import { getUserCollectionNameIDs } from "../../../lib/dbTableAction/collectionTableActions";
 import { Video, FolderOpen, Play, CircleUserRound } from "lucide-react";
 import Link from "next/link";
 
