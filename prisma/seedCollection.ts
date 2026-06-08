@@ -13,6 +13,21 @@ const collections = [
   "Gaming",
   "Comedy",
   "Tech Reviews",
+  "Podcasts",
+  "Interviews",
+  "Travel",
+  "Art & Design",
+  "Business",
+  "Science",
+  "History",
+  "Self-Help",
+  "Cooking",
+  "Sports",
+  "Fitness",
+  "Fashion",
+  "Photography",
+  "Animation",
+  "Shorts",
 ];
 
 async function seedCollections() {
@@ -32,7 +47,7 @@ async function seedCollections() {
         },
       });
     }
-    console.log("✅ Seeded 10 collections");
+    console.log("✅ Seeded 25 collections");
   } catch (error) {
     console.error("Failed to seed collections:", error);
     throw error;
