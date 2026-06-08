@@ -37,8 +37,9 @@ export default async function CollectionPage() {
 									className="card card-compact hover:bg-base-200 cursor-pointer transition-colors select-none group"
 								>
 									<div className="card-body items-center text-center gap-3">
-										<Folder className="w-28 h-28 text-amber-400 fill-amber-400/20 group-hover:fill-amber-400/40 transition-colors drop-shadow-md" />
+										<Folder className="w-28 h-28 text-warning" />
 										<span className="card-title text-sm font-semibold line-clamp-2 justify-center">
+											{/* Collection name */}
 											{c.label}
 										</span>
 									</div>
