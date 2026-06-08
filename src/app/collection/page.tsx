@@ -2,8 +2,9 @@ import requireSession from "../../../lib/requireSession";
 import Sidebar from "../../../components/sidebar";
 import { Metadata } from "next";
 import { getUserCollectionNameIDs } from "../../../lib/dbTableAction/collectionTableActions";
-import { Folder, FolderOpen, Plus } from "lucide-react";
+import { FolderOpen, Plus } from "lucide-react";
 import Link from "next/link";
+import CollectionCard from "./_components/CollectionCard";
 
 export const metadata: Metadata = {
 	title: "Collections",
@@ -32,18 +33,7 @@ export default async function CollectionPage() {
 					{userCollections.length > 0 ? (
 						<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-2">
 							{userCollections.map((c) => (
-								<div
-									key={c.value}
-									className="card card-compact hover:bg-base-200 cursor-pointer transition-colors select-none group"
-								>
-									<div className="card-body items-center text-center gap-3">
-										<Folder className="w-28 h-28 text-warning" />
-										<span className="card-title text-sm font-semibold line-clamp-2 justify-center">
-											{/* Collection name */}
-											{c.label}
-										</span>
-									</div>
-								</div>
+								<CollectionCard key={c.value} id={c.value} name={c.label} />
 							))}
 						</div>
 					) : (
