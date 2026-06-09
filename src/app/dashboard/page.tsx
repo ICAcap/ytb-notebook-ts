@@ -67,7 +67,7 @@ export default async function DashboardPage() {
 									Add your first video to begin organizing your collection
 								</p>
 								<div className="card-actions justify-center">
-									<Link href="/add-video" className="btn btn-primary gap-2">
+									<Link href="/videos" className="btn btn-primary gap-2">
 										<Play size={18} />
 										Add Your First Video
 									</Link>

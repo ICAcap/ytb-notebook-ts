@@ -5,7 +5,6 @@ import {
 	NotebookPen,
 	BarChart3,
 	Tv,
-	Plus,
 	FolderBookmark,
 	Settings,
 	Sun,
@@ -55,7 +54,6 @@ export default function Sidebar({
 
 	const navigation = [
 		{ name: "Dashboard", href: "/dashboard", icon: BarChart3 },
-		{ name: "Add Video", href: "/add-video", icon: Plus },
 		{ name: "Videos", href: "/videos", icon: Tv },
 		{ name: "Collection", href: "/collection", icon: FolderBookmark },
 		{ name: "Setting", href: "/setting", icon: Settings },
@@ -126,9 +124,9 @@ export default function Sidebar({
 										: "hover:bg-neutral-content/10"
 								}`}
 							>
-								<IconComponent className="w-7 h-7 shrink-0" />
+								<IconComponent className="w-5 h-5 shrink-0" />
 								{!isCollapsed && (
-									<span className="text-lg font-medium truncate">
+									<span className="text-2xl font-semibold truncate">
 										{item.name}
 									</span>
 								)}
