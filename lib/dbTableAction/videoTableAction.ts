@@ -197,7 +197,7 @@ export const upsertYouTubeVideo = cache(async function (
 
 		return video as VideoCardType;
 	} catch (error) {
-		console.error("Error Upserting Video to User Profile:", error);
+		console.error("Error Upserting Video to User Profile");
 		return null;
 	}
 });
