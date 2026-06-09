@@ -2,6 +2,7 @@ import Sidebar from "../../../components/sidebar";
 import Pagination from "../../../components/pagination";
 import requireSession from "../../../lib/requireSession";
 import VideoCard from "./_components/VideoCard";
+import AddVideoButton from "./_components/AddVideoButton";
 import { Metadata } from "next";
 import Link from "next/link";
 import {
@@ -9,7 +10,7 @@ import {
 	getVideoNumWithSearchParam,
 } from "../../../lib/dbTableAction/videoTableAction";
 import { Suspense } from "react";
-import { Plus, X } from "lucide-react";
+import { X } from "lucide-react";
 
 export const metadata: Metadata = {
 	title: "Videos",
@@ -45,10 +46,7 @@ export default async function VideoPage({
 			<main className="flex-1 p-6">
 				<header className="flex items-center justify-between mb-8">
 					<h1 className="text-3xl font-bold">My Videos</h1>
-					<Link href="/add-video" className="btn btn-primary btn-sm gap-2">
-						<Plus size={18} />
-						New Video
-					</Link>
+					<AddVideoButton userId={userId} />
 				</header>
 				{/* Search bar */}
 				<div className="mb-8">

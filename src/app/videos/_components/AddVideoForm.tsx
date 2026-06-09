@@ -3,8 +3,8 @@
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { getYoutubeId, YOUTUBE_URL_REGEX } from "../../../../utils/youtube";
 import { fetchYouTubeTitle } from "../../../../utils/youtubeFetchTitleServerSide";
-import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useContext } from "react";
+import { AddVideoButtonContext } from "./AddVideoButton";
 import Select from "react-select";
 import {
 	RotateCcw,
@@ -20,9 +20,8 @@ import {
 } from "../../../../lib/dbTableAction/videoTableAction";
 import { getUserCollectionNameIDs } from "../../../../lib/dbTableAction/collectionTableActions";
 import VideoCard from "@/app/videos/_components/VideoCard";
-import { VideoCardType } from "../../../../lib/dbTableAction/videoTableAction";
 
-// video addition type
+// video upsert type for react hook form
 type UpsertVideo = {
 	youtubeUrl: string;
 	customTitle: string;
@@ -30,13 +29,15 @@ type UpsertVideo = {
 };
 
 export default function AddVideoForm({ userId }: { userId: string }) {
-	// hooks
-	const router = useRouter();
-	const [showStage2, setShowStage2] = useState(false);
-	const YouTubeIdToAdd = useRef("");
-	const foundExistingVid = useRef<VideoCardType | null>(null);
-	const fetchedTitle = useRef("");
-	const collectionOptions = useRef<{ label: string; value: string }[]>([]);
+	const {
+		router,
+		showStage2,
+		setShowStage2,
+		YouTubeIdToAdd,
+		foundExistingVid,
+		fetchedTitle,
+		collectionOptions,
+	} = useContext(AddVideoButtonContext) as any;
 
 	useEffect(() => {
 		getUserCollectionNameIDs(userId).then((options) => {
@@ -50,8 +51,17 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 		register,
 		handleSubmit,
 		control,
+		reset,
 		formState: { errors, isSubmitting },
 	} = useForm<UpsertVideo>();
+
+	//Clear form state when returning to
+	//stage 1 or close modal to prevent stale data.
+	useEffect(() => {
+		if (!showStage2) {
+			reset();
+		}
+	}, [showStage2]);
 
 	// form submit handler(s)
 	const onSubmitYoutubeUrl: SubmitHandler<UpsertVideo> = async (data) => {
@@ -97,63 +107,59 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 			onSubmit={handleSubmit(
 				showStage2 ? onSubmitToBackend : onSubmitYoutubeUrl,
 			)}
-			className="w-full max-w-2xl mx-auto"
+			className="m-3"
 		>
 			{!showStage2 && (
-				<div className="card bg-base-100 shadow-lg border border-base-200">
-					<div className="card-body space-y-6">
-						<div className="flex items-center gap-3">
-							<Plus size={28} className="text-primary" />
-							<h2 className="card-title text-2xl font-bold">
-								Add YouTube Video
-							</h2>
-						</div>
-
-						<div className="form-control w-full">
-							<label className="label">
-								<span className="label-text font-semibold my-0.5">
-									YouTube Video URL
-								</span>
-							</label>
-							<input
-								type="text"
-								placeholder="https://www.youtube.com/watch?v=..."
-								className={`input input-bordered w-full ${
-									errors?.youtubeUrl ? "input-error" : ""
-								}`}
-								{...register("youtubeUrl", {
-									required: true,
-									maxLength: 255,
-									pattern: YOUTUBE_URL_REGEX,
-								})}
-								title="Paste Valid YouTube Video URL Here"
-							/>
-							{errors?.youtubeUrl && (
-								<div className="label mt-2">
-									<span className="label-text-alt text-error flex items-center gap-2">
-										<AlertCircle size={16} />
-										{errors?.youtubeUrl?.type === "required" &&
-											"YouTube Video URL is required"}
-										{errors?.youtubeUrl?.type === "maxLength" &&
-											"YouTube Video URL cannot exceed 255 characters"}
-										{errors?.youtubeUrl?.type === "pattern" &&
-											"Not a valid YouTube Video URL"}
-									</span>
-								</div>
-							)}
-						</div>
-
-						<button
-							className="btn btn-accent w-full"
-							type="submit"
-							disabled={isSubmitting}
-						>
-							{isSubmitting ? (
-								<span className="loading loading-spinner loading-sm"></span>
-							) : null}
-							Add YouTube Video
-						</button>
+				<div className="space-y-6">
+					<div className="flex items-center gap-3">
+						<Plus size={28} className="text-primary" />
+						<h2 className="card-title text-2xl font-bold">Add YouTube Video</h2>
 					</div>
+
+					<div className="form-control w-full">
+						<label className="label">
+							<span className="label-text font-semibold my-0.5">
+								YouTube Video URL
+							</span>
+						</label>
+						<input
+							type="text"
+							placeholder="https://www.youtube.com/watch?v=..."
+							className={`input input-bordered w-full ${
+								errors?.youtubeUrl ? "input-error" : ""
+							}`}
+							{...register("youtubeUrl", {
+								required: true,
+								maxLength: 255,
+								pattern: YOUTUBE_URL_REGEX,
+							})}
+							title="Paste Valid YouTube Video URL Here"
+						/>
+						{errors?.youtubeUrl && (
+							<div className="label mt-2">
+								<span className="label-text-alt text-error flex items-center gap-2">
+									<AlertCircle size={16} />
+									{errors?.youtubeUrl?.type === "required" &&
+										"YouTube Video URL is required"}
+									{errors?.youtubeUrl?.type === "maxLength" &&
+										"YouTube Video URL cannot exceed 255 characters"}
+									{errors?.youtubeUrl?.type === "pattern" &&
+										"Not a valid YouTube Video URL"}
+								</span>
+							</div>
+						)}
+					</div>
+
+					<button
+						className="btn btn-accent w-full"
+						type="submit"
+						disabled={isSubmitting}
+					>
+						{isSubmitting ? (
+							<span className="loading loading-spinner loading-sm"></span>
+						) : null}
+						Add YouTube Video
+					</button>
 				</div>
 			)}
 
@@ -174,13 +180,14 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 							</div>
 						</div>
 						<div className="card-actions justify-end mt-4">
-							<a
-								href="/add-video"
+							<button
+								type="button"
+								onClick={() => setShowStage2(false)}
 								className="btn btn-sm btn-outline btn-error gap-2"
 							>
 								<RotateCcw size={25} strokeWidth={3} />
 								Try Again
-							</a>
+							</button>
 						</div>
 					</div>
 				</div>
@@ -189,15 +196,6 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 			{/* if video already exists for this user, place a Video Card here */}
 			{showStage2 && YouTubeIdToAdd.current && foundExistingVid.current && (
 				<div className="space-y-4">
-					<div className="alert alert-warning shadow-lg">
-						<AlertCircle size={24} />
-						<div>
-							<h3 className="font-bold">Video Already Exists</h3>
-							<p className="text-sm">
-								You have already added this video to your collection.
-							</p>
-						</div>
-					</div>
 					<div className="card bg-base-100 shadow-lg border border-base-200">
 						<div className="card-body">
 							<VideoCard
@@ -217,6 +215,16 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 							<ArrowLeftCircle size={25} strokeWidth={2} />
 							Go Back
 						</button>
+					</div>
+
+					<div className="alert alert-warning shadow-lg">
+						<AlertCircle size={24} />
+						<div>
+							<h3 className="font-bold">Video Already Exists</h3>
+							<p className="text-sm">
+								You have already added this video to your collection.
+							</p>
+						</div>
 					</div>
 				</div>
 			)}
