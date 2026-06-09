@@ -2,6 +2,7 @@
 
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { getYoutubeId, YOUTUBE_URL_REGEX } from "../../../../utils/youtube";
+import { fetchYouTubeTitle } from "../../../../utils/youtubeFetchTitle";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Select from "react-select";
@@ -11,6 +12,7 @@ import {
 	Plus,
 	Save,
 	FolderBookmark,
+	ArrowLeftCircle,
 } from "lucide-react";
 import {
 	getExistingVideo,
@@ -32,12 +34,15 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 	const router = useRouter();
 	const [showStage2, setShowStage2] = useState(false);
 	const YouTubeIdToAdd = useRef("");
-	const foundExistingVid = useRef<VideoCardType>(null);
+	const foundExistingVid = useRef<VideoCardType | null>(null);
+	const fetchedTitle = useRef("");
 	const collectionOptions = useRef<{ label: string; value: string }[]>([]);
 
 	useEffect(() => {
 		getUserCollectionNameIDs(userId).then((options) => {
-			collectionOptions.current = options.toSorted();
+			collectionOptions.current = options.toSorted((a, b) =>
+				a.label.localeCompare(b.label),
+			);
 		});
 	}, [userId]); // load/store collection options BTS
 
@@ -54,10 +59,15 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 
 		if (ytbId) {
 			YouTubeIdToAdd.current = ytbId;
+
 			const existing = await getExistingVideo(userId, ytbId);
 			foundExistingVid.current = existing ?? null;
+			fetchedTitle.current = existing
+				? ""
+				: ((await fetchYouTubeTitle(ytbId)) ?? "");
 		} else {
 			YouTubeIdToAdd.current = "";
+			fetchedTitle.current = "";
 		}
 		setShowStage2(true);
 	};
@@ -198,13 +208,15 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 								createdAt={foundExistingVid.current.createdAt}
 							/>
 						</div>
-						<a
-							href="/add-video"
+						<button
+							onClick={() => {
+								setShowStage2(false);
+							}}
 							className="btn btn-sm btn-outline btn-error gap-2"
 						>
-							<Plus size={25} strokeWidth={4} />
-							Add Another Video
-						</a>
+							<ArrowLeftCircle size={25} strokeWidth={2} />
+							Go Back
+						</button>
 					</div>
 				</div>
 			)}
@@ -226,6 +238,7 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 							</label>
 							<input
 								type="text"
+								defaultValue={fetchedTitle.current}
 								placeholder="My Awesome Custom Video Title..."
 								className={`input input-bordered w-full ${
 									errors?.customTitle ? "input-error" : ""
