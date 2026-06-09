@@ -19,7 +19,10 @@ export default memo(function VideoCard({
 	return (
 		<>
 			{/* Thumbnail Frame */}
-			<Link href={`/videos/${videoId}`} className="relative hover-3d cursor-pointer">
+			<Link
+				href={`/videos/${videoId}`}
+				className="relative hover-3d cursor-pointer"
+			>
 				<div>
 					<Suspense fallback={<div className="w-24 h-14 bg-gray-200" />}>
 						{thumbnailUrl ? (
