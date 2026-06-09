@@ -5,14 +5,25 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import {
 	createCollection,
 	getUserCollectionByName,
+	updateCollection,
 } from "../../../../lib/dbTableAction/collectionTableActions";
 import { AlertCircle } from "lucide-react";
 
+// for react hook form type definition and form validation
 type UpsertCollection = {
 	collectionTitle: string;
 };
 
-export default function CollectionForm({ userId }: { userId: string }) {
+// component for both adding new collection and editing existing collection (upsert)
+export default function CollectionForm({
+	userId,
+	collectionID,
+	existingTitle,
+}: {
+	userId: string;
+	collectionID?: string;
+	existingTitle?: string;
+}) {
 	const [submitSuccess, setSubmitSuccess] = useState(false);
 	const {
 		register,
@@ -27,37 +38,62 @@ export default function CollectionForm({ userId }: { userId: string }) {
 		clearErrors("root"); // Reset root errors to prevent stale messages from previous attempts.
 		const name = data.collectionTitle;
 
+		// no matter edit or adding, check dup on edited/new collection name first
 		const dupCollection = await getUserCollectionByName(userId, name);
 		if (dupCollection) {
 			setError("root", {
 				type: "duplicate",
 				message: `"${name}" already exists. Choose a different name.`,
 			});
-			return;
+			return; // Stop submission
 		}
 
-		const addCollection = await createCollection({
-			collectionName: name,
-			userId: userId,
-		});
-
-		//success
-		if (addCollection) {
-			reset(); // Clear the form input after successful submission.
-			setSubmitSuccess(true);
-
-			// force F5 reload
-			// reference: https://medium.com/@devdo/how-to-force-a-page-refresh-in-next-js-6326cae49fe4
-			setTimeout(() => {
-				window.location.reload();
-			}, 1000);
-		}
-		//failure
-		else {
-			setError("root", {
-				type: "serverError",
-				message: "Failed to create collection. Please try again.",
+		// adding new collection
+		if (!collectionID) {
+			const addCollection = await createCollection({
+				collectionName: name,
+				userId: userId,
 			});
+
+			//success
+			if (addCollection) {
+				reset(); // Clear the form input after successful submission.
+				setSubmitSuccess(true);
+
+				// force F5 reload
+				// reference: https://medium.com/@devdo/how-to-force-a-page-refresh-in-next-js-6326cae49fe4
+				setTimeout(() => {
+					window.location.reload();
+				}, 1000);
+			}
+			//failure
+			else {
+				setError("root", {
+					type: "serverError",
+					message: "Failed to create collection. Please try again.",
+				});
+			}
+		}
+
+		// editing existing collection
+		else {
+			const updateCollectionResult = await updateCollection({
+				collectionId: collectionID,
+				collectionName: name,
+			});
+
+			if (updateCollectionResult) {
+				reset();
+				setSubmitSuccess(true);
+				setTimeout(() => {
+					window.location.reload();
+				}, 1000);
+			} else {
+				setError("root", {
+					type: "serverError",
+					message: "Failed to update collection. Please try again.",
+				});
+			}
 		}
 	};
 
@@ -76,6 +112,7 @@ export default function CollectionForm({ userId }: { userId: string }) {
 					<input
 						type="text"
 						placeholder="My Awesome Collection"
+						defaultValue={existingTitle || ""} // Pre-fill the input with the existing collection name when editing.
 						className={`input input-bordered w-full ${
 							errors?.collectionTitle ? "input-error" : ""
 						}`}
@@ -107,7 +144,7 @@ export default function CollectionForm({ userId }: { userId: string }) {
 					{isSubmitting ? (
 						<span className="loading loading-spinner loading-sm"></span>
 					) : null}
-					Add Collection
+					{collectionID ? "Update Collection" : "Add Collection"}
 				</button>
 
 				{errors.root?.type === "duplicate" && (
@@ -124,7 +161,9 @@ export default function CollectionForm({ userId }: { userId: string }) {
 				)}
 				{submitSuccess && (
 					<div role="alert" className="alert alert-success mt-4">
-						<span>Collection created successfully!</span>
+						<span>
+							Collection {collectionID ? "updated" : "created"} successfully!
+						</span>
 					</div>
 				)}
 			</form>

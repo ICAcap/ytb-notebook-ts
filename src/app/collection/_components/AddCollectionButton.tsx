@@ -1,9 +1,10 @@
 "use client";
 
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Modal from "../../../../components/ModalSkeleton";
 import CollectionForm from "./CollectionForm";
+import { CollectionContext } from "./CollectionContextProvider";
 
 /**
  * AddCollectionButton component provides a user interface element to trigger
@@ -12,14 +13,16 @@ import CollectionForm from "./CollectionForm";
  * It manages the visibility state of the modal and renders a
  * CollectionForm within it when activated.
  */
-export default function AddCollectionButton({ userId }: { userId: string }) {
-	const [modal, setModal] = useState(false);
+export default function AddCollectionButton() {
+	const [addModalOpen, setAddModalOpen] = useState(false);
+	const contextValue = useContext(CollectionContext);
+	const userId = contextValue?.userId || "";
 
 	return (
 		<div>
 			<button
 				onClick={() => {
-					setModal(true);
+					setAddModalOpen(true);
 				}}
 				className="btn btn-primary btn-sm gap-2"
 			>
@@ -27,7 +30,7 @@ export default function AddCollectionButton({ userId }: { userId: string }) {
 				New Collection
 			</button>
 
-			<Modal isOpen={modal} onClose={() => setModal(false)}>
+			<Modal isOpen={addModalOpen} onClose={() => setAddModalOpen(false)}>
 				<CollectionForm userId={userId} />
 			</Modal>
 		</div>
