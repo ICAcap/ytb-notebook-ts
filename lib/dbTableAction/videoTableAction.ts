@@ -10,7 +10,42 @@ export type VideoCardType = Pick<
 	"youtubeVidID" | "title" | "lastPlayedTime" | "videoId" | "createdAt"
 >;
 
+export type VideoDetailPageProp = Pick<
+	Video,
+	"videoId" | "youtubeVidID" | "title" | "lastPlayedTime"
+> & { collections: string[] };
+
 // --------- GET ------------------------------------------------------------------
+
+/**
+ * Fetches a single video with its details and collections for an authenticated user.
+ * Cached for performance optimization.
+ *
+ * @param userId - The unique identifier of the user.
+ * @param id - The video ID to retrieve.
+ * @returns A promise resolving to video details or null if not found.
+ */
+export const getVideoById = cache(async function (
+	userId: string,
+	id: string,
+): Promise<VideoDetailPageProp | null> {
+	const video = await prisma.video.findFirst({
+		where: { userId, videoId: id },
+		include: { collections: true },
+	});
+
+	if (video) {
+		return {
+			videoId: video.videoId,
+			title: video.title,
+			youtubeVidID: video.youtubeVidID,
+			lastPlayedTime: video.lastPlayedTime,
+			collections: video.collections.map((c) => c.collectionName) || [],
+		};
+	}
+
+	return null;
+});
 
 /**
  * Retrieves a paginated list of videos for a specific user.

@@ -9,7 +9,7 @@ import {
 	getVideoNumWithSearchParam,
 } from "../../../lib/dbTableAction/videoTableAction";
 import { Suspense } from "react";
-import { X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 
 export const metadata: Metadata = {
 	title: "Videos",
@@ -43,8 +43,13 @@ export default async function VideoPage({
 			<Sidebar currentPath="/videos" />
 
 			<main className="flex-1 p-6">
-				<h1 className="text-2xl font-bold text-center mb-8">Your Videos</h1>
-
+				<header className="flex items-center justify-between mb-8">
+					<h1 className="text-3xl font-bold">My Videos</h1>
+					<Link href="/add-video" className="btn btn-primary btn-sm gap-2">
+						<Plus size={18} />
+						New Video
+					</Link>
+				</header>
 				{/* Search bar */}
 				<div className="mb-8">
 					<form className="join w-full" action="/videos" method="GET">
