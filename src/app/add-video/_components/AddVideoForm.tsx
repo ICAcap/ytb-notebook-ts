@@ -2,7 +2,7 @@
 
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { getYoutubeId, YOUTUBE_URL_REGEX } from "../../../../utils/youtube";
-import { fetchYouTubeTitle } from "../../../../utils/youtubeFetchTitle";
+import { fetchYouTubeTitle } from "../../../../utils/youtubeFetchTitleServerSide";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Select from "react-select";
