@@ -1,43 +1,11 @@
 import Sidebar from "../../../../components/sidebar";
 import VideoPlayer from "./_components/VideoPlayer";
-import { prisma } from "../../../../lib/prisma";
-import { Video } from "../../../../generated/prisma";
+import { getVideoById } from "../../../../lib/dbTableAction/videoTableAction";
 import requireSession from "../../../../lib/requireSession";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Link from "next/link";
-import { cache } from "react";
 import { ArrowLeft } from "lucide-react";
-
-// a type that only takes data we need for video player from the Video model
-type videoPlayerProp = Pick<
-	Video,
-	"videoId" | "youtubeVidID" | "title" | "lastPlayedTime"
-> & { collections: string[] }; // intersection type with collections string array
-
-// helper function to fetch video details by id for the authenticated user,
-// cached for performance optimization
-const getVideoById = cache(async function getVideoById(
-	userId: string,
-	id: string,
-): Promise<videoPlayerProp | null> {
-	const video = await prisma.video.findFirst({
-		where: { userId, videoId: id },
-		include: { collections: true },
-	});
-
-	if (video) {
-		return {
-			videoId: video.videoId,
-			title: video.title,
-			youtubeVidID: video.youtubeVidID,
-			lastPlayedTime: video.lastPlayedTime,
-			collections: video.collections.map((c) => c.collectionName) || [],
-		};
-	}
-
-	return null;
-});
 
 // helper function to fetch video details by id for the authenticated user
 // https://www.slingacademy.com/article/next-js-how-to-set-page-title-and-meta-description/#static-title-and-meta-description
