@@ -3,8 +3,8 @@ import Sidebar from "../../../components/sidebar";
 import { Metadata } from "next";
 import { getUserCollectionNameIDs } from "../../../lib/dbTableAction/collectionTableActions";
 import { FolderOpen, Plus } from "lucide-react";
-import Link from "next/link";
 import CollectionCard from "./_components/CollectionCard";
+import AddCollectionButton from "./_components/AddCollectionButton";
 
 export const metadata: Metadata = {
 	title: "Collections",
@@ -24,12 +24,8 @@ export default async function CollectionPage() {
 				<div className="max-w-6xl mx-auto">
 					<header className="flex items-center justify-between mb-8">
 						<h1 className="text-3xl font-bold">My Collections</h1>
-						<Link href="/add-video" className="btn btn-primary btn-sm gap-2">
-							<Plus size={18} />
-							New Collection
-						</Link>
+						<AddCollectionButton />
 					</header>
-
 					{userCollections.length > 0 ? (
 						<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-2">
 							{userCollections.map((c) => (
