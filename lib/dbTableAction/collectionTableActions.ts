@@ -4,12 +4,16 @@ import { prisma } from "../prisma";
 import { cache } from "react";
 import { Collection } from "../../generated/prisma";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
-import { connect } from "http2";
 
 // export types
 export type CollectionCreationType = Pick<
 	Collection,
 	"userId" | "collectionName"
+>;
+
+export type CollectionUpdateType = Pick<
+	Collection,
+	"collectionId" | "collectionName"
 >;
 
 // --------- GET ------------------------------------------------------------------
@@ -90,5 +94,22 @@ export const createCollection = cache(async function (
 	}
 });
 // --------- UPDATE ------------------------------------------------------------------
-
+export const updateCollection = cache(async function (
+	collectionToUpdate: CollectionUpdateType,
+): Promise<Collection | null> {
+	try {
+		const update = await prisma.collection.update({
+			where: {
+				collectionId: collectionToUpdate.collectionId,
+			},
+			data: {
+				collectionName: collectionToUpdate.collectionName,
+			},
+		});
+		return update;
+	} catch (error) {
+		console.error("Error updating collection, fallback to null.");
+		return null;
+	}
+});
 // --------- DELETE ------------------------------------------------------------------
