@@ -2,6 +2,13 @@
 
 const youtubeAPIKey = process.env.YOUTUBE_API_KEY as string;
 
+/**
+ * Reference:
+ * https://www.javascriptroom.com/blog/how-do-i-get-the-title-of-a-youtube-video-if-i-have-the-video-id/#method-1-using-the-fetch-api
+ * @param videoId
+ * @param apiKey
+ * @returns Promise title or null
+ */
 export async function fetchYouTubeTitle(
 	videoId: string,
 	apiKey: string = youtubeAPIKey,
