@@ -16,10 +16,15 @@ const Modal = ({ isOpen, onClose, children }: Props) => {
 
 	return (
 		<dialog ref={dialogRef} onCancel={onClose} className="modal">
-			<button onClick={onClose} className="btn btn-circle btn-error">
-				<X size={40} />
-			</button>
-			{children}
+			<div className="relative modal-box">
+				<button
+					onClick={onClose}
+					className="btn btn-sm btn-circle btn-ghost btn-error absolute top-2 right-2"
+				>
+					<X size={20} />
+				</button>
+				{children}
+			</div>
 		</dialog>
 	);
 };

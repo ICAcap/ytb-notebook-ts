@@ -4,6 +4,7 @@ import { prisma } from "../prisma";
 import { cache } from "react";
 import { Collection } from "../../generated/prisma";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
+import { connect } from "http2";
 
 // export types
 export type CollectionCreationType = Pick<
@@ -37,6 +38,31 @@ export const getUserCollectionNameIDs = cache(async function (
 		return [];
 	}
 });
+
+/**
+ * Retrieves a specific collection by its name for a given user.
+ *
+ * @param userId - The unique identifier of the user.
+ * @param collectionName - The name of the collection to retrieve.
+ * @returns A promise resolving to the Collection object if found, otherwise null.
+ */
+export const getUserCollectionByName = cache(async function (
+	userId: string,
+	collectionName: string,
+): Promise<Collection | null> {
+	// composite identifier
+	try {
+		return await prisma.collection.findUnique({
+			where: {
+				userId_collectionName: { userId, collectionName },
+			},
+		});
+	} catch (error) {
+		console.error("Error fetching collection by name, fallback to null."); // Prevent crash during lookup.
+		return null;
+	}
+});
+
 // --------- CREATE ------------------------------------------------------------------
 export const createCollection = cache(async function (
 	collectionToCreate: CollectionCreationType,
@@ -50,7 +76,9 @@ export const createCollection = cache(async function (
 		});
 		return creation;
 	} catch (error) {
-		console.error("Error Creating Collection for User Profile:");
+		console.error(
+			"Error Creating Collection for User Profile, fallback to null",
+		);
 		if (error instanceof PrismaClientKnownRequestError) {
 			if (error.code === "P2002") {
 				console.error(

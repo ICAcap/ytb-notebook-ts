@@ -23,7 +23,7 @@ import VideoCard from "@/app/videos/_components/VideoCard";
 import { VideoCardType } from "../../../../lib/dbTableAction/videoTableAction";
 
 // video addition type
-type AddVideo = {
+type UpsertVideo = {
 	youtubeUrl: string;
 	customTitle: string;
 	collections?: { label: string; value: string }[];
@@ -51,10 +51,10 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 		handleSubmit,
 		control,
 		formState: { errors, isSubmitting },
-	} = useForm<AddVideo>();
+	} = useForm<UpsertVideo>();
 
 	// form submit handler(s)
-	const onSubmitYoutubeUrl: SubmitHandler<AddVideo> = async (data) => {
+	const onSubmitYoutubeUrl: SubmitHandler<UpsertVideo> = async (data) => {
 		const ytbId = getYoutubeId(data.youtubeUrl);
 
 		if (ytbId) {
@@ -72,7 +72,7 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 		setShowStage2(true);
 	};
 
-	const onSubmitToBackend: SubmitHandler<AddVideo> = async (data) => {
+	const onSubmitToBackend: SubmitHandler<UpsertVideo> = async (data) => {
 		const customTitle = data.customTitle;
 		// Extract only the IDs to match the expected backend payload structure.
 		const selectedCollectionIds = data.collections

@@ -24,7 +24,7 @@ export default async function CollectionPage() {
 				<div className="max-w-6xl mx-auto">
 					<header className="flex items-center justify-between mb-8">
 						<h1 className="text-3xl font-bold">My Collections</h1>
-						<AddCollectionButton />
+						<AddCollectionButton userId={userId} />
 					</header>
 					{userCollections.length > 0 ? (
 						<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-2">

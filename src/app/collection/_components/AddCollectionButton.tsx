@@ -12,7 +12,7 @@ import CollectionForm from "./CollectionForm";
  * It manages the visibility state of the modal and renders a
  * CollectionForm within it when activated.
  */
-export default function AddCollectionButton() {
+export default function AddCollectionButton({ userId }: { userId: string }) {
 	const [modal, setModal] = useState(false);
 
 	return (
@@ -28,7 +28,7 @@ export default function AddCollectionButton() {
 			</button>
 
 			<Modal isOpen={modal} onClose={() => setModal(false)}>
-				<CollectionForm />
+				<CollectionForm userId={userId} />
 			</Modal>
 		</div>
 	);
