@@ -30,6 +30,7 @@ type UpsertVideo = {
 
 export default function AddVideoForm({ userId }: { userId: string }) {
 	const {
+		openModal,
 		router,
 		showStage2,
 		setShowStage2,
@@ -58,10 +59,10 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 	//Clear form state when returning to
 	//stage 1 or close modal to prevent stale data.
 	useEffect(() => {
-		if (!showStage2) {
+		if (!openModal || !showStage2) {
 			reset();
 		}
-	}, [showStage2]);
+	}, [openModal, showStage2]);
 
 	// form submit handler(s)
 	const onSubmitYoutubeUrl: SubmitHandler<UpsertVideo> = async (data) => {

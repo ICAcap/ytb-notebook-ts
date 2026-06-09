@@ -10,7 +10,7 @@ import { VideoCardType } from "../../../../lib/dbTableAction/videoTableAction";
 export const AddVideoButtonContext = createContext({});
 
 export default function AddVideoButton({ userId }: { userId: string }) {
-	const [open, setOpen] = useState(false);
+	const [openModal, setOpenModal] = useState(false);
 	const router = useRouter();
 	const [showStage2, setShowStage2] = useState(false);
 	const YouTubeIdToAdd = useRef("");
@@ -21,6 +21,7 @@ export default function AddVideoButton({ userId }: { userId: string }) {
 	return (
 		<AddVideoButtonContext.Provider
 			value={{
+				openModal,
 				router,
 				showStage2,
 				setShowStage2,
@@ -32,7 +33,7 @@ export default function AddVideoButton({ userId }: { userId: string }) {
 		>
 			<div>
 				<button
-					onClick={() => setOpen(true)}
+					onClick={() => setOpenModal(true)}
 					className="btn btn-primary btn-sm gap-2"
 				>
 					<Plus size={18} />
@@ -40,10 +41,10 @@ export default function AddVideoButton({ userId }: { userId: string }) {
 				</button>
 
 				<Modal
-					isOpen={open}
+					isOpen={openModal}
 					// clean up context passed
 					onClose={() => {
-						setOpen(false);
+						setOpenModal(false);
 						setShowStage2(false);
 						YouTubeIdToAdd.current = "";
 						foundExistingVid.current = null;
