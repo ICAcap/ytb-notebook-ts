@@ -37,7 +37,7 @@ YouTube Notebook: A Next.js 16 application for managing video collections with t
 - `src/app/layout.tsx` — Root layout with Tailwind + Geist font
 
 ### Shared Components
-- `components/sidebar.tsx` — Navigation sidebar with collapse/expand, theme toggle (light: retro, dark: synthwave via DaisyUI)
+- `components/sidebar.tsx` — Navigation sidebar with collapse/expand, theme toggle (light: retro, dark: abyss via DaisyUI)
 - `components/ModalSkeleton.tsx` — Reusable modal wrapper using HTML `<dialog>` element
 - `components/pagination.tsx` — Pagination controls
 - `components/SignOutButton.tsx` — Sign-out action button
@@ -107,7 +107,7 @@ See `node_modules/next/dist/docs/` — this version has breaking changes in APIs
 - **Tailwind CSS v4** (via `@tailwindcss/postcss`)
 - **DaisyUI**: Tailwind component library for buttons, cards, modals, etc.
 - **Font**: Geist (auto-optimized via `next/font`)
-- **Theme System**: Sidebar uses `data-theme` attribute on `<html>` (light: "retro", dark: "synthwave")
+- **Theme System**: Sidebar uses `data-theme` attribute on `<html>` (light: "retro", dark: "abyss")
 - React Compiler enabled in `next.config.ts`
 
 ### Utilities & Helpers

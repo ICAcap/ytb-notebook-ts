@@ -11,45 +11,23 @@ import {
 	Moon,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useTheme } from "next-themes";
 
 export default function Sidebar({
 	currentPath = "/dashboard",
 }: {
 	currentPath?: string;
 }) {
-	const [mounted, setMounted] = useState(false);
 	const [isCollapsed, setIsCollapsed] = useState(true);
-	const [theme, setTheme] = useState(() => {
-		//getting stored theme value
-		if (typeof localStorage === "undefined") return "light";
-		const saved = localStorage.getItem("theme");
-		return saved || "light";
-	});
-
-	useEffect(() => {
-		setMounted(true);
-	}, []);
-
-	useEffect(() => {
-		localStorage.setItem("theme", theme);
-	}, [theme]);
-
-	useEffect(() => {
-		document.documentElement.setAttribute(
-			"data-theme",
-			theme === "light" ? "retro" : "synthwave",
-		);
-	}, []);
+	const { setTheme, resolvedTheme } = useTheme();
 
 	function toggleSidebar() {
 		setIsCollapsed((prev) => !prev);
 	}
 
 	function handleThemeToggle() {
-		const next = theme === "light" ? "synthwave" : "retro";
-		document.documentElement.setAttribute("data-theme", next);
-		setTheme(theme === "light" ? "dark" : "light");
+		setTheme(resolvedTheme === "light" ? "dark" : "light");
 	}
 
 	const navigation = [
@@ -79,14 +57,12 @@ export default function Sidebar({
 						onClick={handleThemeToggle}
 						className="btn btn-ghost btn-sm btn-square"
 					>
-						{mounted ? (
-							theme === "light" ? (
-								<Sun className="h-5 w-5" />
-							) : (
-								<Moon className="h-5 w-5" />
-							)
-						) : (
+						{resolvedTheme === undefined ? (
 							<div className="animate-spin rounded-full h-5 w-5" />
+						) : resolvedTheme === "light" ? (
+							<Sun className="h-5 w-5" />
+						) : (
+							<Moon className="h-5 w-5" />
 						)}
 					</button>
 					<button
