@@ -79,7 +79,6 @@ export default async function VidViewPage({
 					</div>
 					<VideoPlayer
 						videoId={video.videoId}
-						userId={userId}
 						url={`https://www.youtube.com/watch?v=${video.youtubeVidID}`}
 						lastPlayedTime={video.lastPlayedTime}
 					/>

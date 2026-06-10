@@ -161,7 +161,7 @@ export const getExistingVideo = cache(async function (
  * @param collectionsID - A list of collection IDs to associate with the video.
  * @returns A promise resolving to the created or updated video record, or null on error.
  */
-export const upsertYouTubeVideo = cache(async function (
+export const upsertYouTubeVideo = async function (
 	userId: string,
 	youtubeVideoId: string,
 	title: string,
@@ -200,33 +200,27 @@ export const upsertYouTubeVideo = cache(async function (
 		console.error("Error Upserting Video to User Profile");
 		return null;
 	}
-});
+};
 
 /**
  * Updates the playback progress (in seconds) for a specific video record.
  *
- * @param userId - The unique identifier of the user.
  * @param videoId - The unique identifier of the video record.
  * @param playedTime - The current playback position in seconds.
  * @returns A promise that resolves when the update operation is complete.
  */
-export const updateVideoPlayedTime = cache(async function (
-	userId: string,
+export const updateVideoPlayedTime = async function (
 	videoId: string,
 	playedTime: number,
 ) {
 	try {
-		await prisma.video.updateMany({
-			where: { userId, videoId },
+		await prisma.video.update({
+			where: { videoId: videoId },
 			data: { lastPlayedTime: playedTime },
 		});
-
-		// console.log(
-		// 	`Updated played time for video ${videoId} and user ${userId} to ${playedTime} seconds`,
-		// );
 	} catch (error) {
 		console.error("Error updating video played time:", error);
 	}
-});
+};
 
 // --------- DELETE ------------------------------------------------------------------
