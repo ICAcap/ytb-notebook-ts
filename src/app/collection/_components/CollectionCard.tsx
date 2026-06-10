@@ -7,6 +7,7 @@ import { deleteCollectionById } from "../../../../lib/dbTableAction/collectionTa
 import Modal from "../../../../components/ModalSkeleton";
 import CollectionForm from "./CollectionForm";
 import { CollectionContext } from "./CollectionContextProvider";
+import toast from "react-hot-toast";
 
 type CollectionCardProps = {
 	id: string;
@@ -26,10 +27,10 @@ export default function CollectionCard({ id, name }: CollectionCardProps) {
 		try {
 			await deleteCollectionById(id);
 			setTrashModalOpen(false);
-			alert("Collection deleted successfully!");
+			toast.success("Collection deleted successfully!");
 			router.refresh();
 		} catch (error) {
-			alert("Failed to delete collection. Please try again.");
+			toast.error("Failed to delete collection. Please try again.");
 			setIsDeleting(false);
 		}
 	};

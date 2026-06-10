@@ -6,6 +6,7 @@ import { FolderOpen } from "lucide-react";
 import CollectionCard from "./_components/CollectionCard";
 import AddCollectionButton from "./_components/AddCollectionButton";
 import CollectionContextProvider from "./_components/CollectionContextProvider";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
 	title: "Collections",
@@ -20,6 +21,7 @@ export default async function CollectionPage() {
 
 	return (
 		<CollectionContextProvider userId={userId}>
+			<Toaster />
 			<div className="flex min-h-screen">
 				<Sidebar currentPath="/collection" />
 				<main className="flex-1 p-6">
