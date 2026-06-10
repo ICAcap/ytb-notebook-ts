@@ -11,7 +11,13 @@ const Modal = ({ isOpen, onClose, children }: Props) => {
 	useEffect(() => {
 		const dialog = dialogRef.current;
 		if (!dialog) return;
-		isOpen ? dialog.showModal() : dialog.close();
+		if (isOpen) {
+			// Close any existing non-modal state to prevent InvalidStateError when showModal() is called twice
+			if (dialog.open) dialog.close();
+			dialog.showModal();
+		} else if (dialog.open) {
+			dialog.close();
+		}
 	}, [isOpen]);
 
 	return (
