@@ -99,7 +99,7 @@ export default function CollectionForm({
 
 	return (
 		<div>
-			<header className="header">
+			<header>
 				<h1 className="text-2xl font-semibold text-center">Collection</h1>
 			</header>
 			<form onSubmit={handleSubmit(onSubmitToBackend)}>
@@ -110,6 +110,7 @@ export default function CollectionForm({
 						</span>
 					</label>
 					<input
+						disabled={isSubmitting || submitSuccess}
 						type="text"
 						placeholder="My Awesome Collection"
 						defaultValue={existingTitle || ""} // Pre-fill the input with the existing collection name when editing.
@@ -139,7 +140,7 @@ export default function CollectionForm({
 				<button
 					className="btn btn-accent w-full"
 					type="submit"
-					disabled={isSubmitting} // Prevent double-submissions while the server action is processing.
+					disabled={isSubmitting || submitSuccess} // Prevent double-submissions while the server action is processing.
 				>
 					{isSubmitting ? (
 						<span className="loading loading-spinner loading-sm"></span>

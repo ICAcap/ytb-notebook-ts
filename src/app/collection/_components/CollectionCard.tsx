@@ -1,19 +1,38 @@
 "use client";
 
-import { Folder, Trash, Pencil } from "lucide-react";
+import { Folder, Trash, Pencil, AlertCircle } from "lucide-react";
 import { useState, useContext } from "react";
-type CollectionCardProps = {
-	id: string;
-	name: string;
-};
+import { useRouter } from "next/navigation";
+import { deleteCollectionById } from "../../../../lib/dbTableAction/collectionTableActions";
 import Modal from "../../../../components/ModalSkeleton";
 import CollectionForm from "./CollectionForm";
 import { CollectionContext } from "./CollectionContextProvider";
 
+type CollectionCardProps = {
+	id: string;
+	name: string;
+};
+
 export default function CollectionCard({ id, name }: CollectionCardProps) {
 	const [pencilModalOpen, setPencilModalOpen] = useState(false);
+	const [trashModalOpen, setTrashModalOpen] = useState(false);
+	const [isDeleting, setIsDeleting] = useState(false);
 	const contextValue = useContext(CollectionContext);
 	const userId = contextValue?.userId || "";
+	const router = useRouter();
+
+	const handleDelete = async () => {
+		setIsDeleting(true);
+		try {
+			await deleteCollectionById(id);
+			setTrashModalOpen(false);
+			alert("Collection deleted successfully!");
+			router.refresh();
+		} catch (error) {
+			alert("Failed to delete collection. Please try again.");
+			setIsDeleting(false);
+		}
+	};
 
 	return (
 		<div className="card card-compact hover:bg-base-200 cursor-pointer transition-colors select-none group">
@@ -29,7 +48,10 @@ export default function CollectionCard({ id, name }: CollectionCardProps) {
 					>
 						<Pencil className="w-4 h-4" />
 					</button>
-					<button className="btn btn-square btn-sm btn-error">
+					<button
+						className="btn btn-square btn-sm btn-error"
+						onClick={() => setTrashModalOpen(true)}
+					>
 						<Trash className="w-4 h-4" />
 					</button>
 				</div>
@@ -42,6 +64,44 @@ export default function CollectionCard({ id, name }: CollectionCardProps) {
 					collectionID={id}
 					existingTitle={name}
 				/>
+			</Modal>
+
+			{/* Delete Collection Modal */}
+			<Modal isOpen={trashModalOpen} onClose={() => setTrashModalOpen(false)}>
+				<div role="dialog" className="flex flex-col gap-6">
+					<div className="flex items-center gap-3">
+						<AlertCircle size={40} className="text-error shrink-0" />
+						<span className="text-lg font-semibold">
+							Please Confirm Collection Removal
+						</span>
+					</div>
+					<p className="text-sm text-base-content/70">
+						Videos in this collection won't be removed, only the collection
+						itself.
+					</p>
+					<div className="flex gap-3 justify-between">
+						<button
+							onClick={() => setTrashModalOpen(false)}
+							className="btn btn-outline flex-1"
+						>
+							Cancel
+						</button>
+						<button
+							className="btn btn-error flex-1"
+							onClick={handleDelete}
+							disabled={isDeleting}
+						>
+							{isDeleting ? (
+								<>
+									<span className="loading loading-spinner loading-sm"></span>
+									Removing...
+								</>
+							) : (
+								"Remove"
+							)}
+						</button>
+					</div>
+				</div>
 			</Modal>
 		</div>
 	);

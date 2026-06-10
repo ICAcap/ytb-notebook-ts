@@ -61,7 +61,7 @@ export default async function VidViewPage({
 							{`${video.title || "Unknown Video"}`}
 						</h1>
 					</div>
-					<div className="mt-4 justify-evenly">
+					<div className="mt-4">
 						<h2 className="text-xl text-base-content/60">Collections:</h2>
 						<div className="flex flex-wrap gap-2 mt-2">
 							{video.collections && video.collections.length > 0 ? (

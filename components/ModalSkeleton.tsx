@@ -15,11 +15,11 @@ const Modal = ({ isOpen, onClose, children }: Props) => {
 	}, [isOpen]);
 
 	return (
-		<dialog ref={dialogRef} onCancel={onClose} className="modal">
+		<dialog ref={dialogRef} onCancel={onClose} className="modal cursor-default">
 			<div className="relative modal-box">
 				<button
 					onClick={onClose}
-					className="btn btn-sm btn-circle btn-ghost btn-error absolute top-2 right-2"
+					className="btn btn-sm btn-circle btn-ghost btn-error absolute top-2 right-2 cursor-pointer"
 				>
 					<X size={20} />
 				</button>

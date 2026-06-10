@@ -2,6 +2,7 @@
 
 import { prisma } from "../prisma";
 import { cache } from "react";
+import { revalidatePath } from "next/cache";
 import { Collection } from "../../generated/prisma";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 
@@ -68,7 +69,7 @@ export const getUserCollectionByName = cache(async function (
 });
 
 // --------- CREATE ------------------------------------------------------------------
-export const createCollection = cache(async function (
+export async function createCollection(
 	collectionToCreate: CollectionCreationType,
 ): Promise<Collection | null> {
 	try {
@@ -78,6 +79,7 @@ export const createCollection = cache(async function (
 				collectionName: collectionToCreate.collectionName,
 			},
 		});
+		revalidatePath("/collection");
 		return creation;
 	} catch (error) {
 		console.error(
@@ -92,9 +94,9 @@ export const createCollection = cache(async function (
 		}
 		return null;
 	}
-});
+}
 // --------- UPDATE ------------------------------------------------------------------
-export const updateCollection = cache(async function (
+export async function updateCollection(
 	collectionToUpdate: CollectionUpdateType,
 ): Promise<Collection | null> {
 	try {
@@ -106,10 +108,27 @@ export const updateCollection = cache(async function (
 				collectionName: collectionToUpdate.collectionName,
 			},
 		});
+		revalidatePath("/collection");
 		return update;
 	} catch (error) {
 		console.error("Error updating collection, fallback to null.");
 		return null;
 	}
-});
+}
 // --------- DELETE ------------------------------------------------------------------
+export async function deleteCollectionById(
+	collectionId: string,
+): Promise<Collection | null> {
+	try {
+		const deletion = await prisma.collection.delete({
+			where: {
+				collectionId,
+			},
+		});
+		revalidatePath("/collection");
+		return deletion;
+	} catch (error) {
+		console.error("Error deleting collection, fallback to null.");
+		return null;
+	}
+}
