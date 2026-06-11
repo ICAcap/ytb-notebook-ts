@@ -6,6 +6,7 @@ import { fetchYouTubeTitle } from "../../../../utils/youtubeFetchTitleServerSide
 import { useEffect, useContext } from "react";
 import { AddVideoButtonContext } from "./AddVideoButton";
 import Select from "react-select";
+import { Toaster, toast } from "react-hot-toast";
 import {
 	RotateCcw,
 	AlertCircle,
@@ -98,7 +99,19 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 		);
 
 		if (added) {
+			// Invalidate router cache so when user hits browser back button to go back to last page,
+			// they see the newly added video at the bottom of the current page instead of stale cache
+			router.refresh();
 			router.push(`/videos/${added.videoId}`);
+		} else {
+			toast.custom(
+				<div role="alert" className="alert alert-warning mt-4">
+					<span>Video Addition Failed, Please Try Again</span>
+				</div>,
+				{
+					id: "video-addition-failed",
+				},
+			);
 		}
 	};
 
@@ -110,6 +123,7 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 			)}
 			className="m-3"
 		>
+			<Toaster />
 			{!showStage2 && (
 				<div className="space-y-6">
 					<div className="flex items-center gap-3">
@@ -222,9 +236,7 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 						<AlertCircle size={24} />
 						<div>
 							<h3 className="font-bold">Video Already Exists</h3>
-							<p className="text-sm">
-								You have already added this video to your collection.
-							</p>
+							<p className="text-sm">You have already added this video</p>
 						</div>
 					</div>
 				</div>
