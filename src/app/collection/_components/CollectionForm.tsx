@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Dispatch, SetStateAction } from "react";
+import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
 	createCollection,
@@ -8,6 +9,7 @@ import {
 	updateCollection,
 } from "../../../../lib/dbTableAction/collectionTableActions";
 import { AlertCircle } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 // for react hook form type definition and form validation
 type UpsertCollection = {
@@ -19,12 +21,16 @@ export default function CollectionForm({
 	userId,
 	collectionID,
 	existingTitle,
+	setAddModalOpen,
+	setPencilModalOpen,
 }: {
 	userId: string;
 	collectionID?: string;
 	existingTitle?: string;
+	setAddModalOpen?: Dispatch<SetStateAction<boolean>>;
+	setPencilModalOpen?: Dispatch<SetStateAction<boolean>>;
 }) {
-	const [submitSuccess, setSubmitSuccess] = useState(false);
+	const router = useRouter();
 	const {
 		register,
 		handleSubmit,
@@ -35,7 +41,7 @@ export default function CollectionForm({
 	} = useForm<UpsertCollection>();
 
 	const onSubmitToBackend: SubmitHandler<UpsertCollection> = async (data) => {
-		clearErrors("root"); // Reset root errors to prevent stale messages from previous attempts.
+		clearErrors("root");
 		const name = data.collectionTitle;
 
 		// no matter edit or adding, check dup on edited/new collection name first
@@ -45,6 +51,13 @@ export default function CollectionForm({
 				type: "duplicate",
 				message: `"${name}" already exists. Choose a different name.`,
 			});
+			toast.custom(
+				<div role="alert" className="alert alert-warning mt-4">
+					<AlertCircle size={16} />
+					<span>{`"${name}" already exists. Choose a different name.`}</span>
+				</div>,
+				{ id: "collection-form-toast" },
+			);
 			return; // Stop submission
 		}
 
@@ -58,13 +71,14 @@ export default function CollectionForm({
 			//success
 			if (addCollection) {
 				reset(); // Clear the form input after successful submission.
-				setSubmitSuccess(true);
-
-				// force F5 reload
-				// reference: https://medium.com/@devdo/how-to-force-a-page-refresh-in-next-js-6326cae49fe4
-				setTimeout(() => {
-					window.location.reload();
-				}, 1000);
+				toast.custom(
+					<div role="alert" className="alert alert-success mt-4">
+						<span>Collection created successfully!</span>
+					</div>,
+					{ id: "collection-form-toast" },
+				);
+				router.refresh();
+				setAddModalOpen && setAddModalOpen(false);
 			}
 			//failure
 			else {
@@ -72,6 +86,13 @@ export default function CollectionForm({
 					type: "serverError",
 					message: "Failed to create collection. Please try again.",
 				});
+				toast.custom(
+					<div role="alert" className="alert alert-error mt-4">
+						<AlertCircle size={16} />
+						<span>Failed to create collection. Please try again.</span>
+					</div>,
+					{ id: "collection-form-toast" },
+				);
 			}
 		}
 
@@ -83,16 +104,26 @@ export default function CollectionForm({
 			});
 
 			if (updateCollectionResult) {
-				reset();
-				setSubmitSuccess(true);
-				setTimeout(() => {
-					window.location.reload();
-				}, 1000);
+				toast.custom(
+					<div role="alert" className="alert alert-success mt-4">
+						<span>Collection updated successfully!</span>
+					</div>,
+					{ id: "collection-form-toast" },
+				);
+				router.refresh();
+				setPencilModalOpen && setPencilModalOpen(false);
 			} else {
 				setError("root", {
 					type: "serverError",
 					message: "Failed to update collection. Please try again.",
 				});
+				toast.custom(
+					<div role="alert" className="alert alert-error mt-4">
+						<AlertCircle size={16} />
+						<span>Failed to update collection. Please try again.</span>
+					</div>,
+					{ id: "collection-form-toast" },
+				);
 			}
 		}
 	};
@@ -110,7 +141,7 @@ export default function CollectionForm({
 						</span>
 					</label>
 					<input
-						disabled={isSubmitting || submitSuccess}
+						disabled={isSubmitting}
 						type="text"
 						placeholder="My Awesome Collection"
 						defaultValue={existingTitle || ""} // Pre-fill the input with the existing collection name when editing.
@@ -140,33 +171,13 @@ export default function CollectionForm({
 				<button
 					className="btn btn-accent w-full"
 					type="submit"
-					disabled={isSubmitting || submitSuccess} // Prevent double-submissions while the server action is processing.
+					disabled={isSubmitting} // Prevent double-submissions while the server action is processing.
 				>
 					{isSubmitting ? (
 						<span className="loading loading-spinner loading-sm"></span>
 					) : null}
 					{collectionID ? "Update Collection" : "Add Collection"}
 				</button>
-
-				{errors.root?.type === "duplicate" && (
-					<div role="alert" className="alert alert-warning mt-4">
-						<AlertCircle size={16} />
-						<span>{errors.root.message}</span>
-					</div>
-				)}
-				{errors.root?.type === "serverError" && (
-					<div role="alert" className="alert alert-error mt-4">
-						<AlertCircle size={16} />
-						<span>{errors.root.message}</span>
-					</div>
-				)}
-				{submitSuccess && (
-					<div role="alert" className="alert alert-success mt-4">
-						<span>
-							Collection {collectionID ? "updated" : "created"} successfully!
-						</span>
-					</div>
-				)}
 			</form>
 		</div>
 	);
