@@ -27,10 +27,19 @@ export default function CollectionCard({ id, name }: CollectionCardProps) {
 		try {
 			await deleteCollectionById(id);
 			setTrashModalOpen(false);
-			toast.success("Collection deleted successfully!");
+			toast.custom(
+				<div role="alert" className="alert alert-success mt-4">
+					<span>Collection "{name}" deleted successfully!</span>
+				</div>,
+			);
 			router.refresh();
 		} catch (error) {
-			toast.error("Failed to delete collection. Please try again.");
+			toast.custom(
+				<div role="alert" className="alert alert-warning mt-4">
+					<AlertCircle size={16} />
+					<span>Failed to delete collection "{name}". Please try again.</span>
+				</div>,
+			);
 			setIsDeleting(false);
 		}
 	};
@@ -64,6 +73,7 @@ export default function CollectionCard({ id, name }: CollectionCardProps) {
 					userId={userId}
 					collectionID={id}
 					existingTitle={name}
+					setPencilModalOpen={setPencilModalOpen}
 				/>
 			</Modal>
 
