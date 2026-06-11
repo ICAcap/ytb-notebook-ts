@@ -31,6 +31,9 @@ export default function CollectionCard({ id, name }: CollectionCardProps) {
 				<div role="alert" className="alert alert-success mt-4">
 					<span>Collection "{name}" deleted successfully!</span>
 				</div>,
+				{
+					id: "collection-deletion-success",
+				},
 			);
 			router.refresh();
 		} catch (error) {
@@ -39,6 +42,9 @@ export default function CollectionCard({ id, name }: CollectionCardProps) {
 					<AlertCircle size={16} />
 					<span>Failed to delete collection "{name}". Please try again.</span>
 				</div>,
+				{
+					id: "collection-deletion-failed",
+				},
 			);
 			setIsDeleting(false);
 		}
