@@ -54,7 +54,7 @@ export default async function VidViewPage({
 						href={"/videos"}
 						className="btn btn-ghost btn-accent rounded-xl text-xl"
 					>
-						<ArrowLeft strokeWidth={3} /> Back to Videos
+						<ArrowLeft strokeWidth={3} /> Back to All Videos
 					</Link>
 					<div className="flex justify-center mb-1">
 						<h1 className="text-3xl text-wrap font-semibold text-center">
