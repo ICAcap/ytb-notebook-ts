@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Trash2, Pencil } from "lucide-react";
 import { Suspense } from "react";
 import { VideoCardType } from "../../../../lib/dbTableAction/videoTableAction";
+import Modal from "../../../../components/ModalSkeleton";
 
 export default memo(function VideoCard({
 	videoId,
@@ -77,6 +78,20 @@ export default memo(function VideoCard({
 					<Pencil className="w-5 h-5 text-info" />
 				</button>
 			</div>
+
+			{/* Modals */}
+
+			{/* Video DELETE modal */}
+			{
+				<Modal
+					isOpen={false}
+					onClose={function (): void {
+						throw new Error("Function not implemented.");
+					}}
+				>
+					placeholder
+				</Modal>
+			}
 		</>
 	);
 });

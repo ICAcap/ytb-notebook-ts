@@ -52,7 +52,7 @@ export default async function VidViewPage({
 				<main className="flex-1 p-6">
 					<Link
 						href={"/videos"}
-						className="btn btn-ghost btn-accent rounded-xl text-xl"
+						className="btn btn-ghost btn-accent rounded-xl text-xl text-accent-content"
 					>
 						<ArrowLeft strokeWidth={3} /> Back to All Videos
 					</Link>
