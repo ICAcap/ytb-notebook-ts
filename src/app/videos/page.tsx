@@ -11,6 +11,7 @@ import {
 } from "../../../lib/dbTableAction/videoTableAction";
 import { Suspense } from "react";
 import { X } from "lucide-react";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
 	title: "Videos",
@@ -41,6 +42,7 @@ export default async function VideoPage({
 
 	return (
 		<div className="flex min-h-screen">
+			<Toaster />
 			<Sidebar currentPath="/videos" />
 
 			<main className="flex-1 p-6">

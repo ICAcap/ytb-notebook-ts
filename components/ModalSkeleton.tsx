@@ -21,10 +21,19 @@ const Modal = ({ isOpen, onClose, children }: Props) => {
 	}, [isOpen]);
 
 	return (
-		<dialog ref={dialogRef} onCancel={onClose} className="modal cursor-default backdrop:bg-transparent">
+		<dialog
+			ref={dialogRef}
+			onCancel={(e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				onClose();
+			}}
+			className="modal cursor-default backdrop:bg-transparent"
+		>
 			<div className="relative modal-box">
 				<button
 					onClick={onClose}
+					type="button"
 					className="btn btn-sm btn-circle btn-ghost btn-error absolute top-2 right-2 cursor-pointer"
 				>
 					<X size={20} />
