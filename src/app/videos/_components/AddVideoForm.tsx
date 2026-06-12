@@ -140,7 +140,7 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 						onClick={() => {
 							setShowStage2(false);
 						}}
-						className="btn btn-sm btn-outline btn-error gap-2 w-full"
+						className="btn btn-accent gap-2 w-full"
 					>
 						<ArrowLeftCircle size={25} strokeWidth={2} />
 						Go Back To URL Input
@@ -325,7 +325,7 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 								onClick={() => {
 									setShowStage2(false);
 								}}
-								className="btn btn-sm btn-outline btn-error gap-2 w-full"
+								className="btn btn-accent gap-2 w-full"
 							>
 								<ArrowLeftCircle size={25} strokeWidth={2} />
 								Go Back To URL Input
