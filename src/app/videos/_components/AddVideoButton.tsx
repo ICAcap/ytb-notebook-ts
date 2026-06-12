@@ -51,7 +51,7 @@ export default function AddVideoButton({ userId }: { userId: string }) {
 						fetchedTitle.current = "";
 					}}
 				>
-					<AddVideoForm userId={userId} />
+					{openModal && <AddVideoForm userId={userId} />}
 				</Modal>
 			</div>
 		</AddVideoButtonContext.Provider>

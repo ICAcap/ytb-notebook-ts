@@ -31,7 +31,9 @@ export default function AddCollectionButton() {
 			</button>
 
 			<Modal isOpen={addModalOpen} onClose={() => setAddModalOpen(false)}>
-				<CollectionForm setAddModalOpen={setAddModalOpen} userId={userId} />
+				{addModalOpen && (
+					<CollectionForm setAddModalOpen={setAddModalOpen} userId={userId} />
+				)}
 			</Modal>
 		</div>
 	);

@@ -32,24 +32,13 @@ export default memo(function VideoCard({
 		setIsDeleting(true);
 		try {
 			await deleteVideo(videoId);
-			toast.custom(
-				<div role="alert" className="alert alert-success mt-4 transition-all">
-					<span>Video "{title}" deleted successfully!</span>
-				</div>,
-				{
-					id: "video-deletion-success",
-				},
-			);
+			toast.success(`Video "${title}" deleted successfully!`, {
+				id: "video-deletion-success",
+			});
 		} catch (error) {
-			toast.custom(
-				<div role="alert" className="alert alert-warning mt-4">
-					<AlertCircle size={16} />
-					<span>Failed to delete video "{title}". Please try again.</span>
-				</div>,
-				{
-					id: "video-deletion-failed",
-				},
-			);
+			toast.error(`Failed to delete video "${title}". Please try again.`, {
+				id: "video-deletion-failed",
+			});
 		} finally {
 			router.refresh();
 			setTrashModalOpen(false);
@@ -137,9 +126,15 @@ export default memo(function VideoCard({
 					<div className="flex items-center gap-3">
 						<AlertCircle size={40} className="text-error shrink-0" />
 						<span className="text-lg font-semibold">
-							Warning, Deleting Video Will Also Delete All Related Notes!{" "}
+							Confirm Video Removal
 						</span>
 					</div>
+					<div className="text-xl font-bold text-error break-word">
+						{title}
+					</div>
+					<p className="text-sm text-base-content/70">
+						Warning: Deleting this video will also delete all related notes.
+					</p>
 					<div className="flex gap-3 justify-between">
 						<button
 							onClick={() => setTrashModalOpen(false)}
