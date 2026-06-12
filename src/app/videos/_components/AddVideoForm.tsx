@@ -3,7 +3,7 @@
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { getYoutubeId, YOUTUBE_URL_REGEX } from "../../../../utils/youtube";
 import { fetchYouTubeTitle } from "../../../../utils/youtubeFetchTitleServerSide";
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
 import { AddVideoButtonContext } from "./AddVideoButton";
 import Select from "react-select";
 import { Toaster, toast } from "react-hot-toast";
@@ -40,6 +40,8 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 		fetchedTitle,
 		collectionOptions,
 	} = useContext(AddVideoButtonContext) as any;
+
+	const [isNavigating, setIsNavigating] = useState(false); // to block double clicking save button while router is pushing
 
 	useEffect(() => {
 		getUserCollectionNameIDs(userId).then((options) => {
@@ -101,6 +103,7 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 		if (added) {
 			// Invalidate router cache so when user hits browser back button to go back to last page,
 			// they see the newly added video at the bottom of the current page instead of stale cache
+			setIsNavigating(true);
 			router.refresh();
 			router.push(`/videos/${added.videoId}`);
 		} else {
@@ -307,9 +310,9 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 							<button
 								className="btn btn-primary w-full gap-2"
 								type="submit"
-								disabled={isSubmitting}
+								disabled={isSubmitting || isNavigating}
 							>
-								{isSubmitting ? (
+								{isSubmitting || isNavigating ? (
 									<span className="loading loading-spinner loading-sm"></span>
 								) : (
 									<Save size={20} />
