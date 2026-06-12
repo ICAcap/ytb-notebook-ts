@@ -223,4 +223,25 @@ export const updateVideoPlayedTime = async function (
 	}
 };
 
-// --------- DELETE ------------------------------------------------------------------
+// --------- DELETE DANGEROUS ------------------------------------------------------------------
+/**
+ * Dangerous operation, delete a video
+ * Warning: this will delete all notes related to video
+ * @param videoId cuid for the video
+ */
+export const deleteVideo = async function (
+	videoId: string,
+): Promise<Video | null> {
+	try {
+		const deletedVideo = await prisma.video.delete({
+			where: {
+				videoId: videoId,
+			},
+		});
+
+		return deletedVideo;
+	} catch (error) {
+		console.error("Video Deletion failed, fallback to return null");
+		return null;
+	}
+};
