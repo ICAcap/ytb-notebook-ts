@@ -10,7 +10,7 @@ interface VideoPlayerProps {
 	lastPlayedTime?: number;
 }
 
-const _ = require("lodash"); // for debounce purpose
+const _ = require("lodash"); // for debounce & throttle purpose
 
 // Component
 const VideoPlayer = ({
