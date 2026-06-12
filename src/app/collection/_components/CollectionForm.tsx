@@ -38,7 +38,9 @@ export default function CollectionForm({
 		reset,
 		clearErrors,
 		formState: { errors, isSubmitting },
-	} = useForm<UpsertCollection>();
+	} = useForm<UpsertCollection>({
+		defaultValues: { collectionTitle: existingTitle ?? "" },
+	});
 
 	const onSubmitToBackend: SubmitHandler<UpsertCollection> = async (data) => {
 		clearErrors("root");
@@ -51,13 +53,9 @@ export default function CollectionForm({
 				type: "duplicate",
 				message: `"${name}" already exists. Choose a different name.`,
 			});
-			toast.custom(
-				<div role="alert" className="alert alert-warning mt-4">
-					<AlertCircle size={16} />
-					<span>{`"${name}" already exists. Choose a different name.`}</span>
-				</div>,
-				{ id: "collection-form-toast" },
-			);
+			toast.error(`"${name}" already exists. Choose a different name.`, {
+				id: "collection-form-toast",
+			});
 			return; // Stop submission
 		}
 
@@ -71,12 +69,9 @@ export default function CollectionForm({
 			//success
 			if (addCollection) {
 				reset(); // Clear the form input after successful submission.
-				toast.custom(
-					<div role="alert" className="alert alert-success mt-4">
-						<span>Collection created successfully!</span>
-					</div>,
-					{ id: "collection-form-toast" },
-				);
+				toast.success("Collection created successfully!", {
+					id: "collection-form-toast",
+				});
 				router.refresh();
 				setAddModalOpen && setAddModalOpen(false);
 			}
@@ -86,13 +81,9 @@ export default function CollectionForm({
 					type: "serverError",
 					message: "Failed to create collection. Please try again.",
 				});
-				toast.custom(
-					<div role="alert" className="alert alert-error mt-4">
-						<AlertCircle size={16} />
-						<span>Failed to create collection. Please try again.</span>
-					</div>,
-					{ id: "collection-form-toast" },
-				);
+				toast.error("Failed to create collection. Please try again.", {
+					id: "collection-form-toast",
+				});
 			}
 		}
 
@@ -104,12 +95,9 @@ export default function CollectionForm({
 			});
 
 			if (updateCollectionResult) {
-				toast.custom(
-					<div role="alert" className="alert alert-success mt-4">
-						<span>Collection updated successfully!</span>
-					</div>,
-					{ id: "collection-form-toast" },
-				);
+				toast.success("Collection updated successfully!", {
+					id: "collection-form-toast",
+				});
 				router.refresh();
 				setPencilModalOpen && setPencilModalOpen(false);
 			} else {
@@ -117,13 +105,9 @@ export default function CollectionForm({
 					type: "serverError",
 					message: "Failed to update collection. Please try again.",
 				});
-				toast.custom(
-					<div role="alert" className="alert alert-error mt-4">
-						<AlertCircle size={16} />
-						<span>Failed to update collection. Please try again.</span>
-					</div>,
-					{ id: "collection-form-toast" },
-				);
+				toast.error("Failed to update collection. Please try again.", {
+					id: "collection-form-toast",
+				});
 			}
 		}
 	};

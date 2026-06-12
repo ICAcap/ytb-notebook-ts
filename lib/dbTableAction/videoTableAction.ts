@@ -29,6 +29,10 @@ export const getVideoById = cache(async function (
 	userId: string,
 	id: string,
 ): Promise<VideoDetailPageProp | null> {
+	if (!userId || !id) {
+		console.error("Error fetching video by ID, user ID or video ID is undefined");
+		return null;
+	}
 	const video = await prisma.video.findFirst({
 		where: { userId, videoId: id },
 		include: { collections: true },
@@ -63,6 +67,10 @@ export const getVideoCardsWithSearchParam = cache(async function (
 	pageSize: number,
 	q: string,
 ): Promise<VideoCardType[]> {
+	if (!userId) {
+		console.error("Error fetching video cards, user ID is undefined");
+		return [];
+	}
 	// Calculate how many items to skip
 	// Page 1: (1-1) * pageSize = 0
 	// Page 2: (2-1) * pageSize = pageSize
@@ -99,6 +107,10 @@ export const getVideoNumWithSearchParam = cache(async function (
 	userId: string,
 	q: string,
 ): Promise<number> {
+	if (!userId) {
+		console.error("Error fetching video count, user ID is undefined");
+		return 0;
+	}
 	const where = {
 		userId,
 		...(q ? { title: { contains: q, mode: "insensitive" as const } } : {}),
@@ -127,6 +139,12 @@ export const getExistingVideo = cache(async function (
 	userId: string,
 	youtubeVideoId: string,
 ): Promise<VideoCardType | null> {
+	if (!userId || !youtubeVideoId) {
+		console.error(
+			"Error fetching existing video, user ID or YouTube video ID is undefined",
+		);
+		return null;
+	}
 	try {
 		const v = await prisma.video.findUnique({
 			where: {
@@ -167,6 +185,12 @@ export const upsertYouTubeVideo = async function (
 	title: string,
 	collectionsID: string[],
 ): Promise<VideoCardType | null> {
+	if (!userId || !youtubeVideoId || !title) {
+		console.error(
+			"Error upserting video, user ID, YouTube video ID, or title is undefined, fallback to null.",
+		);
+		return null;
+	}
 	try {
 		// Use upsert because of the @@unique([userId, youtubeVidID]) constraint
 		const video = await prisma.video.upsert({
@@ -213,6 +237,10 @@ export const updateVideoPlayedTime = async function (
 	videoId: string,
 	playedTime: number,
 ) {
+	if (!videoId) {
+		console.error("Error updating video played time, video ID is undefined");
+		return;
+	}
 	try {
 		await prisma.video.update({
 			where: { videoId: videoId },
@@ -232,6 +260,10 @@ export const updateVideoPlayedTime = async function (
 export const deleteVideo = async function (
 	videoId: string,
 ): Promise<Video | null> {
+	if (!videoId) {
+		console.error("Error deleting video, video ID is undefined");
+		return null;
+	}
 	try {
 		const deletedVideo = await prisma.video.delete({
 			where: {

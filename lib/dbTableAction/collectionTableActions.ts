@@ -27,6 +27,10 @@ export type CollectionUpdateType = Pick<
 export const getUserCollectionNameIDs = cache(async function (
 	userId: string,
 ): Promise<{ label: string; value: string }[]> {
+	if (!userId) {
+		console.error("Error Fetching Collection by user, user id is undefined");
+		return [];
+	}
 	try {
 		const collections = await prisma.collection.findMany({
 			where: { userId },
@@ -55,6 +59,13 @@ export const getUserCollectionByName = cache(async function (
 	userId: string,
 	collectionName: string,
 ): Promise<Collection | null> {
+	if (!userId || !collectionName) {
+		console.error(
+			"Error Fetching Collection by Name, user id or collection name is undefined",
+		);
+		return null;
+	}
+
 	// composite identifier
 	try {
 		return await prisma.collection.findUnique({
@@ -72,6 +83,12 @@ export const getUserCollectionByName = cache(async function (
 export async function createCollection(
 	collectionToCreate: CollectionCreationType,
 ): Promise<Collection | null> {
+	if (!collectionToCreate.collectionName || !collectionToCreate.userId) {
+		console.error(
+			"Error creating collection, user id or collection name is undefined, fallback to null.",
+		);
+		return null;
+	}
 	try {
 		const creation = await prisma.collection.create({
 			data: {
@@ -99,6 +116,12 @@ export async function createCollection(
 export async function updateCollection(
 	collectionToUpdate: CollectionUpdateType,
 ): Promise<Collection | null> {
+	if (!collectionToUpdate.collectionId || !collectionToUpdate.collectionName) {
+		console.error(
+			"Error updating collection, collection id or name is undefined, fallback to null.",
+		);
+		return null;
+	}
 	try {
 		const update = await prisma.collection.update({
 			where: {
@@ -119,6 +142,10 @@ export async function updateCollection(
 export async function deleteCollectionById(
 	collectionId: string,
 ): Promise<Collection | null> {
+	if (!collectionId) {
+		console.error("Error deleting collection, collection ID undefined");
+		return null;
+	}
 	try {
 		const deletion = await prisma.collection.delete({
 			where: {

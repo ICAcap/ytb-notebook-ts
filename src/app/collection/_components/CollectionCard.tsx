@@ -27,25 +27,14 @@ export default function CollectionCard({ id, name }: CollectionCardProps) {
 		try {
 			await deleteCollectionById(id);
 			setTrashModalOpen(false);
-			toast.custom(
-				<div role="alert" className="alert alert-success mt-4">
-					<span>Collection "{name}" deleted successfully!</span>
-				</div>,
-				{
-					id: "collection-deletion-success",
-				},
-			);
+			toast.success(`Collection "${name}" deleted successfully!`, {
+				id: "collection-deletion-success",
+			});
 			router.refresh();
 		} catch (error) {
-			toast.custom(
-				<div role="alert" className="alert alert-warning mt-4">
-					<AlertCircle size={16} />
-					<span>Failed to delete collection "{name}". Please try again.</span>
-				</div>,
-				{
-					id: "collection-deletion-failed",
-				},
-			);
+			toast.error(`Failed to delete collection "${name}". Please try again.`, {
+				id: "collection-deletion-failed",
+			});
 			setIsDeleting(false);
 		}
 	};
@@ -75,12 +64,14 @@ export default function CollectionCard({ id, name }: CollectionCardProps) {
 
 			{/* Editing Collection Modal */}
 			<Modal isOpen={pencilModalOpen} onClose={() => setPencilModalOpen(false)}>
-				<CollectionForm
-					userId={userId}
-					collectionID={id}
-					existingTitle={name}
-					setPencilModalOpen={setPencilModalOpen}
-				/>
+				{pencilModalOpen && (
+					<CollectionForm
+						userId={userId}
+						collectionID={id}
+						existingTitle={name}
+						setPencilModalOpen={setPencilModalOpen}
+					/>
+				)}
 			</Modal>
 
 			{/* Delete Collection Modal */}
@@ -89,8 +80,11 @@ export default function CollectionCard({ id, name }: CollectionCardProps) {
 					<div className="flex items-center gap-3">
 						<AlertCircle size={40} className="text-error shrink-0" />
 						<span className="text-lg font-semibold">
-							Please Confirm Collection Removal
+							Confirm Collection Removal
 						</span>
+					</div>
+					<div className="text-xl font-bold text-error break-word">
+						{name}
 					</div>
 					<p className="text-sm text-base-content/70">
 						Videos in this collection won't be removed, only the collection

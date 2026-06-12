@@ -104,14 +104,9 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 			router.refresh();
 			router.push(`/videos/${added.videoId}`);
 		} else {
-			toast.custom(
-				<div role="alert" className="alert alert-warning mt-4">
-					<span>Video Addition Failed, Please Try Again</span>
-				</div>,
-				{
-					id: "video-addition-failed",
-				},
-			);
+			toast.error("Video Addition Failed, Please Try Again", {
+				id: "video-addition-failed",
+			});
 		}
 	};
 
