@@ -1,12 +1,18 @@
+"use client";
+
 import { getThumbnailUrl } from "../../../../utils/youtube";
 import { formatTimeStamp } from "../../../../utils/formatTimeStamp";
-import { memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Trash2, Pencil } from "lucide-react";
-import { Suspense } from "react";
-import { VideoCardType } from "../../../../lib/dbTableAction/videoTableAction";
+import { Trash2, Pencil, AlertCircle } from "lucide-react";
+import {
+	deleteVideo,
+	VideoCardType,
+} from "../../../../lib/dbTableAction/videoTableAction";
 import Modal from "../../../../components/ModalSkeleton";
+import { useState, memo, Suspense } from "react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default memo(function VideoCard({
 	videoId,
@@ -16,6 +22,40 @@ export default memo(function VideoCard({
 	createdAt,
 }: VideoCardType) {
 	const thumbnailUrl = youtubeVidID ? getThumbnailUrl(youtubeVidID) : null;
+	const [trashModalOpen, setTrashModalOpen] = useState(false);
+	const [pencilModalOpen, setPencilModalOpen] = useState(false);
+
+	const router = useRouter();
+	const [isDeleting, setIsDeleting] = useState(false);
+
+	const handleDelete = async () => {
+		setIsDeleting(true);
+		try {
+			await deleteVideo(videoId);
+			toast.custom(
+				<div role="alert" className="alert alert-success mt-4 transition-all">
+					<span>Video "{title}" deleted successfully!</span>
+				</div>,
+				{
+					id: "video-deletion-success",
+				},
+			);
+		} catch (error) {
+			toast.custom(
+				<div role="alert" className="alert alert-warning mt-4">
+					<AlertCircle size={16} />
+					<span>Failed to delete video "{title}". Please try again.</span>
+				</div>,
+				{
+					id: "video-deletion-failed",
+				},
+			);
+		} finally {
+			router.refresh();
+			setTrashModalOpen(false);
+			setIsDeleting(false);
+		}
+	};
 
 	return (
 		<>
@@ -71,10 +111,20 @@ export default memo(function VideoCard({
 
 			{/* Actions */}
 			<div className="flex gap-2">
-				<button title="Delete Video" className="btn btn-ghost btn-sm">
+				<button
+					title="Delete Video"
+					type="button"
+					onClick={() => setTrashModalOpen(true)}
+					className="btn btn-ghost btn-sm"
+				>
 					<Trash2 className="w-5 h-5 text-error" />
 				</button>
-				<button title="Edit Video" className="btn btn-ghost btn-sm">
+				<button
+					title="Edit Video"
+					type="button"
+					onClick={() => setPencilModalOpen(true)}
+					className="btn btn-ghost btn-sm"
+				>
 					<Pencil className="w-5 h-5 text-info" />
 				</button>
 			</div>
@@ -82,16 +132,45 @@ export default memo(function VideoCard({
 			{/* Modals */}
 
 			{/* Video DELETE modal */}
-			{
-				<Modal
-					isOpen={false}
-					onClose={function (): void {
-						throw new Error("Function not implemented.");
-					}}
-				>
-					placeholder
-				</Modal>
-			}
+			<Modal isOpen={trashModalOpen} onClose={() => setTrashModalOpen(false)}>
+				<div role="dialog" className="flex flex-col gap-6">
+					<div className="flex items-center gap-3">
+						<AlertCircle size={40} className="text-error shrink-0" />
+						<span className="text-lg font-semibold">
+							Warning, Deleting Video Will Also Delete All Related Notes!{" "}
+						</span>
+					</div>
+					<div className="flex gap-3 justify-between">
+						<button
+							onClick={() => setTrashModalOpen(false)}
+							type="button"
+							className="btn btn-outline flex-1"
+						>
+							Cancel
+						</button>
+						<button
+							className="btn btn-error flex-1"
+							onClick={handleDelete}
+							type="button"
+							disabled={isDeleting}
+						>
+							{isDeleting ? (
+								<>
+									<span className="loading loading-spinner loading-sm"></span>
+									Removing...
+								</>
+							) : (
+								"Remove"
+							)}
+						</button>
+					</div>
+				</div>
+			</Modal>
+			{/* EDITING Modal */}
+
+			<Modal isOpen={pencilModalOpen} onClose={() => setPencilModalOpen(false)}>
+				Pencil Modal Placeholder
+			</Modal>
 		</>
 	);
 });
