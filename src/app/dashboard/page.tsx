@@ -93,7 +93,7 @@ export default async function DashboardPage() {
 								className="card bg-base-100 border border-base-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
 							>
 								<div className="card-body items-center text-center">
-									<FolderOpen className="w-12 h-12 text-accent" />
+									<FolderOpen className="w-12 h-12 text-primary" />
 									<h2 className="card-title text-lg">My Collections</h2>
 									<p className="text-base-content/60 text-sm">
 										{collections.length} collections
