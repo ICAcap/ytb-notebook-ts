@@ -82,7 +82,7 @@ export default async function VideoPage({
 						<ul className="list bg-base-100 rounded-box shadow-md">
 							{videoCards.map((video) => (
 								<li key={video.videoId} className="list-row">
-									<VideoCard {...video} />
+									<VideoCard {...video} userId={userId} />
 								</li>
 							))}
 						</ul>

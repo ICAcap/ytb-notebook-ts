@@ -141,16 +141,15 @@ export async function updateCollection(
 // --------- DELETE ------------------------------------------------------------------
 export async function deleteCollectionById(
 	collectionId: string,
+	userId: string,
 ): Promise<Collection | null> {
-	if (!collectionId) {
-		console.error("Error deleting collection, collection ID undefined");
+	if (!collectionId || !userId) {
+		console.error("Error deleting collection, collection ID or user ID undefined");
 		return null;
 	}
 	try {
 		const deletion = await prisma.collection.delete({
-			where: {
-				collectionId,
-			},
+			where: { collectionId, userId },
 		});
 		revalidatePath("/collection");
 		return deletion;
