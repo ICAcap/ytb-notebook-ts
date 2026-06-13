@@ -6,6 +6,7 @@ import { updateVideoPlayedTime } from "../../../../../lib/dbTableAction/videoTab
 
 interface VideoPlayerProps {
 	videoId: string;
+	userId: string;
 	url: string;
 	lastPlayedTime?: number;
 }
@@ -15,6 +16,7 @@ const _ = require("lodash"); // for debounce & throttle purpose
 // Component
 const VideoPlayer = ({
 	videoId,
+	userId,
 	url,
 	lastPlayedTime = 0,
 }: VideoPlayerProps) => {
@@ -24,7 +26,7 @@ const VideoPlayer = ({
 	// heartbeat saves position every 15s while playing
 	const heartbeat = useRef(
 		_.throttle(async (seconds: number) => {
-			await updateVideoPlayedTime(videoId, seconds);
+			await updateVideoPlayedTime(videoId, userId, seconds);
 		}, 30000),
 	).current;
 
@@ -39,7 +41,7 @@ const VideoPlayer = ({
 				),
 			);
 			// console.log(`${currentTimeSeconds}`);
-			await updateVideoPlayedTime(videoId, currentTimeSeconds);
+			await updateVideoPlayedTime(videoId, userId, currentTimeSeconds);
 		}
 	}
 

@@ -25,7 +25,7 @@ export default function CollectionCard({ id, name }: CollectionCardProps) {
 	const handleDelete = async () => {
 		setIsDeleting(true);
 		try {
-			await deleteCollectionById(id);
+			await deleteCollectionById(id, userId);
 			setTrashModalOpen(false);
 			toast.success(`Collection "${name}" deleted successfully!`, {
 				id: "collection-deletion-success",

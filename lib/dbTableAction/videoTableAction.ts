@@ -2,6 +2,7 @@
 
 import { prisma } from "../prisma";
 import { cache } from "react";
+import { revalidatePath } from "next/cache";
 import { Video } from "../../generated/prisma";
 
 // export types
@@ -30,7 +31,9 @@ export const getVideoById = cache(async function (
 	id: string,
 ): Promise<VideoDetailPageProp | null> {
 	if (!userId || !id) {
-		console.error("Error fetching video by ID, user ID or video ID is undefined");
+		console.error(
+			"Error fetching video by ID, user ID or video ID is undefined",
+		);
 		return null;
 	}
 	const video = await prisma.video.findFirst({
@@ -219,6 +222,7 @@ export const upsertYouTubeVideo = async function (
 			},
 		});
 
+		revalidatePath("/videos");
 		return video as VideoCardType;
 	} catch (error) {
 		console.error("Error Upserting Video to User Profile");
@@ -235,15 +239,16 @@ export const upsertYouTubeVideo = async function (
  */
 export const updateVideoPlayedTime = async function (
 	videoId: string,
+	userId: string,
 	playedTime: number,
 ) {
-	if (!videoId) {
-		console.error("Error updating video played time, video ID is undefined");
+	if (!videoId || !userId) {
+		console.error("Error updating video played time, video ID or user ID is undefined");
 		return;
 	}
 	try {
 		await prisma.video.update({
-			where: { videoId: videoId },
+			where: { videoId, userId },
 			data: { lastPlayedTime: playedTime },
 		});
 	} catch (error) {
@@ -259,18 +264,18 @@ export const updateVideoPlayedTime = async function (
  */
 export const deleteVideo = async function (
 	videoId: string,
+	userId: string,
 ): Promise<Video | null> {
-	if (!videoId) {
-		console.error("Error deleting video, video ID is undefined");
+	if (!videoId || !userId) {
+		console.error("Error deleting video, video ID or user ID is undefined");
 		return null;
 	}
 	try {
 		const deletedVideo = await prisma.video.delete({
-			where: {
-				videoId: videoId,
-			},
+			where: { videoId, userId },
 		});
 
+		revalidatePath("/videos");
 		return deletedVideo;
 	} catch (error) {
 		console.error("Video Deletion failed, fallback to return null");

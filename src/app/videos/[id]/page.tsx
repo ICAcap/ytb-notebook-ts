@@ -72,13 +72,14 @@ export default async function VidViewPage({
 								))
 							) : (
 								<p className="text-base-content/50">
-									No collections available.
+									Not Part of Any Collections.
 								</p>
 							)}
 						</div>
 					</div>
 					<VideoPlayer
 						videoId={video.videoId}
+						userId={userId}
 						url={`https://www.youtube.com/watch?v=${video.youtubeVidID}`}
 						lastPlayedTime={video.lastPlayedTime}
 					/>

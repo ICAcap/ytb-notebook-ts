@@ -20,7 +20,8 @@ export default memo(function VideoCard({
 	title,
 	lastPlayedTime,
 	createdAt,
-}: VideoCardType) {
+	userId,
+}: VideoCardType & { userId: string }) {
 	const thumbnailUrl = youtubeVidID ? getThumbnailUrl(youtubeVidID) : null;
 	const [trashModalOpen, setTrashModalOpen] = useState(false);
 	const [pencilModalOpen, setPencilModalOpen] = useState(false);
@@ -31,7 +32,7 @@ export default memo(function VideoCard({
 	const handleDelete = async () => {
 		setIsDeleting(true);
 		try {
-			await deleteVideo(videoId);
+			await deleteVideo(videoId, userId);
 			toast.success(`Video "${title}" deleted successfully!`, {
 				id: "video-deletion-success",
 			});
