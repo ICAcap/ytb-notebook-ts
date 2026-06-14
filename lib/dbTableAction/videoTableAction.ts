@@ -7,15 +7,10 @@ import { Video } from "../../generated/prisma";
 import { CollectionOptions } from "./collectionTableActions";
 
 // export types
-export type VideoCardType = Pick<
+export type VideoDetailType = Pick<
 	Video,
 	"youtubeVidID" | "title" | "lastPlayedTime" | "videoId" | "createdAt"
 > & { collections: CollectionOptions };
-
-export type VideoDetailPageProp = Pick<
-	Video,
-	"videoId" | "youtubeVidID" | "title" | "lastPlayedTime"
-> & { collections: string[] };
 
 // --------- GET ------------------------------------------------------------------
 
@@ -30,7 +25,7 @@ export type VideoDetailPageProp = Pick<
 export const getVideoById = cache(async function (
 	userId: string,
 	id: string,
-): Promise<VideoDetailPageProp | null> {
+): Promise<VideoDetailType | null> {
 	if (!userId || !id) {
 		console.error(
 			"Error fetching video by ID, user ID or video ID is undefined",
@@ -48,7 +43,11 @@ export const getVideoById = cache(async function (
 			title: video.title,
 			youtubeVidID: video.youtubeVidID,
 			lastPlayedTime: video.lastPlayedTime,
-			collections: video.collections.map((c) => c.collectionName) || [],
+			createdAt: video.createdAt,
+			collections: video.collections.map((c) => ({
+				label: c.collectionName,
+				value: c.collectionId,
+			})) || [],
 		};
 	}
 
@@ -63,14 +62,14 @@ export const getVideoById = cache(async function (
  * @param page - The page number to retrieve (1-indexed).
  * @param pageSize - The maximum number of videos to return per page.
  * @param q - The search string used to filter video titles.
- * @returns A promise resolving to an array of video data matching the VideoCardType.
+ * @returns A promise resolving to an array of video data matching the VideoDetailType.
  */
 export const getVideoCardsWithSearchParam = cache(async function (
 	userId: string,
 	page: number,
 	pageSize: number,
 	q: string,
-): Promise<VideoCardType[]> {
+): Promise<VideoDetailType[]> {
 	if (!userId) {
 		console.error("Error fetching video cards, user ID is undefined");
 		return [];
@@ -109,10 +108,10 @@ export const getVideoCardsWithSearchParam = cache(async function (
 				label: c.collectionName,
 				value: c.collectionId,
 			})),
-		})) as VideoCardType[];
+		})) as VideoDetailType[];
 	} catch (error) {
 		console.error("Error fetching video card data with searchParam:", error);
-		return [] as VideoCardType[];
+		return [] as VideoDetailType[];
 	}
 });
 
@@ -159,7 +158,7 @@ export const getVideoNumWithSearchParam = cache(async function (
 export const getExistingVideo = cache(async function (
 	userId: string,
 	youtubeVideoId: string,
-): Promise<VideoCardType | null> {
+): Promise<VideoDetailType | null> {
 	if (!userId || !youtubeVideoId) {
 		console.error(
 			"Error fetching existing video, user ID or YouTube video ID is undefined",
@@ -181,7 +180,7 @@ export const getExistingVideo = cache(async function (
 		});
 
 		if (!v) return null;
-		return { ...v, collections: [] } as VideoCardType;
+		return { ...v, collections: [] } as VideoDetailType;
 	} catch (error) {
 		console.error("Error lookup user video table, fallback to null");
 		return null;
@@ -206,7 +205,7 @@ export const upsertYouTubeVideo = async function (
 	youtubeVideoId: string,
 	title: string,
 	collectionsID: string[],
-): Promise<VideoCardType | null> {
+): Promise<VideoDetailType | null> {
 	if (!userId || !youtubeVideoId || !title) {
 		console.error(
 			"Error upserting video, user ID, YouTube video ID, or title is undefined, fallback to null.",
@@ -258,7 +257,7 @@ export const upsertYouTubeVideo = async function (
 				label: c.collectionName,
 				value: c.collectionId,
 			})),
-		} as VideoCardType;
+		} as VideoDetailType;
 	} catch (error) {
 		console.error("Error Upserting Video to User Profile");
 		return null;
