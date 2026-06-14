@@ -40,7 +40,10 @@ export default function CollectionCard({ id, name }: CollectionCardProps) {
 	};
 
 	return (
-		<div className="card card-compact hover:bg-base-200 cursor-pointer transition-colors select-none group">
+		<div
+			title={name}
+			className="card card-compact hover:bg-base-200 cursor-pointer transition-colors select-none group"
+		>
 			<div className="card-body items-center text-center gap-3">
 				<Folder className="w-28 h-28 text-warning" />
 				<span className="card-title text-sm font-semibold line-clamp-2 justify-center">
@@ -83,9 +86,7 @@ export default function CollectionCard({ id, name }: CollectionCardProps) {
 							Confirm Collection Removal
 						</span>
 					</div>
-					<div className="text-xl font-bold text-error break-word">
-						{name}
-					</div>
+					<div className="text-xl font-bold text-error break-word">{name}</div>
 					<p className="text-sm text-base-content/70">
 						Videos in this collection won't be removed, only the collection
 						itself.
