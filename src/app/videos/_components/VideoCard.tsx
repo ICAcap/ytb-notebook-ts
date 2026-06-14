@@ -10,6 +10,7 @@ import {
 	VideoCardType,
 } from "../../../../lib/dbTableAction/videoTableAction";
 import Modal from "../../../../components/ModalSkeleton";
+import EditVideoForm from "./EditVideoForm";
 import { useState, memo, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -21,6 +22,7 @@ export default memo(function VideoCard({
 	lastPlayedTime,
 	createdAt,
 	userId,
+	collections,
 }: VideoCardType & { userId: string }) {
 	const thumbnailUrl = youtubeVidID ? getThumbnailUrl(youtubeVidID) : null;
 	const [trashModalOpen, setTrashModalOpen] = useState(false);
@@ -97,6 +99,14 @@ export default memo(function VideoCard({
 				<div className="text-xs text-base-content/50 mt-0.5">
 					Added: {createdAt.toLocaleDateString()}
 				</div>
+				{/* collection badges */}
+				<div className="flex flex-wrap gap-1 mt-1">
+					{collections.map((collection, index) => (
+						<span key={index} className="badge badge-accent badge-sm">
+							{collection.label}
+						</span>
+					))}
+				</div>
 			</div>
 
 			{/* Actions */}
@@ -126,13 +136,9 @@ export default memo(function VideoCard({
 				<div role="dialog" className="flex flex-col gap-6">
 					<div className="flex items-center gap-3">
 						<AlertCircle size={40} className="text-error shrink-0" />
-						<span className="text-lg font-semibold">
-							Confirm Video Removal
-						</span>
+						<span className="text-lg font-semibold">Confirm Video Removal</span>
 					</div>
-					<div className="text-xl font-bold text-error break-word">
-						{title}
-					</div>
+					<div className="text-xl font-bold text-error break-word">{title}</div>
 					<p className="text-sm text-base-content/70">
 						Warning: Deleting this video will also delete all related notes.
 					</p>
@@ -162,10 +168,19 @@ export default memo(function VideoCard({
 					</div>
 				</div>
 			</Modal>
-			{/* EDITING Modal */}
 
+			{/* EDITING Modal */}
 			<Modal isOpen={pencilModalOpen} onClose={() => setPencilModalOpen(false)}>
-				Pencil Modal Placeholder
+				{pencilModalOpen && (
+					<EditVideoForm
+						modalOpen={pencilModalOpen}
+						setModalOpen={() => setPencilModalOpen(true)}
+						userId={userId}
+						youtubeVideoId={youtubeVidID}
+						oldTitle={title}
+						oldCollections={collections}
+					/>
+				)}
 			</Modal>
 		</>
 	);

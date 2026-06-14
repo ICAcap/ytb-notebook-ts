@@ -4,12 +4,13 @@ import { prisma } from "../prisma";
 import { cache } from "react";
 import { revalidatePath } from "next/cache";
 import { Video } from "../../generated/prisma";
+import { CollectionOptions } from "./collectionTableActions";
 
 // export types
 export type VideoCardType = Pick<
 	Video,
 	"youtubeVidID" | "title" | "lastPlayedTime" | "videoId" | "createdAt"
->;
+> & { collections: CollectionOptions };
 
 export type VideoDetailPageProp = Pick<
 	Video,
@@ -90,8 +91,25 @@ export const getVideoCardsWithSearchParam = cache(async function (
 			where: where,
 			take: pageSize,
 			skip: skipItemNum,
+			select: {
+				youtubeVidID: true,
+				title: true,
+				lastPlayedTime: true,
+				videoId: true,
+				createdAt: true,
+				collections: {
+					select: { collectionId: true, collectionName: true },
+				},
+			},
 		});
-		return videos as VideoCardType[];
+
+		return videos.map((v) => ({
+			...v,
+			collections: v.collections.map((c) => ({
+				label: c.collectionName,
+				value: c.collectionId,
+			})),
+		})) as VideoCardType[];
 	} catch (error) {
 		console.error("Error fetching video card data with searchParam:", error);
 		return [] as VideoCardType[];
@@ -162,7 +180,8 @@ export const getExistingVideo = cache(async function (
 			},
 		});
 
-		return v as VideoCardType | null;
+		if (!v) return null;
+		return { ...v, collections: [] } as VideoCardType;
 	} catch (error) {
 		console.error("Error lookup user video table, fallback to null");
 		return null;
@@ -220,10 +239,26 @@ export const upsertYouTubeVideo = async function (
 					connect: collectionsID.map((id) => ({ collectionId: id })),
 				},
 			},
+			select: {
+				youtubeVidID: true,
+				title: true,
+				lastPlayedTime: true,
+				videoId: true,
+				createdAt: true,
+				collections: {
+					select: { collectionId: true, collectionName: true },
+				},
+			},
 		});
 
 		revalidatePath("/videos");
-		return video as VideoCardType;
+		return {
+			...video,
+			collections: video.collections.map((c) => ({
+				label: c.collectionName,
+				value: c.collectionId,
+			})),
+		} as VideoCardType;
 	} catch (error) {
 		console.error("Error Upserting Video to User Profile");
 		return null;
@@ -243,7 +278,9 @@ export const updateVideoPlayedTime = async function (
 	playedTime: number,
 ) {
 	if (!videoId || !userId) {
-		console.error("Error updating video played time, video ID or user ID is undefined");
+		console.error(
+			"Error updating video played time, video ID or user ID is undefined",
+		);
 		return;
 	}
 	try {

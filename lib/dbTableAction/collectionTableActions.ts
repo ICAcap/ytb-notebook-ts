@@ -17,6 +17,8 @@ export type CollectionUpdateType = Pick<
 	"collectionId" | "collectionName"
 >;
 
+export type CollectionOptions = { label: string; value: string }[];
+
 // --------- GET ------------------------------------------------------------------
 /**
  * Retrieves a list of collection names and their corresponding identifiers owned by a specific user.
@@ -144,7 +146,9 @@ export async function deleteCollectionById(
 	userId: string,
 ): Promise<Collection | null> {
 	if (!collectionId || !userId) {
-		console.error("Error deleting collection, collection ID or user ID undefined");
+		console.error(
+			"Error deleting collection, collection ID or user ID undefined",
+		);
 		return null;
 	}
 	try {

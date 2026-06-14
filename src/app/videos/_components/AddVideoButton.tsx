@@ -6,22 +6,23 @@ import Modal from "../../../../components/ModalSkeleton";
 import AddVideoForm from "./AddVideoForm";
 import { useRouter } from "next/navigation";
 import { VideoCardType } from "../../../../lib/dbTableAction/videoTableAction";
+import { CollectionOptions } from "../../../../lib/dbTableAction/collectionTableActions";
 
 export const AddVideoButtonContext = createContext({});
 
 export default function AddVideoButton({ userId }: { userId: string }) {
-	const [openModal, setOpenModal] = useState(false);
+	const [modalOpen, setModalOpen] = useState(false);
 	const router = useRouter();
 	const [showStage2, setShowStage2] = useState(false);
 	const YouTubeIdToAdd = useRef("");
 	const foundExistingVid = useRef<VideoCardType | null>(null);
 	const fetchedTitle = useRef("");
-	const collectionOptions = useRef<{ label: string; value: string }[]>([]);
+	const collectionOptions = useRef<CollectionOptions>([]);
 
 	return (
 		<AddVideoButtonContext.Provider
 			value={{
-				openModal,
+				modalOpen,
 				router,
 				showStage2,
 				setShowStage2,
@@ -33,7 +34,7 @@ export default function AddVideoButton({ userId }: { userId: string }) {
 		>
 			<div>
 				<button
-					onClick={() => setOpenModal(true)}
+					onClick={() => setModalOpen(true)}
 					className="btn btn-primary btn-sm gap-2"
 				>
 					<Plus size={18} />
@@ -41,17 +42,17 @@ export default function AddVideoButton({ userId }: { userId: string }) {
 				</button>
 
 				<Modal
-					isOpen={openModal}
+					isOpen={modalOpen}
 					// clean up context passed
 					onClose={() => {
-						setOpenModal(false);
+						setModalOpen(false);
 						setShowStage2(false);
 						YouTubeIdToAdd.current = "";
 						foundExistingVid.current = null;
 						fetchedTitle.current = "";
 					}}
 				>
-					{openModal && <AddVideoForm userId={userId} />}
+					{modalOpen && <AddVideoForm userId={userId} />}
 				</Modal>
 			</div>
 		</AddVideoButtonContext.Provider>
