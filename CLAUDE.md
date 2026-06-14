@@ -62,7 +62,7 @@ YouTube Notebook: A Next.js 16 application for managing video collections with t
 **Modal System**: `ModalSkeleton` component wraps `<dialog>` element and manages `isOpen`/`onClose` props. Used throughout for modals (add video, add collection).
 
 **AddVideoButton Pattern**: 
-- Manages modal state (`openModal`, `showStage2`) and form data via refs (YouTube ID, existing video check, fetched title, collection options)
+- Manages modal state (`modalOpen`, `showStage2`) and form data via refs (YouTube ID, existing video check, fetched title, collection options)
 - Provides context (`AddVideoButtonContext`) to child `AddVideoForm`
 - Resets state on modal close (cleanup refs)
 
