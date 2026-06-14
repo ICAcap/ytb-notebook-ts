@@ -5,7 +5,7 @@ import { useRef, useState, createContext } from "react";
 import Modal from "../../../../components/ModalSkeleton";
 import AddVideoForm from "./AddVideoForm";
 import { useRouter } from "next/navigation";
-import { VideoCardType } from "../../../../lib/dbTableAction/videoTableAction";
+import { VideoDetailType } from "../../../../lib/dbTableAction/videoTableAction";
 import { CollectionOptions } from "../../../../lib/dbTableAction/collectionTableActions";
 
 export const AddVideoButtonContext = createContext({});
@@ -15,7 +15,7 @@ export default function AddVideoButton({ userId }: { userId: string }) {
 	const router = useRouter();
 	const [showStage2, setShowStage2] = useState(false);
 	const YouTubeIdToAdd = useRef("");
-	const foundExistingVid = useRef<VideoCardType | null>(null);
+	const foundExistingVid = useRef<VideoDetailType | null>(null);
 	const fetchedTitle = useRef("");
 	const collectionOptions = useRef<CollectionOptions>([]);
 

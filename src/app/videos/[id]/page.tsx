@@ -67,7 +67,7 @@ export default async function VidViewPage({
 							{video.collections && video.collections.length > 0 ? (
 								video.collections.map((collection, index) => (
 									<span key={index} className="badge badge-accent">
-										{collection}
+										{collection.label}
 									</span>
 								))
 							) : (

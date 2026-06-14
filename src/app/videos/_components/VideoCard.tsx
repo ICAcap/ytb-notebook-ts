@@ -7,7 +7,7 @@ import Link from "next/link";
 import { Trash2, Pencil, AlertCircle } from "lucide-react";
 import {
 	deleteVideo,
-	VideoCardType,
+	VideoDetailType,
 } from "../../../../lib/dbTableAction/videoTableAction";
 import Modal from "../../../../components/ModalSkeleton";
 import EditVideoForm from "./EditVideoForm";
@@ -23,7 +23,7 @@ export default memo(function VideoCard({
 	createdAt,
 	userId,
 	collections,
-}: VideoCardType & { userId: string }) {
+}: VideoDetailType & { userId: string }) {
 	const thumbnailUrl = youtubeVidID ? getThumbnailUrl(youtubeVidID) : null;
 	const [trashModalOpen, setTrashModalOpen] = useState(false);
 	const [pencilModalOpen, setPencilModalOpen] = useState(false);
