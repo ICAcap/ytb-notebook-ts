@@ -89,6 +89,7 @@ export default memo(function VideoCard({
 			<div className="list-col-grow">
 				<Link
 					href={`/videos/${videoId}`}
+					title={title}
 					className="font-semibold text-base hover:text-primary transition-colors duration-150 line-clamp-2"
 				>
 					{title}
