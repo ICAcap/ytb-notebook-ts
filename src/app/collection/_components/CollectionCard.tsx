@@ -12,9 +12,14 @@ import toast from "react-hot-toast";
 type CollectionCardProps = {
 	id: string;
 	name: string;
+	videoCount: number;
 };
 
-export default function CollectionCard({ id, name }: CollectionCardProps) {
+export default function CollectionCard({
+	id,
+	name,
+	videoCount,
+}: CollectionCardProps) {
 	const [pencilModalOpen, setPencilModalOpen] = useState(false);
 	const [trashModalOpen, setTrashModalOpen] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
@@ -48,8 +53,13 @@ export default function CollectionCard({ id, name }: CollectionCardProps) {
 	return (
 		<div
 			title={name}
-			className="card card-compact hover:bg-base-200 cursor-pointer transition-colors select-none group"
+			className="card card-compact indicator hover:bg-base-200 cursor-pointer transition-colors select-none group"
 		>
+			{videoCount > 0 && (
+				<span className="indicator-item badge badge-primary badge-sm rounded-full">
+					{videoCount}
+				</span>
+			)}
 			<div
 				onClick={onClick}
 				className="card-body items-center text-center gap-3"
