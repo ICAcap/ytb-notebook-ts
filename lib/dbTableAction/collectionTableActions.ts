@@ -28,7 +28,7 @@ export type CollectionOptions = { label: string; value: string }[];
  */
 export const getUserCollectionNameIDs = cache(async function (
 	userId: string,
-): Promise<{ label: string; value: string }[]> {
+): Promise<{ label: string; value: string; videoNum: number }[]> {
 	if (!userId) {
 		console.error("Error Fetching Collection by user, user id is undefined");
 		return [];
@@ -36,12 +36,13 @@ export const getUserCollectionNameIDs = cache(async function (
 	try {
 		const collections = await prisma.collection.findMany({
 			where: { userId },
-			select: { collectionName: true, collectionId: true },
+			select: { collectionName: true, collectionId: true, _count: { select: { videos: true } } },
 			orderBy: { collectionName: "asc" },
 		});
 		return collections.map((c) => ({
 			label: c.collectionName,
 			value: c.collectionId,
+			videoNum: c._count.videos,
 		}));
 	} catch (error) {
 		console.error(

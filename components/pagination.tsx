@@ -1,3 +1,4 @@
+//reference:
 //https://github.com/machadop1407/NextJS-inventory-management-app/blob/main/components/pagination.tsx
 
 import { ChevronLeft, ChevronRight } from "lucide-react";

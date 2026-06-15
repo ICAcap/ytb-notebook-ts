@@ -103,7 +103,10 @@ export default memo(function VideoCard({
 				{/* collection badges */}
 				<div className="flex flex-wrap gap-1 mt-1">
 					{collections.map((collection, index) => (
-						<span key={index} className="badge badge-accent badge-sm">
+						<span
+							key={index}
+							className="badge badge-accent badge-sm rounded-full"
+						>
 							{collection.label}
 						</span>
 					))}

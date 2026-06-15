@@ -31,9 +31,14 @@ export default async function CollectionPage() {
 							<AddCollectionButton />
 						</header>
 						{userCollections.length > 0 ? (
-							<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-2">
+							<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-2 gap-y-4.5">
 								{userCollections.map((c) => (
-									<CollectionCard key={c.value} id={c.value} name={c.label} />
+									<CollectionCard
+										key={c.value}
+										id={c.value}
+										name={c.label}
+										videoCount={c.videoNum}
+									/>
 								))}
 							</div>
 						) : (
