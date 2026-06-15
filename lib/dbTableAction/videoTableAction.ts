@@ -44,10 +44,11 @@ export const getVideoById = cache(async function (
 			youtubeVidID: video.youtubeVidID,
 			lastPlayedTime: video.lastPlayedTime,
 			createdAt: video.createdAt,
-			collections: video.collections.map((c) => ({
-				label: c.collectionName,
-				value: c.collectionId,
-			})) || [],
+			collections:
+				video.collections.map((c) => ({
+					label: c.collectionName,
+					value: c.collectionId,
+				})) || [],
 		};
 	}
 
@@ -69,6 +70,7 @@ export const getVideoCardsWithSearchParam = cache(async function (
 	page: number,
 	pageSize: number,
 	q: string,
+	collection: string,
 ): Promise<VideoDetailType[]> {
 	if (!userId) {
 		console.error("Error fetching video cards, user ID is undefined");
@@ -83,6 +85,9 @@ export const getVideoCardsWithSearchParam = cache(async function (
 	const where = {
 		userId,
 		...(q ? { title: { contains: q, mode: "insensitive" as const } } : {}),
+		...(collection
+			? { collections: { some: { collectionName: collection } } }
+			: {}),
 	};
 
 	try {
@@ -126,6 +131,7 @@ export const getVideoCardsWithSearchParam = cache(async function (
 export const getVideoNumWithSearchParam = cache(async function (
 	userId: string,
 	q: string,
+	collection: string,
 ): Promise<number> {
 	if (!userId) {
 		console.error("Error fetching video count, user ID is undefined");
@@ -134,6 +140,9 @@ export const getVideoNumWithSearchParam = cache(async function (
 	const where = {
 		userId,
 		...(q ? { title: { contains: q, mode: "insensitive" as const } } : {}),
+		...(collection
+			? { collections: { some: { collectionName: collection } } }
+			: {}),
 	};
 
 	try {

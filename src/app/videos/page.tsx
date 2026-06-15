@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 export default async function VideoPage({
 	searchParams,
 }: {
-	searchParams: Promise<{ q?: string; page?: string }>;
+	searchParams: Promise<{ q?: string; page?: string; collection?: string }>;
 }) {
 	const session = await requireSession();
 	const userId = session.user.id;
@@ -30,12 +30,13 @@ export default async function VideoPage({
 	const params = await searchParams;
 	const q = (params.q ?? "").trim();
 	const page = Math.max(1, Number(params.page ?? 1)); // Prevent negative or zero page indices.
+	const collection = (params.collection ?? "").trim();
 	const pageSize = 15;
 
 	// fetch data from db video table
 	const [totalCount, videoCards] = await Promise.all([
-		getVideoNumWithSearchParam(userId, q),
-		getVideoCardsWithSearchParam(userId, page, pageSize, q),
+		getVideoNumWithSearchParam(userId, q, collection),
+		getVideoCardsWithSearchParam(userId, page, pageSize, q, collection),
 	]);
 
 	const totalPagesNum = Math.max(1, Math.ceil(totalCount / pageSize)); // Ensure at least one page exists for the UI.
@@ -47,7 +48,9 @@ export default async function VideoPage({
 
 			<main className="flex-1 p-6">
 				<header className="flex items-center justify-between mb-8">
-					<h1 className="text-3xl font-bold">My Videos</h1>
+					<h1 className="text-3xl font-bold">
+						My Videos {collection ? ` - ${collection}` : ""}
+					</h1>
 					<AddVideoButton userId={userId} />
 				</header>
 				{/* Search bar */}
@@ -102,7 +105,7 @@ export default async function VideoPage({
 							baseUrl="/videos"
 							searchParams={{
 								q,
-								pageSize: String(pageSize), // Convert to string to match expected API for URL params.
+								collection: collection,
 							}}
 						/>
 					</div>

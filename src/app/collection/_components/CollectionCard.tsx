@@ -22,6 +22,12 @@ export default function CollectionCard({ id, name }: CollectionCardProps) {
 	const userId = contextValue?.userId || "";
 	const router = useRouter();
 
+	function onClick() {
+		// redirect to show videos belonging to this collection
+		const newSearchParams = new URLSearchParams({ collection: name });
+		router.push("/videos?" + newSearchParams.toString());
+	}
+
 	const handleDelete = async () => {
 		setIsDeleting(true);
 		try {
@@ -44,25 +50,28 @@ export default function CollectionCard({ id, name }: CollectionCardProps) {
 			title={name}
 			className="card card-compact hover:bg-base-200 cursor-pointer transition-colors select-none group"
 		>
-			<div className="card-body items-center text-center gap-3">
+			<div
+				onClick={onClick}
+				className="card-body items-center text-center gap-3"
+			>
 				<Folder className="w-28 h-28 text-warning" />
 				<span className="card-title text-sm font-semibold line-clamp-2 justify-center">
 					{name}
 				</span>
-				<div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-					<button
-						className="btn btn-square btn-sm btn-info"
-						onClick={() => setPencilModalOpen(true)}
-					>
-						<Pencil className="w-4 h-4" />
-					</button>
-					<button
-						className="btn btn-square btn-sm btn-error"
-						onClick={() => setTrashModalOpen(true)}
-					>
-						<Trash className="w-4 h-4" />
-					</button>
-				</div>
+			</div>
+			<div className="flex gap-2 justify-center opacity-0 group-hover:opacity-100 group-hover:bg-accent transition-all">
+				<button
+					className="btn btn-square btn-sm btn-info"
+					onClick={() => setPencilModalOpen(true)}
+				>
+					<Pencil className="w-4 h-4" />
+				</button>
+				<button
+					className="btn btn-square btn-sm btn-error"
+					onClick={() => setTrashModalOpen(true)}
+				>
+					<Trash className="w-4 h-4" />
+				</button>
 			</div>
 
 			{/* Editing Collection Modal */}
