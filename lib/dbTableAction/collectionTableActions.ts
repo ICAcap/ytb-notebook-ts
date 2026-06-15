@@ -37,6 +37,7 @@ export const getUserCollectionNameIDs = cache(async function (
 		const collections = await prisma.collection.findMany({
 			where: { userId },
 			select: { collectionName: true, collectionId: true },
+			orderBy: { collectionName: "asc" },
 		});
 		return collections.map((c) => ({
 			label: c.collectionName,
