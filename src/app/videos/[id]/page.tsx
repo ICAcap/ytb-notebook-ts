@@ -4,8 +4,6 @@ import { getVideoById } from "../../../../lib/dbTableAction/videoTableAction";
 import requireSession from "../../../../lib/requireSession";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 
 // helper function to fetch video details by id for the authenticated user
 // https://www.slingacademy.com/article/next-js-how-to-set-page-title-and-meta-description/#static-title-and-meta-description
@@ -50,12 +48,6 @@ export default async function VidViewPage({
 			<div className="flex min-h-screen">
 				<Sidebar currentPath="/videos" />
 				<main className="flex-1 p-6">
-					<Link
-						href={"/videos"}
-						className="btn btn-ghost btn-accent rounded-xl text-xl text-accent-content"
-					>
-						<ArrowLeft strokeWidth={3} /> Back to All Videos
-					</Link>
 					<div className="flex justify-center mb-1">
 						<h1 className="text-3xl text-wrap font-semibold text-center">
 							{`${video.title || "Unknown Video"}`}
