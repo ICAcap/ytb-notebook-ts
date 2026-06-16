@@ -233,9 +233,9 @@ export const upsertYouTubeVideo = async function (
 			update: {
 				// in case need to modify the title
 				title: title,
-				// If the video already exists, we just add it to the new collections
+				// Replace the entire collection set (supports removals)
 				collections: {
-					connect: collectionsID.map((id) => ({ collectionId: id })),
+					set: collectionsID.map((id) => ({ collectionId: id })),
 				},
 			},
 			create: {

@@ -135,12 +135,12 @@ const EditVideoForm = ({
 					<Controller
 						name="collections"
 						control={control}
+						defaultValue={oldCollections}
 						render={({ field }) => (
 							<Select
 								{...field}
 								isMulti
 								isSearchable
-								defaultValue={oldCollections}
 								options={collectionOptions}
 								placeholder="Select Collection(s)..."
 								classNamePrefix="react-select"
