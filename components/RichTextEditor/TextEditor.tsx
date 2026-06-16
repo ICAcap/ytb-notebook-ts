@@ -21,7 +21,7 @@ const TextEditor = () => {
 		dark: "bg-slate-500 text-slate-100",
 	};
 
-	const lowlight = createLowlight(all); // create a lowlight instance with all languages loaded
+	const lowlight = createLowlight(all); // create a lowlight instance with all prog languages loaded
 
 	// editor config
 	const editor = useEditor({
