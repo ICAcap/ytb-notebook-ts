@@ -54,12 +54,12 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 	}
 
 	return (
-		<div className="control-group flex justify-center">
-			<div className="join rounded-lg overflow-hidden">
+		<div className="control-group flex justify-center mt-2">
+			<div className="flex gap-1 flex-wrap">
 				<button
 					onClick={() => editor.chain().focus().undo().run()}
 					disabled={!editorState.canUndo}
-					className="btn btn-square join-item"
+					className="btn btn-square"
 					type="button"
 					title="Undo (Control + Z / ⌘ + Z)"
 				>
@@ -68,7 +68,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 				<button
 					onClick={() => editor.chain().focus().redo().run()}
 					disabled={!editorState.canRedo}
-					className="btn btn-square join-item"
+					className="btn btn-square"
 					type="button"
 					title="Redo (Control + Y / ⌘ + Y)"
 				>
@@ -78,7 +78,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					onClick={() =>
 						editor.chain().focus().toggleHeading({ level: 1 }).run()
 					}
-					className="btn btn-square join-item"
+					className="btn btn-square"
 					title="Heading 1 (Ctrl+Alt+1 / ⌘+Alt+1)"
 				>
 					<span className={editorState.isH1 ? activeClass : inactiveClass}>
@@ -89,7 +89,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					onClick={() =>
 						editor.chain().focus().toggleHeading({ level: 2 }).run()
 					}
-					className="btn btn-square join-item"
+					className="btn btn-square"
 					title="Heading 2 (Ctrl+Alt+2 / ⌘+Alt+2)"
 				>
 					<span className={editorState.isH2 ? activeClass : inactiveClass}>
@@ -100,7 +100,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					onClick={() =>
 						editor.chain().focus().toggleHeading({ level: 3 }).run()
 					}
-					className="btn btn-square join-item"
+					className="btn btn-square"
 					title="Heading 3 (Ctrl+Alt+3 / ⌘+Alt+3)"
 				>
 					<span className={editorState.isH3 ? activeClass : inactiveClass}>
@@ -109,7 +109,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 				</button>
 				<button
 					onClick={() => editor.chain().focus().toggleBold().run()}
-					className="btn btn-square join-item"
+					className="btn btn-square"
 					title="Bold (Ctrl+B / ⌘+B)"
 				>
 					<span className={editorState.isBold ? activeClass : inactiveClass}>
@@ -118,7 +118,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 				</button>
 				<button
 					onClick={() => editor.chain().focus().toggleItalic().run()}
-					className="btn btn-square join-item"
+					className="btn btn-square"
 					title="Italic (Ctrl+I / ⌘+I)"
 				>
 					<span className={editorState.isItalic ? activeClass : inactiveClass}>
@@ -127,7 +127,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 				</button>
 				<button
 					onClick={() => editor.chain().focus().toggleStrike().run()}
-					className="btn btn-square join-item"
+					className="btn btn-square"
 					title="Strikethrough (Ctrl+Shift+S / ⌘+Shift+S)"
 				>
 					<span className={editorState.isStrike ? activeClass : inactiveClass}>
@@ -136,7 +136,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 				</button>
 				<button
 					onClick={() => editor.chain().focus().toggleHighlight().run()}
-					className="btn btn-square join-item"
+					className="btn btn-square"
 					title="Highlight (Ctrl+Shift+H / ⌘+Shift+H)"
 				>
 					<span
@@ -147,7 +147,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 				</button>
 				<button
 					onClick={() => editor.chain().focus().setTextAlign("left").run()}
-					className="btn btn-square join-item"
+					className="btn btn-square"
 					title="Align Left (Ctrl+Shift+L / ⌘+Shift+L)"
 				>
 					<span
@@ -158,7 +158,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 				</button>
 				<button
 					onClick={() => editor.chain().focus().setTextAlign("center").run()}
-					className="btn btn-square join-item"
+					className="btn btn-square"
 					title="Align Center (Ctrl+Shift+E / ⌘+Shift+E)"
 				>
 					<span
@@ -169,7 +169,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 				</button>
 				<button
 					onClick={() => editor.chain().focus().setTextAlign("right").run()}
-					className="btn btn-square join-item"
+					className="btn btn-square"
 					title="Align Right (Ctrl+Shift+R / ⌘+Shift+R)"
 				>
 					<span
@@ -180,7 +180,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 				</button>
 				<button
 					onClick={() => editor.chain().focus().setTextAlign("justify").run()}
-					className="btn btn-square join-item"
+					className="btn btn-square"
 					title="Align Justify (Ctrl+Shift+J / ⌘+Shift+J)"
 				>
 					<span
@@ -191,7 +191,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 				</button>
 				<button
 					onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-					className="btn btn-square join-item"
+					className="btn btn-square"
 					title="Code Block (Ctrl+Alt+C / ⌘+Alt+C)"
 				>
 					<span
@@ -202,7 +202,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 				</button>
 				<button
 					onClick={() => editor.chain().focus().toggleBulletList().run()}
-					className="btn btn-square join-item"
+					className="btn btn-square"
 					title="Bullet List (Ctrl+Shift+8 / ⌘+Shift+8)"
 				>
 					<span
@@ -213,7 +213,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 				</button>
 				<button
 					onClick={() => editor.chain().focus().toggleOrderedList().run()}
-					className="btn btn-square join-item"
+					className="btn btn-square"
 					title="Ordered List (Ctrl+Shift+7 / ⌘+Shift+7)"
 				>
 					<span
