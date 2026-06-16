@@ -19,6 +19,7 @@ import {
 	ListOrdered,
 	Redo2,
 	Undo2,
+	Underline,
 } from "lucide-react";
 
 const activeClass =
@@ -46,6 +47,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 			isLowLightCode: editor?.isActive("codeBlock") ?? false,
 			isBulletList: editor?.isActive("bulletList") ?? false,
 			isOrderedList: editor?.isActive("orderedList") ?? false,
+			isUnderline: editor?.isActive("underline") ?? false,
 		}),
 	})!;
 
@@ -123,6 +125,15 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 				>
 					<span className={editorState.isItalic ? activeClass : inactiveClass}>
 						<Italic size={20} strokeWidth={2.5} />
+					</span>
+				</button>
+				<button
+					onClick={() => editor.chain().focus().toggleUnderline().run()}
+					className="btn btn-square"
+					title="Underline (Ctrl+U / ⌘+U)"
+				>
+					<span className={editorState.isUnderline ? activeClass : inactiveClass}>
+						<Underline size={20} strokeWidth={2.5} />
 					</span>
 				</button>
 				<button
