@@ -1,9 +1,12 @@
 "use client";
 
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import FloatingMenu from "@tiptap/extension-floating-menu";
+import Highlight from "@tiptap/extension-highlight";
+import TextAlign from "@tiptap/extension-text-align";
 import { useTheme } from "next-themes";
+import MenuBar from "./MenuBar";
 
 const TextEditor = () => {
 	// current theme
@@ -17,21 +20,30 @@ const TextEditor = () => {
 
 	// editor config
 	const editor = useEditor({
-		extensions: [StarterKit, FloatingMenu],
+		extensions: [
+			StarterKit,
+			FloatingMenu,
+			FloatingMenu,
+			Highlight,
+			TextAlign.configure({
+				types: ["heading", "paragraph"],
+			}),
+		],
 		immediatelyRender: false,
 	});
 
 	return (
-		<div>
-			<span>
-				<h1 className="text-xl">TextEditor</h1>
-			</span>
-			{/* static toolbar - TBD*/}
-			<EditorContent
-				editor={editor}
-				className={`min-h-15 border rounded-md ${currentStyle === "light" ? themeStyles.light : themeStyles.dark}`}
-			/>
-		</div>
+		<>
+			<style>{`.ProseMirror:focus { outline: none; border: none; }`}</style>
+			<div>
+				{/* static toolbar - TBD*/}
+				<MenuBar editor={editor} />
+				<EditorContent
+					editor={editor}
+					className={`border m-2 p-2 min-h-15 rounded-md ${currentStyle === "light" ? themeStyles.light : themeStyles.dark}`}
+				/>
+			</div>
+		</>
 	);
 };
 
