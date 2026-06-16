@@ -10,13 +10,13 @@ import { all, createLowlight } from "lowlight";
 import { useTheme } from "next-themes";
 import MenuBar from "./MenuBar";
 
-const TextEditor = () => {
+const TextEditor = ({ contentJson }: { contentJson?: object }) => {
 	// current theme
 	const currentStyle = useTheme().theme ?? "light";
 
 	// editor-exclusive styles based on the active theme
 	const themeStyles = {
-		light: "bg-slate-300 text-slate-900",
+		light: "bg-amber-300 text-slate-900",
 		dark: "bg-slate-500 text-slate-100",
 	};
 
@@ -37,6 +37,7 @@ const TextEditor = () => {
 				lowlight,
 			}),
 		],
+		content: contentJson ?? "",
 		immediatelyRender: false,
 	});
 
@@ -44,7 +45,7 @@ const TextEditor = () => {
 		<>
 			<style>{`.ProseMirror:focus { outline: none; border: none; }`}</style>
 			<div>
-				{/* static toolbar - TBD*/}
+				{/* static menu tool bar */}
 				<MenuBar editor={editor} />
 				<EditorContent
 					editor={editor}
