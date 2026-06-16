@@ -17,6 +17,8 @@ import {
 	SquareCode,
 	List,
 	ListOrdered,
+	Redo2,
+	Undo2,
 } from "lucide-react";
 
 const activeClass =
@@ -28,6 +30,8 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 	const editorState = useEditorState({
 		editor,
 		selector: ({ editor }) => ({
+			canUndo: editor?.can().chain().focus().undo().run() ?? false,
+			canRedo: editor?.can().chain().focus().redo().run() ?? false,
 			isBold: editor?.isActive("bold") ?? false,
 			isItalic: editor?.isActive("italic") ?? false,
 			isStrike: editor?.isActive("strike") ?? false,
@@ -52,6 +56,24 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 	return (
 		<div className="control-group flex justify-center">
 			<div className="join rounded-lg overflow-hidden">
+				<button
+					onClick={() => editor.chain().focus().undo().run()}
+					disabled={!editorState.canUndo}
+					className="btn btn-square join-item"
+					type="button"
+					title="Undo (Control + Z / ⌘ + Z)"
+				>
+					<Undo2 size={20} strokeWidth={2.5} />
+				</button>
+				<button
+					onClick={() => editor.chain().focus().redo().run()}
+					disabled={!editorState.canRedo}
+					className="btn btn-square join-item"
+					type="button"
+					title="Redo (Control + Y / ⌘ + Y)"
+				>
+					<Redo2 size={20} strokeWidth={2.5} />
+				</button>
 				<button
 					onClick={() =>
 						editor.chain().focus().toggleHeading({ level: 1 }).run()
