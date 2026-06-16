@@ -15,7 +15,13 @@ import {
 	AlignRight,
 	AlignJustify,
 	SquareCode,
+	List,
+	ListOrdered,
 } from "lucide-react";
+
+const activeClass =
+	"flex items-center justify-center w-8 h-8 rounded-full bg-accent";
+const inactiveClass = "flex items-center justify-center w-8 h-8 rounded-full";
 
 const MenuBar = ({ editor }: { editor: Editor | null }) => {
 	//reference: https://tiptap.dev/docs/editor/getting-started/install/react#reacting-to-editor-state-changes
@@ -34,6 +40,8 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 			isAlignRight: editor?.isActive({ textAlign: "right" }) ?? false,
 			isAlignJustify: editor?.isActive({ textAlign: "justify" }) ?? false,
 			isLowLightCode: editor?.isActive("codeBlock") ?? false,
+			isBulletList: editor?.isActive("bulletList") ?? false,
+			isOrderedList: editor?.isActive("orderedList") ?? false,
 		}),
 	})!;
 
@@ -42,97 +50,155 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 	}
 
 	return (
-		<div className="control-group">
-			<div className="join">
+		<div className="control-group flex justify-center">
+			<div className="join rounded-lg overflow-hidden">
 				<button
 					onClick={() =>
 						editor.chain().focus().toggleHeading({ level: 1 }).run()
 					}
-					className={`btn join-item ${editorState.isH1 ? "bg-accent" : ""}`}
-					title="Heading 1"
+					className="btn btn-square join-item"
+					title="Heading 1 (Ctrl+Alt+1 / ⌘+Alt+1)"
 				>
-					<Heading1 size={20} strokeWidth={2.5} />
+					<span className={editorState.isH1 ? activeClass : inactiveClass}>
+						<Heading1 size={20} strokeWidth={2.5} />
+					</span>
 				</button>
 				<button
 					onClick={() =>
 						editor.chain().focus().toggleHeading({ level: 2 }).run()
 					}
-					className={`btn join-item ${editorState.isH2 ? "bg-accent" : ""}`}
-					title="Heading 2"
+					className="btn btn-square join-item"
+					title="Heading 2 (Ctrl+Alt+2 / ⌘+Alt+2)"
 				>
-					<Heading2 size={20} strokeWidth={2.5} />
+					<span className={editorState.isH2 ? activeClass : inactiveClass}>
+						<Heading2 size={20} strokeWidth={2.5} />
+					</span>
 				</button>
 				<button
 					onClick={() =>
 						editor.chain().focus().toggleHeading({ level: 3 }).run()
 					}
-					className={`btn join-item ${editorState.isH3 ? "bg-accent" : ""}`}
-					title="Heading 3"
+					className="btn btn-square join-item"
+					title="Heading 3 (Ctrl+Alt+3 / ⌘+Alt+3)"
 				>
-					<Heading3 size={20} strokeWidth={2.5} />
+					<span className={editorState.isH3 ? activeClass : inactiveClass}>
+						<Heading3 size={20} strokeWidth={2.5} />
+					</span>
 				</button>
 				<button
 					onClick={() => editor.chain().focus().toggleBold().run()}
-					className={`btn join-item ${editorState.isBold ? "bg-accent" : ""}`}
-					title="Bold"
+					className="btn btn-square join-item"
+					title="Bold (Ctrl+B / ⌘+B)"
 				>
-					<Bold size={20} strokeWidth={2.5} />
+					<span className={editorState.isBold ? activeClass : inactiveClass}>
+						<Bold size={20} strokeWidth={2.5} />
+					</span>
 				</button>
 				<button
 					onClick={() => editor.chain().focus().toggleItalic().run()}
-					className={`btn join-item ${editorState.isItalic ? "bg-accent" : ""}`}
-					title="Italic"
+					className="btn btn-square join-item"
+					title="Italic (Ctrl+I / ⌘+I)"
 				>
-					<Italic size={20} strokeWidth={2.5} />
+					<span className={editorState.isItalic ? activeClass : inactiveClass}>
+						<Italic size={20} strokeWidth={2.5} />
+					</span>
 				</button>
 				<button
 					onClick={() => editor.chain().focus().toggleStrike().run()}
-					className={`btn join-item ${editorState.isStrike ? "bg-accent" : ""}`}
-					title="Strikethrough"
+					className="btn btn-square join-item"
+					title="Strikethrough (Ctrl+Shift+S / ⌘+Shift+S)"
 				>
-					<Strikethrough size={20} strokeWidth={2.5} />
+					<span className={editorState.isStrike ? activeClass : inactiveClass}>
+						<Strikethrough size={20} strokeWidth={2.5} />
+					</span>
 				</button>
 				<button
 					onClick={() => editor.chain().focus().toggleHighlight().run()}
-					className={`btn join-item ${editorState.isHighlight ? "bg-accent" : ""}`}
-					title="Highlight"
+					className="btn btn-square join-item"
+					title="Highlight (Ctrl+Shift+H / ⌘+Shift+H)"
 				>
-					<Highlighter size={20} strokeWidth={2.5} />
+					<span
+						className={editorState.isHighlight ? activeClass : inactiveClass}
+					>
+						<Highlighter size={20} strokeWidth={2.5} />
+					</span>
 				</button>
 				<button
 					onClick={() => editor.chain().focus().setTextAlign("left").run()}
-					className={`btn join-item ${editorState.isAlignLeft ? "bg-accent" : ""}`}
-					title="Align Left"
+					className="btn btn-square join-item"
+					title="Align Left (Ctrl+Shift+L / ⌘+Shift+L)"
 				>
-					<AlignLeft size={20} strokeWidth={2.5} />
+					<span
+						className={editorState.isAlignLeft ? activeClass : inactiveClass}
+					>
+						<AlignLeft size={20} strokeWidth={2.5} />
+					</span>
 				</button>
 				<button
 					onClick={() => editor.chain().focus().setTextAlign("center").run()}
-					className={`btn join-item ${editorState.isAlignCenter ? "bg-accent" : ""}`}
-					title="Align Center"
+					className="btn btn-square join-item"
+					title="Align Center (Ctrl+Shift+E / ⌘+Shift+E)"
 				>
-					<AlignCenter size={20} strokeWidth={2.5} />
+					<span
+						className={editorState.isAlignCenter ? activeClass : inactiveClass}
+					>
+						<AlignCenter size={20} strokeWidth={2.5} />
+					</span>
 				</button>
 				<button
 					onClick={() => editor.chain().focus().setTextAlign("right").run()}
-					className={`btn join-item ${editorState.isAlignRight ? "bg-accent" : ""}`}
-					title="Align Right"
+					className="btn btn-square join-item"
+					title="Align Right (Ctrl+Shift+R / ⌘+Shift+R)"
 				>
-					<AlignRight size={20} strokeWidth={2.5} />
+					<span
+						className={editorState.isAlignRight ? activeClass : inactiveClass}
+					>
+						<AlignRight size={20} strokeWidth={2.5} />
+					</span>
 				</button>
 				<button
 					onClick={() => editor.chain().focus().setTextAlign("justify").run()}
-					className={`btn join-item ${editorState.isAlignJustify ? "bg-accent" : ""}`}
-					title="Align Justify"
+					className="btn btn-square join-item"
+					title="Align Justify (Ctrl+Shift+J / ⌘+Shift+J)"
 				>
-					<AlignJustify size={20} strokeWidth={2.5} />
+					<span
+						className={editorState.isAlignJustify ? activeClass : inactiveClass}
+					>
+						<AlignJustify size={20} strokeWidth={2.5} />
+					</span>
 				</button>
 				<button
 					onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-					className={`btn join-item ${editorState.isLowLightCode ? "bg-accent" : ""}`}
-					title="Code Block"
+					className="btn btn-square join-item"
+					title="Code Block (Ctrl+Alt+C / ⌘+Alt+C)"
 				>
-					<SquareCode size={20} strokeWidth={2.5} />
+					<span
+						className={editorState.isLowLightCode ? activeClass : inactiveClass}
+					>
+						<SquareCode size={20} strokeWidth={2.5} />
+					</span>
+				</button>
+				<button
+					onClick={() => editor.chain().focus().toggleBulletList().run()}
+					className="btn btn-square join-item"
+					title="Bullet List (Ctrl+Shift+8 / ⌘+Shift+8)"
+				>
+					<span
+						className={editorState.isBulletList ? activeClass : inactiveClass}
+					>
+						<List size={20} strokeWidth={2.5} />
+					</span>
+				</button>
+				<button
+					onClick={() => editor.chain().focus().toggleOrderedList().run()}
+					className="btn btn-square join-item"
+					title="Ordered List (Ctrl+Shift+7 / ⌘+Shift+7)"
+				>
+					<span
+						className={editorState.isOrderedList ? activeClass : inactiveClass}
+					>
+						<ListOrdered size={20} strokeWidth={2.5} />
+					</span>
 				</button>
 			</div>
 		</div>
