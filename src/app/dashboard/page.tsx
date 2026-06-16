@@ -24,9 +24,6 @@ export default async function DashboardPage() {
 		<div className="flex min-h-screen">
 			<Sidebar currentPath="/dashboard" />
 			<main className="flex-1 p-6">
-				<Link href={"/tiptap"} className="text-4xl">
-					TipTap editor Here
-				</Link>
 				<div className="max-w-4xl mx-auto space-y-8">
 					{/* Welcome Card */}
 					<div className="card bg-linear-to-br from-primary/10 to-accent/10 border border-primary/20 shadow-md">
