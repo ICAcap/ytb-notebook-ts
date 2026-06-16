@@ -6,6 +6,7 @@ import Highlight from "@tiptap/extension-highlight";
 import Heading from "@tiptap/extension-heading";
 import TextAlign from "@tiptap/extension-text-align";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import { BulletList, OrderedList, ListItem } from "@tiptap/extension-list";
 import { all, createLowlight } from "lowlight";
 import { useTheme } from "next-themes";
 import MenuBar from "./MenuBar";
@@ -27,6 +28,9 @@ const TextEditor = () => {
 		extensions: [
 			StarterKit.configure({
 				codeBlock: false,
+				bulletList: false,
+				orderedList: false,
+				listItem: false,
 			}),
 			Highlight,
 			TextAlign.configure({
@@ -36,6 +40,9 @@ const TextEditor = () => {
 			CodeBlockLowlight.configure({
 				lowlight,
 			}),
+			BulletList,
+			OrderedList,
+			ListItem,
 		],
 		immediatelyRender: false,
 	});
