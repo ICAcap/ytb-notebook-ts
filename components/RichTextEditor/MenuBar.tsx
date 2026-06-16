@@ -31,7 +31,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					}`}
 					title="Heading 1"
 				>
-					<Heading1 size={16} strokeWidth={2} />
+					<Heading1 size={20} strokeWidth={2.5} />
 				</button>
 				<button
 					onClick={() =>
@@ -42,7 +42,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					}`}
 					title="Heading 2"
 				>
-					<Heading2 size={16} strokeWidth={2} />
+					<Heading2 size={20} strokeWidth={2.5} />
 				</button>
 				<button
 					onClick={() =>
@@ -53,7 +53,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					}`}
 					title="Heading 3"
 				>
-					<Heading3 size={16} strokeWidth={2} />
+					<Heading3 size={20} strokeWidth={2.5} />
 				</button>
 				<button
 					onClick={() => editor.chain().focus().toggleBold().run()}
@@ -62,7 +62,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					}`}
 					title="Bold"
 				>
-					<Bold size={16} strokeWidth={2} />
+					<Bold size={20} strokeWidth={2.5} />
 				</button>
 				<button
 					onClick={() => editor.chain().focus().toggleItalic().run()}
@@ -71,7 +71,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					}`}
 					title="Italic"
 				>
-					<Italic size={16} strokeWidth={2} />
+					<Italic size={20} strokeWidth={2.5} />
 				</button>
 				<button
 					onClick={() => editor.chain().focus().toggleStrike().run()}
@@ -80,7 +80,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					}`}
 					title="Strikethrough"
 				>
-					<Strikethrough size={16} strokeWidth={2} />
+					<Strikethrough size={20} strokeWidth={2.5} />
 				</button>
 				<button
 					onClick={() => editor.chain().focus().toggleHighlight().run()}
@@ -89,7 +89,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					}`}
 					title="Highlight"
 				>
-					<Highlighter size={16} strokeWidth={2} />
+					<Highlighter size={20} strokeWidth={2.5} />
 				</button>
 				<button
 					onClick={() => editor.chain().focus().setTextAlign("left").run()}
@@ -98,7 +98,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					}`}
 					title="Align Left"
 				>
-					<AlignLeft size={16} strokeWidth={2} />
+					<AlignLeft size={20} strokeWidth={2.5} />
 				</button>
 				<button
 					onClick={() => editor.chain().focus().setTextAlign("center").run()}
@@ -107,7 +107,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					}`}
 					title="Align Center"
 				>
-					<AlignCenter size={16} strokeWidth={2} />
+					<AlignCenter size={20} strokeWidth={2.5} />
 				</button>
 				<button
 					onClick={() => editor.chain().focus().setTextAlign("right").run()}
@@ -116,7 +116,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					}`}
 					title="Align Right"
 				>
-					<AlignRight size={16} strokeWidth={2} />
+					<AlignRight size={20} strokeWidth={2.5} />
 				</button>
 				<button
 					onClick={() => editor.chain().focus().setTextAlign("justify").run()}
@@ -125,7 +125,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					}`}
 					title="Align Justify"
 				>
-					<AlignJustify size={16} strokeWidth={2} />
+					<AlignJustify size={20} strokeWidth={2.5} />
 				</button>
 			</div>
 		</div>
