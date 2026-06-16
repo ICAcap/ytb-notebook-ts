@@ -12,6 +12,7 @@
   "dependencies": {
     "@better-auth/prisma-adapter": "^1.6.11",
     "@prisma/client": "^7.8.0",
+    "@tiptap/extension-code-block-lowlight": "^3.26.1",
     "@tiptap/extension-highlight": "^3.26.1",
     "@tiptap/extension-text-align": "^3.26.1",
     "@tiptap/pm": "^3.26.1",
@@ -19,6 +20,7 @@
     "@tiptap/starter-kit": "^3.26.1",
     "better-auth": "^1.6.11",
     "lodash": "^4.18.1",
+    "lowlight": "^3.3.0",
     "lucide-react": "^1.16.0",
     "next": "16.2.6",
     "next-themes": "^0.4.6",
@@ -43,6 +45,7 @@
     "eslint-config-next": "16.2.6",
     "pg": "^8.21.0",
     "prisma": "^7.8.0",
+    "sass": "^1.101.0",
     "tailwindcss": "^4",
     "tsx": "^4.22.3",
     "typescript": "^5.9.3"
