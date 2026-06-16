@@ -1,10 +1,12 @@
 "use client";
 
-import { useEditor, EditorContent, Editor } from "@tiptap/react";
+import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import FloatingMenu from "@tiptap/extension-floating-menu";
 import Highlight from "@tiptap/extension-highlight";
+import Heading from "@tiptap/extension-heading";
 import TextAlign from "@tiptap/extension-text-align";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import { all, createLowlight } from "lowlight";
 import { useTheme } from "next-themes";
 import MenuBar from "./MenuBar";
 
@@ -12,21 +14,27 @@ const TextEditor = () => {
 	// current theme
 	const currentStyle = useTheme().theme ?? "light";
 
-	// Define styles based on the active theme
+	// editor-exclusive styles based on the active theme
 	const themeStyles = {
 		light: "bg-slate-300 text-slate-900",
 		dark: "bg-slate-500 text-slate-100",
 	};
 
+	const lowlight = createLowlight(all); // create a lowlight instance with all languages loaded
+
 	// editor config
 	const editor = useEditor({
 		extensions: [
-			StarterKit,
-			FloatingMenu,
-			FloatingMenu,
+			StarterKit.configure({
+				codeBlock: false,
+			}),
 			Highlight,
 			TextAlign.configure({
 				types: ["heading", "paragraph"],
+			}),
+			Heading,
+			CodeBlockLowlight.configure({
+				lowlight,
 			}),
 		],
 		immediatelyRender: false,
