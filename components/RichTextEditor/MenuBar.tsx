@@ -61,7 +61,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					disabled={!editorState.canUndo}
 					className="btn btn-square"
 					type="button"
-					title="Undo (Control + Z / ⌘ + Z)"
+					title="Undo (Ctrl + Z / ⌘ + Z)"
 				>
 					<Undo2 size={20} strokeWidth={2.5} />
 				</button>
@@ -70,7 +70,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					disabled={!editorState.canRedo}
 					className="btn btn-square"
 					type="button"
-					title="Redo (Control + Y / ⌘ + Y)"
+					title="Redo (Ctrl + Y / ⌘ + Y)"
 				>
 					<Redo2 size={20} strokeWidth={2.5} />
 				</button>
