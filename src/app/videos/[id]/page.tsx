@@ -4,6 +4,7 @@ import { getVideoById } from "../../../../lib/dbTableAction/videoTableAction";
 import requireSession from "../../../../lib/requireSession";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import Link from "next/link";
 
 // helper function to fetch video details by id for the authenticated user
 // https://www.slingacademy.com/article/next-js-how-to-set-page-title-and-meta-description/#static-title-and-meta-description
@@ -58,8 +59,21 @@ export default async function VidViewPage({
 						<div className="flex flex-wrap gap-2 mt-2">
 							{video.collections && video.collections.length > 0 ? (
 								video.collections.map((collection, index) => (
-									<span key={index} className="badge badge-accent rounded-full">
-										{collection.label}
+									// click collection tag to be redirected to other videos in that collection
+									<span
+										key={index}
+										className="btn btn-xs btn-accent rounded-full"
+									>
+										<Link
+											href={
+												"/videos?" +
+												new URLSearchParams({
+													collection: collection.label,
+												}).toString()
+											}
+										>
+											{collection.label}
+										</Link>
 									</span>
 								))
 							) : (
