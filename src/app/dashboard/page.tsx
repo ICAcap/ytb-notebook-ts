@@ -16,7 +16,7 @@ export default async function DashboardPage() {
 	const userId = session.user.id;
 
 	const [totalVideos, collections] = await Promise.all([
-		getVideoNumWithSearchParam(userId, ""),
+		getVideoNumWithSearchParam(userId, "", ""),
 		getUserCollectionNameIDs(userId),
 	]);
 
