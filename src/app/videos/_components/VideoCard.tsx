@@ -12,7 +12,7 @@ import {
 import Modal from "../../../../components/ModalSkeleton";
 import EditVideoForm from "./EditVideoForm";
 import { useState, memo, Suspense } from "react";
-import { useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 export default memo(function VideoCard({
@@ -29,6 +29,7 @@ export default memo(function VideoCard({
 	const [pencilModalOpen, setPencilModalOpen] = useState(false);
 
 	const router = useRouter();
+	const searchParams = useSearchParams();
 	const [isDeleting, setIsDeleting] = useState(false);
 
 	const handleDelete = async () => {
@@ -103,12 +104,24 @@ export default memo(function VideoCard({
 				{/* collection badges */}
 				<div className="flex flex-wrap gap-1 mt-1">
 					{collections.map((collection, index) => (
-						<span
+						// click the collection badge to jump to other videos that are all the same collection
+						// except the collection view we are currently landed on
+						<button
 							key={index}
-							className="badge badge-accent badge-sm rounded-full"
+							disabled={collection.label === searchParams.get("collection")}
+							className={`btn btn-xs btn-accent rounded-full ${collection.label === searchParams.get("collection") ? "btn-disabled" : ""}`}
 						>
-							{collection.label}
-						</span>
+							<Link
+								href={
+									"/videos?" +
+									new URLSearchParams({
+										collection: collection.label,
+									}).toString()
+								}
+							>
+								{collection.label}
+							</Link>
+						</button>
 					))}
 				</div>
 			</div>
