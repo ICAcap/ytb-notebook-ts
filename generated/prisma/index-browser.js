@@ -154,8 +154,11 @@ exports.Prisma.NoteScalarFieldEnum = {
   noteId: 'noteId',
   userId: 'userId',
   videoId: 'videoId',
-  timestamp: 'timestamp',
+  startTime: 'startTime',
+  endTime: 'endTime',
   content: 'content',
+  color: 'color',
+  screenshotUrl: 'screenshotUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
