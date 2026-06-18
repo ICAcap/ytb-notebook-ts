@@ -5075,18 +5075,23 @@ export namespace Prisma {
   }
 
   export type NoteAvgAggregateOutputType = {
-    timestamp: number | null
+    startTime: number | null
+    endTime: number | null
   }
 
   export type NoteSumAggregateOutputType = {
-    timestamp: number | null
+    startTime: number | null
+    endTime: number | null
   }
 
   export type NoteMinAggregateOutputType = {
     noteId: string | null
     userId: string | null
     videoId: string | null
-    timestamp: number | null
+    startTime: number | null
+    endTime: number | null
+    color: string | null
+    screenshotUrl: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5095,7 +5100,10 @@ export namespace Prisma {
     noteId: string | null
     userId: string | null
     videoId: string | null
-    timestamp: number | null
+    startTime: number | null
+    endTime: number | null
+    color: string | null
+    screenshotUrl: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5104,8 +5112,11 @@ export namespace Prisma {
     noteId: number
     userId: number
     videoId: number
-    timestamp: number
+    startTime: number
+    endTime: number
     content: number
+    color: number
+    screenshotUrl: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -5113,18 +5124,23 @@ export namespace Prisma {
 
 
   export type NoteAvgAggregateInputType = {
-    timestamp?: true
+    startTime?: true
+    endTime?: true
   }
 
   export type NoteSumAggregateInputType = {
-    timestamp?: true
+    startTime?: true
+    endTime?: true
   }
 
   export type NoteMinAggregateInputType = {
     noteId?: true
     userId?: true
     videoId?: true
-    timestamp?: true
+    startTime?: true
+    endTime?: true
+    color?: true
+    screenshotUrl?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5133,7 +5149,10 @@ export namespace Prisma {
     noteId?: true
     userId?: true
     videoId?: true
-    timestamp?: true
+    startTime?: true
+    endTime?: true
+    color?: true
+    screenshotUrl?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5142,8 +5161,11 @@ export namespace Prisma {
     noteId?: true
     userId?: true
     videoId?: true
-    timestamp?: true
+    startTime?: true
+    endTime?: true
     content?: true
+    color?: true
+    screenshotUrl?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -5239,8 +5261,11 @@ export namespace Prisma {
     noteId: string
     userId: string
     videoId: string
-    timestamp: number
+    startTime: number
+    endTime: number
     content: JsonValue
+    color: string
+    screenshotUrl: string | null
     createdAt: Date
     updatedAt: Date
     _count: NoteCountAggregateOutputType | null
@@ -5268,8 +5293,11 @@ export namespace Prisma {
     noteId?: boolean
     userId?: boolean
     videoId?: boolean
-    timestamp?: boolean
+    startTime?: boolean
+    endTime?: boolean
     content?: boolean
+    color?: boolean
+    screenshotUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -5280,8 +5308,11 @@ export namespace Prisma {
     noteId?: boolean
     userId?: boolean
     videoId?: boolean
-    timestamp?: boolean
+    startTime?: boolean
+    endTime?: boolean
     content?: boolean
+    color?: boolean
+    screenshotUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -5292,8 +5323,11 @@ export namespace Prisma {
     noteId?: boolean
     userId?: boolean
     videoId?: boolean
-    timestamp?: boolean
+    startTime?: boolean
+    endTime?: boolean
     content?: boolean
+    color?: boolean
+    screenshotUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -5304,13 +5338,16 @@ export namespace Prisma {
     noteId?: boolean
     userId?: boolean
     videoId?: boolean
-    timestamp?: boolean
+    startTime?: boolean
+    endTime?: boolean
     content?: boolean
+    color?: boolean
+    screenshotUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type NoteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"noteId" | "userId" | "videoId" | "timestamp" | "content" | "createdAt" | "updatedAt", ExtArgs["result"]["note"]>
+  export type NoteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"noteId" | "userId" | "videoId" | "startTime" | "endTime" | "content" | "color" | "screenshotUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["note"]>
   export type NoteInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     video?: boolean | VideoDefaultArgs<ExtArgs>
@@ -5334,8 +5371,11 @@ export namespace Prisma {
       noteId: string
       userId: string
       videoId: string
-      timestamp: number
+      startTime: number
+      endTime: number
       content: Prisma.JsonValue
+      color: string
+      screenshotUrl: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["note"]>
@@ -5766,8 +5806,11 @@ export namespace Prisma {
     readonly noteId: FieldRef<"Note", 'String'>
     readonly userId: FieldRef<"Note", 'String'>
     readonly videoId: FieldRef<"Note", 'String'>
-    readonly timestamp: FieldRef<"Note", 'Int'>
+    readonly startTime: FieldRef<"Note", 'Int'>
+    readonly endTime: FieldRef<"Note", 'Int'>
     readonly content: FieldRef<"Note", 'Json'>
+    readonly color: FieldRef<"Note", 'String'>
+    readonly screenshotUrl: FieldRef<"Note", 'String'>
     readonly createdAt: FieldRef<"Note", 'DateTime'>
     readonly updatedAt: FieldRef<"Note", 'DateTime'>
   }
@@ -9528,8 +9571,11 @@ export namespace Prisma {
     noteId: 'noteId',
     userId: 'userId',
     videoId: 'videoId',
-    timestamp: 'timestamp',
+    startTime: 'startTime',
+    endTime: 'endTime',
     content: 'content',
+    color: 'color',
+    screenshotUrl: 'screenshotUrl',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -9934,8 +9980,11 @@ export namespace Prisma {
     noteId?: StringFilter<"Note"> | string
     userId?: StringFilter<"Note"> | string
     videoId?: StringFilter<"Note"> | string
-    timestamp?: IntFilter<"Note"> | number
+    startTime?: IntFilter<"Note"> | number
+    endTime?: IntFilter<"Note"> | number
     content?: JsonFilter<"Note">
+    color?: StringFilter<"Note"> | string
+    screenshotUrl?: StringNullableFilter<"Note"> | string | null
     createdAt?: DateTimeFilter<"Note"> | Date | string
     updatedAt?: DateTimeFilter<"Note"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -9946,8 +9995,11 @@ export namespace Prisma {
     noteId?: SortOrder
     userId?: SortOrder
     videoId?: SortOrder
-    timestamp?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
     content?: SortOrder
+    color?: SortOrder
+    screenshotUrl?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
@@ -9961,8 +10013,11 @@ export namespace Prisma {
     NOT?: NoteWhereInput | NoteWhereInput[]
     userId?: StringFilter<"Note"> | string
     videoId?: StringFilter<"Note"> | string
-    timestamp?: IntFilter<"Note"> | number
+    startTime?: IntFilter<"Note"> | number
+    endTime?: IntFilter<"Note"> | number
     content?: JsonFilter<"Note">
+    color?: StringFilter<"Note"> | string
+    screenshotUrl?: StringNullableFilter<"Note"> | string | null
     createdAt?: DateTimeFilter<"Note"> | Date | string
     updatedAt?: DateTimeFilter<"Note"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -9973,8 +10028,11 @@ export namespace Prisma {
     noteId?: SortOrder
     userId?: SortOrder
     videoId?: SortOrder
-    timestamp?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
     content?: SortOrder
+    color?: SortOrder
+    screenshotUrl?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: NoteCountOrderByAggregateInput
@@ -9991,8 +10049,11 @@ export namespace Prisma {
     noteId?: StringWithAggregatesFilter<"Note"> | string
     userId?: StringWithAggregatesFilter<"Note"> | string
     videoId?: StringWithAggregatesFilter<"Note"> | string
-    timestamp?: IntWithAggregatesFilter<"Note"> | number
+    startTime?: IntWithAggregatesFilter<"Note"> | number
+    endTime?: IntWithAggregatesFilter<"Note"> | number
     content?: JsonWithAggregatesFilter<"Note">
+    color?: StringWithAggregatesFilter<"Note"> | string
+    screenshotUrl?: StringNullableWithAggregatesFilter<"Note"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Note"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Note"> | Date | string
   }
@@ -10461,8 +10522,11 @@ export namespace Prisma {
 
   export type NoteCreateInput = {
     noteId?: string
-    timestamp: number
+    startTime: number
+    endTime: number
     content: JsonNullValueInput | InputJsonValue
+    color?: string
+    screenshotUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutNotesInput
@@ -10473,16 +10537,22 @@ export namespace Prisma {
     noteId?: string
     userId: string
     videoId: string
-    timestamp: number
+    startTime: number
+    endTime: number
     content: JsonNullValueInput | InputJsonValue
+    color?: string
+    screenshotUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type NoteUpdateInput = {
     noteId?: StringFieldUpdateOperationsInput | string
-    timestamp?: IntFieldUpdateOperationsInput | number
+    startTime?: IntFieldUpdateOperationsInput | number
+    endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
+    color?: StringFieldUpdateOperationsInput | string
+    screenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutNotesNestedInput
@@ -10493,8 +10563,11 @@ export namespace Prisma {
     noteId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     videoId?: StringFieldUpdateOperationsInput | string
-    timestamp?: IntFieldUpdateOperationsInput | number
+    startTime?: IntFieldUpdateOperationsInput | number
+    endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
+    color?: StringFieldUpdateOperationsInput | string
+    screenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -10503,16 +10576,22 @@ export namespace Prisma {
     noteId?: string
     userId: string
     videoId: string
-    timestamp: number
+    startTime: number
+    endTime: number
     content: JsonNullValueInput | InputJsonValue
+    color?: string
+    screenshotUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type NoteUpdateManyMutationInput = {
     noteId?: StringFieldUpdateOperationsInput | string
-    timestamp?: IntFieldUpdateOperationsInput | number
+    startTime?: IntFieldUpdateOperationsInput | number
+    endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
+    color?: StringFieldUpdateOperationsInput | string
+    screenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -10521,8 +10600,11 @@ export namespace Prisma {
     noteId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     videoId?: StringFieldUpdateOperationsInput | string
-    timestamp?: IntFieldUpdateOperationsInput | number
+    startTime?: IntFieldUpdateOperationsInput | number
+    endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
+    color?: StringFieldUpdateOperationsInput | string
+    screenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -11108,21 +11190,28 @@ export namespace Prisma {
     noteId?: SortOrder
     userId?: SortOrder
     videoId?: SortOrder
-    timestamp?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
     content?: SortOrder
+    color?: SortOrder
+    screenshotUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type NoteAvgOrderByAggregateInput = {
-    timestamp?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
   }
 
   export type NoteMaxOrderByAggregateInput = {
     noteId?: SortOrder
     userId?: SortOrder
     videoId?: SortOrder
-    timestamp?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    color?: SortOrder
+    screenshotUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -11131,13 +11220,17 @@ export namespace Prisma {
     noteId?: SortOrder
     userId?: SortOrder
     videoId?: SortOrder
-    timestamp?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    color?: SortOrder
+    screenshotUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type NoteSumOrderByAggregateInput = {
-    timestamp?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
   }
   export type JsonWithAggregatesFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -11970,8 +12063,11 @@ export namespace Prisma {
 
   export type NoteCreateWithoutUserInput = {
     noteId?: string
-    timestamp: number
+    startTime: number
+    endTime: number
     content: JsonNullValueInput | InputJsonValue
+    color?: string
+    screenshotUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     video: VideoCreateNestedOneWithoutNotesInput
@@ -11980,8 +12076,11 @@ export namespace Prisma {
   export type NoteUncheckedCreateWithoutUserInput = {
     noteId?: string
     videoId: string
-    timestamp: number
+    startTime: number
+    endTime: number
     content: JsonNullValueInput | InputJsonValue
+    color?: string
+    screenshotUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -12144,8 +12243,11 @@ export namespace Prisma {
     noteId?: StringFilter<"Note"> | string
     userId?: StringFilter<"Note"> | string
     videoId?: StringFilter<"Note"> | string
-    timestamp?: IntFilter<"Note"> | number
+    startTime?: IntFilter<"Note"> | number
+    endTime?: IntFilter<"Note"> | number
     content?: JsonFilter<"Note">
+    color?: StringFilter<"Note"> | string
+    screenshotUrl?: StringNullableFilter<"Note"> | string | null
     createdAt?: DateTimeFilter<"Note"> | Date | string
     updatedAt?: DateTimeFilter<"Note"> | Date | string
   }
@@ -12281,8 +12383,11 @@ export namespace Prisma {
 
   export type NoteCreateWithoutVideoInput = {
     noteId?: string
-    timestamp: number
+    startTime: number
+    endTime: number
     content: JsonNullValueInput | InputJsonValue
+    color?: string
+    screenshotUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutNotesInput
@@ -12291,8 +12396,11 @@ export namespace Prisma {
   export type NoteUncheckedCreateWithoutVideoInput = {
     noteId?: string
     userId: string
-    timestamp: number
+    startTime: number
+    endTime: number
     content: JsonNullValueInput | InputJsonValue
+    color?: string
+    screenshotUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -12838,8 +12946,11 @@ export namespace Prisma {
   export type NoteCreateManyUserInput = {
     noteId?: string
     videoId: string
-    timestamp: number
+    startTime: number
+    endTime: number
     content: JsonNullValueInput | InputJsonValue
+    color?: string
+    screenshotUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -12909,8 +13020,11 @@ export namespace Prisma {
 
   export type NoteUpdateWithoutUserInput = {
     noteId?: StringFieldUpdateOperationsInput | string
-    timestamp?: IntFieldUpdateOperationsInput | number
+    startTime?: IntFieldUpdateOperationsInput | number
+    endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
+    color?: StringFieldUpdateOperationsInput | string
+    screenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     video?: VideoUpdateOneRequiredWithoutNotesNestedInput
@@ -12919,8 +13033,11 @@ export namespace Prisma {
   export type NoteUncheckedUpdateWithoutUserInput = {
     noteId?: StringFieldUpdateOperationsInput | string
     videoId?: StringFieldUpdateOperationsInput | string
-    timestamp?: IntFieldUpdateOperationsInput | number
+    startTime?: IntFieldUpdateOperationsInput | number
+    endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
+    color?: StringFieldUpdateOperationsInput | string
+    screenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -12928,8 +13045,11 @@ export namespace Prisma {
   export type NoteUncheckedUpdateManyWithoutUserInput = {
     noteId?: StringFieldUpdateOperationsInput | string
     videoId?: StringFieldUpdateOperationsInput | string
-    timestamp?: IntFieldUpdateOperationsInput | number
+    startTime?: IntFieldUpdateOperationsInput | number
+    endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
+    color?: StringFieldUpdateOperationsInput | string
+    screenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13035,16 +13155,22 @@ export namespace Prisma {
   export type NoteCreateManyVideoInput = {
     noteId?: string
     userId: string
-    timestamp: number
+    startTime: number
+    endTime: number
     content: JsonNullValueInput | InputJsonValue
+    color?: string
+    screenshotUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type NoteUpdateWithoutVideoInput = {
     noteId?: StringFieldUpdateOperationsInput | string
-    timestamp?: IntFieldUpdateOperationsInput | number
+    startTime?: IntFieldUpdateOperationsInput | number
+    endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
+    color?: StringFieldUpdateOperationsInput | string
+    screenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutNotesNestedInput
@@ -13053,8 +13179,11 @@ export namespace Prisma {
   export type NoteUncheckedUpdateWithoutVideoInput = {
     noteId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    timestamp?: IntFieldUpdateOperationsInput | number
+    startTime?: IntFieldUpdateOperationsInput | number
+    endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
+    color?: StringFieldUpdateOperationsInput | string
+    screenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13062,8 +13191,11 @@ export namespace Prisma {
   export type NoteUncheckedUpdateManyWithoutVideoInput = {
     noteId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    timestamp?: IntFieldUpdateOperationsInput | number
+    startTime?: IntFieldUpdateOperationsInput | number
+    endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
+    color?: StringFieldUpdateOperationsInput | string
+    screenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
