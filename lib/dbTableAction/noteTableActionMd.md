@@ -1,9 +1,9 @@
 # 🛠️ Data Level Access: Note Service Checklist
 
 ## 1. Core CRUD Operations
-- [ ] `createNote(userId, videoId, startTime, endTime, content, color, screenshotUrl)`
-- [ ] `updateNote(noteId, userId, updates)`
-- [ ] `deleteNote(noteId, userId)`
+- [x] `createNote(userId, videoId, startTime, endTime, content, color, screenshotUrl)`
+- [x] `updateNote(userId, noteId, startTime, endTime, content, color, screenshotUrl)`
+- [x] `deleteNote(noteId, userId)`
 - [ ] `getNotesByVideo(videoId, userId)` // Sorted by startTime ASC
 
 ## 2. Range-Specific Logic
