@@ -4,7 +4,7 @@ import { Folder, Trash, Pencil, AlertCircle } from "lucide-react";
 import { useState, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { deleteCollectionById } from "../../../../lib/dbTableAction/collectionTableActions";
-import Modal from "../../../../components/ModalSkeleton";
+import Modal from "../../../_components/ModalSkeleton";
 import CollectionForm from "./CollectionForm";
 import { CollectionContext } from "./CollectionContextProvider";
 import toast from "react-hot-toast";

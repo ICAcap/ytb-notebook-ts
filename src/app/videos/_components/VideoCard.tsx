@@ -9,7 +9,7 @@ import {
 	deleteVideo,
 	VideoDetailType,
 } from "../../../../lib/dbTableAction/videoTableAction";
-import Modal from "../../../../components/ModalSkeleton";
+import Modal from "../../../_components/ModalSkeleton";
 import EditVideoForm from "./EditVideoForm";
 import CollectionBadgeList from "./CollectionBadgeList";
 import { useState, memo, Suspense } from "react";

@@ -1,6 +1,6 @@
 import requireSession from "../../../lib/requireSession";
-import Sidebar from "../../../components/sidebar";
-import SignOutButton from "../../../components/SignOutButton";
+import Sidebar from "../../_components/sidebar";
+import SignOutButton from "../../_components/SignOutButton";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

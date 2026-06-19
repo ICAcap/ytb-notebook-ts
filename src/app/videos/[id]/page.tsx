@@ -1,4 +1,4 @@
-import Sidebar from "../../../../components/sidebar";
+import Sidebar from "../../../_components/sidebar";
 import VideoPlayer from "./_components/VideoPlayer";
 import CollectionBadgeList from "../_components/CollectionBadgeList";
 import { getVideoById } from "../../../../lib/dbTableAction/videoTableAction";
