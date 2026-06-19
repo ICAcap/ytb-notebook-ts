@@ -49,8 +49,8 @@ export default async function VidViewPage({
 			<div className="flex min-h-screen">
 				<Sidebar currentPath="/videos" />
 				<main className="flex-1 p-6">
-					<div className="flex justify-center mb-1">
-						<h1 className="text-3xl text-wrap font-semibold text-center">
+					<div className="flex mb-0.5">
+						<h1 className="text-2xl text-wrap font-semibold">
 							{`${video.title || "Unknown Video"}`}
 						</h1>
 					</div>
