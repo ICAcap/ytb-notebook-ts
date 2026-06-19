@@ -1,5 +1,5 @@
 import requireSession from "../../../lib/requireSession";
-import Sidebar from "../../../components/sidebar";
+import Sidebar from "../../_components/sidebar";
 import { Metadata } from "next";
 import { getUserCollectionNameIDs } from "../../../lib/dbTableAction/collectionTableActions";
 import { FolderOpen } from "lucide-react";

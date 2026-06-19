@@ -1,4 +1,4 @@
-import Sidebar from "../../../components/sidebar";
+import Sidebar from "../../_components/sidebar";
 import requireSession from "../../../lib/requireSession";
 import { Metadata } from "next";
 import Image from "next/image";

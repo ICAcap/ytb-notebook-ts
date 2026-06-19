@@ -1,5 +1,5 @@
-import Sidebar from "../../../components/sidebar";
-import Pagination from "../../../components/pagination";
+import Sidebar from "../../_components/sidebar";
+import Pagination from "../../_components/pagination";
 import requireSession from "../../../lib/requireSession";
 import VideoCard from "./_components/VideoCard";
 import AddVideoButton from "./_components/AddVideoButton";

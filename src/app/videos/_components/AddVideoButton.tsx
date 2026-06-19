@@ -2,7 +2,7 @@
 
 import { Plus } from "lucide-react";
 import { useRef, useState, createContext } from "react";
-import Modal from "../../../../components/ModalSkeleton";
+import Modal from "../../../_components/ModalSkeleton";
 import AddVideoForm from "./AddVideoForm";
 import { useRouter } from "next/navigation";
 import { VideoDetailType } from "../../../../lib/dbTableAction/videoTableAction";

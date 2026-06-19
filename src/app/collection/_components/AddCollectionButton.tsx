@@ -2,7 +2,7 @@
 
 import { Plus } from "lucide-react";
 import { useState, useContext } from "react";
-import Modal from "../../../../components/ModalSkeleton";
+import Modal from "../../../_components/ModalSkeleton";
 import CollectionForm from "./CollectionForm";
 import { CollectionContext } from "./CollectionContextProvider";
 

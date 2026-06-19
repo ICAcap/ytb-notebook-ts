@@ -1,4 +1,4 @@
-import TextEditor from "../../../components/RichTextEditor/TextEditor";
+import TextEditor from "../../_components/RichTextEditor/TextEditor";
 
 const sampleJson = {
 	type: "doc",
