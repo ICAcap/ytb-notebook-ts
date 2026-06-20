@@ -16,26 +16,23 @@ export default function CollectionBadgeList({
 
 	return (
 		<div className="flex flex-wrap gap-1 mt-1">
-			{collectionSorted.map((collection, index) => (
-				// click the collection badge to jump to other videos that are all the same collection
-				// except the collection view we are currently landed on
-				<button
-					key={index}
-					disabled={collection.label === searchParams.get("collection")}
-					className={`btn btn-xs btn-accent rounded-full ${collection.label === searchParams.get("collection") ? "btn-disabled" : ""}`}
-				>
+			{collectionSorted.map((collection, index) => {
+				const isActive = collection.label === searchParams.get("collection");
+				return (
 					<Link
+						key={index}
 						href={
 							"/videos?" +
 							new URLSearchParams({
 								collection: collection.label,
 							}).toString()
 						}
+						className={`btn btn-xs btn-accent hover:border hover:border-accent-content transition-all rounded-full ${isActive ? "btn-disabled pointer-events-none" : ""}`}
 					>
 						{collection.label}
 					</Link>
-				</button>
-			))}
+				);
+			})}
 		</div>
 	);
 }
