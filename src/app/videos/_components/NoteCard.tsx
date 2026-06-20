@@ -4,9 +4,11 @@ import TextEditor from "@/_components/RichTextEditor/TextEditor";
 import { Note } from "../../../../generated/prisma";
 import { useState } from "react";
 import { PencilLine } from "lucide-react";
-import { generateHTML, JSONContent } from "@tiptap/react";
+import { JSONContent } from "@tiptap/react";
+import { renderToReactElement } from "@tiptap/static-renderer/pm/react";
 import { formatTimeStamp } from "../../../../utils/formatTimeStamp";
 import { TiptapExtensions } from "@/_components/RichTextEditor/TiptapExtension";
+import "@/_components/RichTextEditor/styles.scss";
 
 const NoteCard = (note: Note) => {
 	// get related data
@@ -32,11 +34,17 @@ const NoteCard = (note: Note) => {
 			{editable ? (
 				<TextEditor contentJson={contentJson} />
 			) : (
-				<div className="card">
-					{/* Render static content here */}
-					{generateHTML(contentJson, TiptapExtensions)}
+				<div className="card tiptap">
+					{/* Render static content here - */}
+					{/* reference: https://tiptap.dev/docs/editor/api/utilities/static-renderer#generating-react-components-from-json */}
+					{renderToReactElement({
+						content: contentJson,
+						extensions: TiptapExtensions,
+					})}
 				</div>
 			)}
 		</div>
 	);
 };
+
+export default NoteCard;

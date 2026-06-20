@@ -31,6 +31,7 @@ const TextEditor = ({ contentJson }: { contentJson?: JSONContent }) => {
 				<EditorContent
 					editor={editor}
 					className={`border m-2 p-2 min-h-15 rounded-md ${currentStyle === "light" ? themeStyles.light : themeStyles.dark}`}
+					suppressHydrationWarning
 				/>
 			</div>
 		</>

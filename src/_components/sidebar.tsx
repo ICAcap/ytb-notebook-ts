@@ -11,7 +11,7 @@ import {
 	Moon,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 
 export default function Sidebar({
@@ -20,7 +20,12 @@ export default function Sidebar({
 	currentPath?: string;
 }) {
 	const [isCollapsed, setIsCollapsed] = useState(true);
+	const [mounted, setMounted] = useState(false);
 	const { setTheme, resolvedTheme } = useTheme();
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
 
 	function toggleSidebar() {
 		setIsCollapsed((prev) => !prev);
@@ -57,7 +62,7 @@ export default function Sidebar({
 						onClick={handleThemeToggle}
 						className="btn btn-ghost btn-sm btn-square"
 					>
-						{resolvedTheme === undefined ? (
+						{!mounted ? (
 							<div className="animate-spin rounded-full h-5 w-5" />
 						) : resolvedTheme === "light" ? (
 							<Sun className="h-5 w-5" />
