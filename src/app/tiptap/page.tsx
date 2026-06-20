@@ -1,4 +1,5 @@
 import TextEditor from "../../_components/RichTextEditor/TextEditor";
+import Sidebar from "@/_components/sidebar";
 
 const sampleJson = {
 	type: "doc",
@@ -27,8 +28,11 @@ const sampleJson = {
 
 const page = () => {
 	return (
-		<div>
-			<TextEditor contentJson={sampleJson} />
+		<div className="flex min-h-screen">
+			<Sidebar />
+			<main className="flex-1 p-6">
+				<TextEditor contentJson={sampleJson} />
+			</main>
 		</div>
 	);
 };
