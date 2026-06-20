@@ -4,8 +4,9 @@ import TextEditor from "@/_components/RichTextEditor/TextEditor";
 import { Note } from "../../../../generated/prisma";
 import { useState } from "react";
 import { PencilLine } from "lucide-react";
-import { JSONContent } from "@tiptap/react";
+import { generateHTML, JSONContent } from "@tiptap/react";
 import { formatTimeStamp } from "../../../../utils/formatTimeStamp";
+import { TiptapExtensions } from "@/_components/RichTextEditor/TiptapExtension";
 
 const NoteCard = (note: Note) => {
 	// get related data
@@ -19,16 +20,23 @@ const NoteCard = (note: Note) => {
 
 	// helper func
 	function handleEdit() {
-		return;
+		return; // TBD
 	}
 
 	function handleCancel() {
 		setEditable(false);
 	}
 	return (
-		<div>
-			<h1>NoteCard</h1>
-			<TextEditor contentJson={contentJson} />
+		<div className="p-4 border rounded-md">
+			<h1 className="text-lg font-bold">NoteCard</h1>
+			{editable ? (
+				<TextEditor contentJson={contentJson} />
+			) : (
+				<div className="card">
+					{/* Render static content here */}
+					{generateHTML(contentJson, TiptapExtensions)}
+				</div>
+			)}
 		</div>
 	);
 };
