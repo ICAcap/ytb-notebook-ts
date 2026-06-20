@@ -20,14 +20,77 @@ import {
 	Redo2,
 	Undo2,
 	Underline,
+	Baseline,
+	Ban,
 } from "lucide-react";
+import { useState } from "react";
 
+// styling
 const activeClass =
 	"flex items-center justify-center w-8 h-8 rounded-full bg-accent";
 const inactiveClass = "flex items-center justify-center w-8 h-8 rounded-full";
 
+// color picker sub-component
+// reference: https://tiptap.dev/docs/editor/extensions/functionality/color
+const TextColorPicker = ({ editor }: { editor: Editor | null }) => {
+	// preset colors
+	const colors = [
+		{ hex: "#E53935", key: "isTextRed", title: "Red" },
+		{ hex: "#F4511E", key: "isTextOrange", title: "Orange" },
+		{ hex: "#F9A825", key: "isTextYellow", title: "Gold" },
+		{ hex: "#1E88E5", key: "isTextBlue", title: "Blue" },
+		{ hex: "#00897B", key: "isTextTeal", title: "Teal" },
+		{ hex: "#43A047", key: "isTextGreen", title: "Green" },
+	];
+
+	const editorState = useEditorState({
+		editor,
+		selector: ({ editor }) => ({
+			// preset colors
+			isTextRed: editor?.isActive("textStyle", { color: "#E53935" }),
+			isTextOrange: editor?.isActive("textStyle", { color: "#F4511E" }),
+			isTextYellow: editor?.isActive("textStyle", { color: "#F9A825" }),
+			isTextBlue: editor?.isActive("textStyle", { color: "#1E88E5" }),
+			isTextTeal: editor?.isActive("textStyle", { color: "#00897B" }),
+			isTextGreen: editor?.isActive("textStyle", { color: "#43A047" }),
+		}),
+	});
+
+	return (
+		<div className="control-group rounded-2xl dropdown-content bg-accent p-2 w-fit min-w-max">
+			<div className="flex flex-row gap-1 flex-wrap justify-center">
+				{colors.map(({ hex, key, title }) => (
+					<button
+						key={hex}
+						title={title}
+						onClick={() => editor?.chain().focus().setColor(hex).run()}
+					>
+						<div
+							className={`w-5 h-5 rounded-full ${
+								editorState?.[key as keyof typeof editorState]
+									? "border-4 border-accent-content"
+									: ""
+							}`}
+							style={{ backgroundColor: hex }}
+						/>
+					</button>
+				))}
+				{/* unset text color */}
+				<button
+					title="Unset Text Color"
+					onClick={() => editor?.chain().focus().unsetColor().run()}
+				>
+					<Ban size={20} strokeWidth={2.5} className="w-5 h-5 rounded-full" />
+				</button>
+			</div>
+		</div>
+	);
+};
+
+// main component
 const MenuBar = ({ editor }: { editor: Editor | null }) => {
 	//reference: https://tiptap.dev/docs/editor/getting-started/install/react#reacting-to-editor-state-changes
+	const [colorPickerOpen, setColorPickerOpen] = useState(false);
 	const editorState = useEditorState({
 		editor,
 		selector: ({ editor }) => ({
@@ -48,6 +111,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 			isBulletList: editor?.isActive("bulletList") ?? false,
 			isOrderedList: editor?.isActive("orderedList") ?? false,
 			isUnderline: editor?.isActive("underline") ?? false,
+			textColor: editor?.getAttributes("textStyle").color,
 		}),
 	})!;
 
@@ -58,6 +122,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 	return (
 		<div className="control-group flex justify-center mt-2">
 			<div className="flex gap-1 flex-wrap">
+				{/* History controls */}
 				<button
 					onClick={() => editor.chain().focus().undo().run()}
 					disabled={!editorState.canUndo}
@@ -76,6 +141,8 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 				>
 					<Redo2 size={20} strokeWidth={2.5} />
 				</button>
+
+				{/* Heading level controls */}
 				<button
 					onClick={() =>
 						editor.chain().focus().toggleHeading({ level: 1 }).run()
@@ -109,6 +176,20 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 						<Heading3 size={20} strokeWidth={2.5} />
 					</span>
 				</button>
+
+				{/* Text color and palette toggle */}
+				<div className="dropdown" title="Text Color">
+					<button tabIndex={0} className="btn btn-square">
+						<Baseline
+							size={20}
+							strokeWidth={2.5}
+							style={{ color: editorState.textColor || "currentColor" }}
+						/>
+					</button>
+					<TextColorPicker editor={editor} />
+				</div>
+
+				{/* Text styling controls */}
 				<button
 					onClick={() => editor.chain().focus().toggleBold().run()}
 					className="btn btn-square"
@@ -132,7 +213,9 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					className="btn btn-square"
 					title="Underline (Ctrl+U / ⌘+U)"
 				>
-					<span className={editorState.isUnderline ? activeClass : inactiveClass}>
+					<span
+						className={editorState.isUnderline ? activeClass : inactiveClass}
+					>
 						<Underline size={20} strokeWidth={2.5} />
 					</span>
 				</button>
@@ -156,6 +239,8 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 						<Highlighter size={20} strokeWidth={2.5} />
 					</span>
 				</button>
+
+				{/* Text alignment controls */}
 				<button
 					onClick={() => editor.chain().focus().setTextAlign("left").run()}
 					className="btn btn-square"
@@ -200,6 +285,8 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 						<AlignJustify size={20} strokeWidth={2.5} />
 					</span>
 				</button>
+
+				{/* Block and list controls */}
 				<button
 					onClick={() => editor.chain().focus().toggleCodeBlock().run()}
 					className="btn btn-square"

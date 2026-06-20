@@ -5,6 +5,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
 import Heading from "@tiptap/extension-heading";
 import TextAlign from "@tiptap/extension-text-align";
+import { Color, TextStyle } from "@tiptap/extension-text-style";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { all, createLowlight } from "lowlight";
 import { useTheme } from "next-themes";
@@ -37,8 +38,10 @@ const TextEditor = ({ contentJson }: { contentJson?: JSONContent }) => {
 			CodeBlockLowlight.configure({
 				lowlight,
 			}),
+			TextStyle,
+			Color,
 		],
-		content: contentJson ?? "",
+		content: contentJson ?? {},
 		immediatelyRender: false,
 	});
 
