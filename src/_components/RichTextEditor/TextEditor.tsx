@@ -1,6 +1,6 @@
 "use client";
 
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
 import Heading from "@tiptap/extension-heading";
@@ -10,13 +10,13 @@ import { all, createLowlight } from "lowlight";
 import { useTheme } from "next-themes";
 import MenuBar from "./MenuBar";
 
-const TextEditor = ({ contentJson }: { contentJson?: object }) => {
+const TextEditor = ({ contentJson }: { contentJson?: JSONContent }) => {
 	// current theme
 	const currentStyle = useTheme().theme ?? "light";
 
 	// editor-exclusive styles based on the active theme
 	const themeStyles = {
-		light: "bg-amber-300 text-slate-900",
+		light: "bg-white text-slate-900",
 		dark: "bg-slate-500 text-slate-100",
 	};
 
@@ -27,6 +27,7 @@ const TextEditor = ({ contentJson }: { contentJson?: object }) => {
 		extensions: [
 			StarterKit.configure({
 				codeBlock: false,
+				heading: false,
 			}),
 			Highlight,
 			TextAlign.configure({
