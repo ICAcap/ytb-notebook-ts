@@ -29,20 +29,21 @@ const NoteCard = (note: Note) => {
 		setEditable(false);
 	}
 	return (
-		<div className="p-4 border rounded-md">
-			<h1 className="text-lg font-bold">NoteCard</h1>
-			{editable ? (
-				<TextEditor contentJson={contentJson} />
-			) : (
-				<div className="card tiptap">
-					{/* Render static content here - */}
-					{/* reference: https://tiptap.dev/docs/editor/api/utilities/static-renderer#generating-react-components-from-json */}
-					{renderToReactElement({
-						content: contentJson,
-						extensions: TiptapExtensions,
-					})}
-				</div>
-			)}
+		<div className="p-4 card card-md shadow-md shadow-primary rounded-md">
+			<div className="card-body">
+				{editable ? (
+					<TextEditor contentJson={contentJson} />
+				) : (
+					<div className="tiptap">
+						{/* Render static content here - */}
+						{/* reference: https://tiptap.dev/docs/editor/api/utilities/static-renderer#generating-react-components-from-json */}
+						{renderToReactElement({
+							content: contentJson,
+							extensions: TiptapExtensions,
+						})}
+					</div>
+				)}
+			</div>
 		</div>
 	);
 };
