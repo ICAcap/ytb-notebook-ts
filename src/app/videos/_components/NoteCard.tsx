@@ -3,14 +3,20 @@
 import TextEditor from "@/_components/RichTextEditor/TextEditor";
 import { Note } from "../../../../generated/prisma";
 import { useState } from "react";
-import { PencilLine, Shredder } from "lucide-react";
+import { AlertCircle, PencilLine, Shredder } from "lucide-react";
 import { JSONContent } from "@tiptap/react";
 import { renderToReactElement } from "@tiptap/static-renderer/pm/react";
 import { formatTimeStamp } from "../../../../utils/formatTimeStamp";
 import { TiptapExtensions } from "@/_components/RichTextEditor/TiptapExtension";
 import "@/_components/RichTextEditor/styles.scss";
+import { deleteNote } from "../../../../lib/dbTableAction/noteTableAction";
+import Modal from "@/_components/ModalSkeleton";
+import toast from "react-hot-toast";
 
-type Props = Note & { playerRef?: React.RefObject<HTMLVideoElement | null> };
+type Props = Note & {
+	playerRef?: React.RefObject<HTMLVideoElement | null>; // DOM ref to connect to react player
+	onDeleted?: (noteId: string) => void; // parent component's handler func when a note is deleted
+};
 
 const NoteCard = (props: Props) => {
 	// get related data
@@ -29,8 +35,9 @@ const NoteCard = (props: Props) => {
 
 	// hooks
 	const [editable, setEditable] = useState(false);
-	const [pencilModal, setPencilModalOpen] = useState(false);
-	const [trashModal, setTrashModalOpen] = useState(false);
+	const [pencilModalOpen, setPencilModalOpen] = useState(false);
+	const [trashModalOpen, setTrashModalOpen] = useState(false);
+	const [isDeleting, setIsDeleting] = useState(false);
 
 	// helper func
 	function handleSeekTo(seconds: number) {
@@ -47,9 +54,30 @@ const NoteCard = (props: Props) => {
 		return; // TBD
 	}
 
-	function handleCancel() {
-		setEditable(false);
-	}
+	const handleDeleteNote = async () => {
+		setIsDeleting(true);
+		const deletion = await deleteNote(props.userId, props.noteId);
+
+		if (deletion) {
+			props.onDeleted?.(props.noteId); //pass up success deletion signal to parent component to trigger re-rendering
+			toast.success(
+				`Note last updated at "${updatedAtLabel}" deleted successfully!`,
+				{
+					id: "note-deletion-success",
+				},
+			);
+			setTrashModalOpen(false);
+		} else {
+			toast.error(
+				`Failed to delete the note last updated at "${updatedAtLabel}". Please try again.`,
+				{
+					id: "note-deletion-failed",
+				},
+			);
+			setIsDeleting(false);
+		}
+	};
+
 	return (
 		<div className="card card-md shadow-md shadow-primary rounded-lg">
 			<div
@@ -65,7 +93,10 @@ const NoteCard = (props: Props) => {
 					</button>
 					<button
 						className="btn btn-square btn-ghost btn-md"
-						onClick={() => setTrashModalOpen(true)}
+						onClick={() => {
+							props.playerRef?.current && props.playerRef.current.pause(); // pause vid
+							setTrashModalOpen(true);
+						}}
 					>
 						<Shredder className="w-6 h-6" color="white" />
 					</button>
@@ -73,7 +104,10 @@ const NoteCard = (props: Props) => {
 			</div>
 			<div className="border-b border-accent px-4 py-2">
 				<div className="flex gap-2 items-center justify-between">
-					<span className="text-xs text-base-content/60 truncate" title={updatedAtLabel}>
+					<span
+						className="text-xs text-base-content/60 truncate"
+						title={updatedAtLabel}
+					>
 						Updated {updatedAtLabel}
 					</span>
 					<div className="flex gap-2 items-center">
@@ -111,6 +145,41 @@ const NoteCard = (props: Props) => {
 					</div>
 				)}
 			</div>
+
+			{/* Delete Note Modal */}
+			<Modal isOpen={trashModalOpen} onClose={() => setTrashModalOpen(false)}>
+				<div role="dialog" className="flex flex-col gap-6">
+					<div className="flex items-center gap-3">
+						<AlertCircle size={40} className="text-error shrink-0" />
+						<span className="text-lg font-semibold">Confirm Note Deletion</span>
+					</div>
+					<p>Last Updated at {updatedAtLabel}</p>
+					<div className="flex gap-3 justify-between">
+						<button
+							onClick={() => {
+								setTrashModalOpen(false);
+							}}
+							className="btn btn-outline flex-1"
+						>
+							Cancel
+						</button>
+						<button
+							onClick={handleDeleteNote}
+							disabled={isDeleting}
+							className="btn btn-error flex-1"
+						>
+							{isDeleting ? (
+								<>
+									<span className="loading loading-spinner loading-sm"></span>
+									Deleting...
+								</>
+							) : (
+								"Delete"
+							)}
+						</button>
+					</div>
+				</div>
+			</Modal>
 		</div>
 	);
 };

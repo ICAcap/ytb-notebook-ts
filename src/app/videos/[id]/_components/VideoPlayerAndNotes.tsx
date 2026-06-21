@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import VideoPlayer from "./VideoPlayer";
 import NoteCard from "../../_components/NoteCard";
 import { VideoDetailType } from "../../../../../lib/dbTableAction/videoTableAction";
 import { Note } from "../../../../../generated/prisma";
+import { Toaster } from "react-hot-toast";
 
 const VideoPlayerAndNotes = ({
 	userId,
@@ -15,13 +16,24 @@ const VideoPlayerAndNotes = ({
 	video: VideoDetailType;
 	notes: Note[] | null;
 }) => {
+	// hooks
+	// client state for notes array, to trigger re-rendering after note deletion/modification
+	const [noteList, setNoteList] = useState(notes ?? []);
 	// ref to bridge the player and the notes container to enable timestamp seeking
 	const playerRef = useRef<HTMLVideoElement | null>(null);
 
-	const noteCount = notes ? notes.length : 0;
+	// handler
+	// function to trigger current note list filtering out the one note deleted,
+	// further trigger the current component re-rendering only
+	function handleNoteDeleted(noteId: string) {
+		setNoteList((prev) => prev.filter((note) => note.noteId !== noteId));
+	}
+
+	const noteCount = noteList ? noteList.length : 0;
 
 	return (
 		<div className="flex gap-6 mt-4">
+			<Toaster />
 			<div className="flex-1">
 				<VideoPlayer
 					videoId={video.videoId}
@@ -35,8 +47,8 @@ const VideoPlayerAndNotes = ({
 			<div className="w-80">
 				<span>There are {noteCount} Notes</span>
 				<div>
-					{notes ? (
-						notes.map((note) => (
+					{noteCount > 0 ? (
+						noteList.map((note) => (
 							<NoteCard
 								key={note.noteId}
 								noteId={note.noteId}
@@ -50,10 +62,13 @@ const VideoPlayerAndNotes = ({
 								createdAt={note.createdAt}
 								updatedAt={note.updatedAt}
 								playerRef={playerRef}
+								onDeleted={() => handleNoteDeleted(note.noteId)}
 							/>
 						))
 					) : (
-						<span>No Notes...</span>
+						<span className="text-xl label">
+							No notes related to this video...
+						</span>
 					)}
 				</div>
 			</div>
