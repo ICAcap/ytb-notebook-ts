@@ -128,7 +128,6 @@ export default function CollectionForm({
 						disabled={isSubmitting}
 						type="text"
 						placeholder="My Awesome Collection"
-						defaultValue={existingTitle || ""} // Pre-fill the input with the existing collection name when editing.
 						className={`input input-bordered w-full ${
 							errors?.collectionTitle ? "input-error" : ""
 						}`}
