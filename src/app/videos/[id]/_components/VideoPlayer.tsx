@@ -1,13 +1,14 @@
 ﻿"use client";
 
 import ReactPlayer from "react-player";
-import { useRef } from "react";
+import { RefObject, useRef } from "react";
 import { updateVideoPlayedTime } from "../../../../../lib/dbTableAction/videoTableAction";
 
 interface VideoPlayerProps {
 	videoId: string;
 	userId: string;
 	url: string;
+	playerRef?: RefObject<HTMLVideoElement | null>;
 	lastPlayedTime?: number;
 }
 
@@ -18,12 +19,17 @@ const VideoPlayer = ({
 	videoId,
 	userId,
 	url,
+	playerRef,
 	lastPlayedTime = 0,
 }: VideoPlayerProps) => {
-	const playerAlreadyMounted = useRef(false);
-	const playerRef = useRef<HTMLVideoElement | null>(null);
+	// hooks
+	const internalRef = useRef<HTMLVideoElement | null>(null);
+	// fall back to internal hook if need to use the component by itself
+	const reactPlayerRef = playerRef ?? internalRef;
 
-	// heartbeat saves position every 15s while playing
+	const playerAlreadyMounted = useRef(false);
+
+	// heartbeat saves position every fixed seconds while playing
 	const heartbeat = useRef(
 		_.throttle(async (seconds: number) => {
 			await updateVideoPlayedTime(videoId, userId, seconds);
@@ -32,12 +38,12 @@ const VideoPlayer = ({
 
 	// helper function to update the video played time
 	async function handleTimePlayedUpdate() {
-		if (playerRef.current) {
+		if (reactPlayerRef.current) {
 			const currentTimeSeconds = Math.max(
 				0,
 				Math.min(
-					Math.floor(playerRef.current.currentTime),
-					Math.floor(playerRef.current.duration),
+					Math.floor(reactPlayerRef.current.currentTime),
+					Math.floor(reactPlayerRef.current.duration),
 				),
 			);
 			// console.log(`${currentTimeSeconds}`);
@@ -55,7 +61,7 @@ const VideoPlayer = ({
 		<div className="w-full max-w-6xl mt-5 border-2 border-accent">
 			<div className="aspect-video">
 				<ReactPlayer
-					ref={playerRef}
+					ref={reactPlayerRef}
 					src={url}
 					controls={true}
 					width="100%"
@@ -64,8 +70,8 @@ const VideoPlayer = ({
 					onReady={() => {
 						// Set the player's current time to the last played time when it's ready,
 						// but only on the initial player mount
-						if (playerRef.current && !playerAlreadyMounted.current) {
-							playerRef.current.currentTime = lastPlayedTime;
+						if (reactPlayerRef.current && !playerAlreadyMounted.current) {
+							reactPlayerRef.current.currentTime = lastPlayedTime;
 							playerAlreadyMounted.current = true;
 						}
 					}}
@@ -81,8 +87,8 @@ const VideoPlayer = ({
 					onEnded={debouncedHandleTimePlayedUpdate}
 					onSeeked={debouncedHandleTimePlayedUpdate}
 					onTimeUpdate={() => {
-						if (playerRef.current) {
-							const seconds = Math.floor(playerRef.current.currentTime);
+						if (reactPlayerRef.current) {
+							const seconds = Math.floor(reactPlayerRef.current.currentTime);
 							heartbeat(seconds);
 						}
 					}}

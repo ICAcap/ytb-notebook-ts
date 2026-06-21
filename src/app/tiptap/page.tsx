@@ -1,7 +1,7 @@
 import Sidebar from "@/_components/sidebar";
 import NoteCard from "../videos/_components/NoteCard";
 
-const sampleJson = {
+export const sampleJson = {
 	type: "doc",
 	content: [
 		{
@@ -118,7 +118,7 @@ const page = () => {
 					videoId={"1"}
 					startTime={0}
 					endTime={80}
-					color={"red"}
+					color={"#FF0000"}
 					screenshotUrl={null}
 					createdAt={new Date("2023-05-12T10:30:00Z")} // Mock date for initial creation.
 					updatedAt={new Date("2023-06-20T15:45:00Z")} // Mock date for last modification.
