@@ -1,6 +1,7 @@
 import Sidebar from "../../../_components/sidebar";
 import CollectionBadgeList from "../_components/CollectionBadgeList";
 import { getVideoById } from "../../../../lib/dbTableAction/videoTableAction";
+import { getNotesByVideo } from "../../../../lib/dbTableAction/noteTableAction";
 import requireSession from "../../../../lib/requireSession";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
@@ -38,7 +39,9 @@ export default async function VidViewPage({
 	const videoId = (await params).id;
 	const userId = session.user.id;
 
+	// DB data access
 	const video = await getVideoById(userId, videoId);
+	const vidNotes = await getNotesByVideo(userId, videoId);
 
 	if (!video) {
 		notFound();
@@ -66,7 +69,7 @@ export default async function VidViewPage({
 							)}
 						</div>
 					</div>
-					<VideoPlayerAndNotes userId={userId} video={video} />
+					<VideoPlayerAndNotes userId={userId} video={video} notes={vidNotes} />
 				</main>
 			</div>
 		</>
