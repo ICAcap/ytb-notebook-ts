@@ -3,24 +3,38 @@
 import TextEditor from "@/_components/RichTextEditor/TextEditor";
 import { Note } from "../../../../generated/prisma";
 import { useState } from "react";
-import { PencilLine } from "lucide-react";
+import { PencilLine, Shredder } from "lucide-react";
 import { JSONContent } from "@tiptap/react";
 import { renderToReactElement } from "@tiptap/static-renderer/pm/react";
 import { formatTimeStamp } from "../../../../utils/formatTimeStamp";
 import { TiptapExtensions } from "@/_components/RichTextEditor/TiptapExtension";
 import "@/_components/RichTextEditor/styles.scss";
 
-const NoteCard = (note: Note) => {
+type Props = Note & { playerRef?: React.RefObject<HTMLVideoElement | null> };
+
+const NoteCard = (props: Props) => {
 	// get related data
-	const contentJson = note.content as JSONContent;
-	const starTime = formatTimeStamp(note.startTime);
-	const endTime = formatTimeStamp(note.endTime);
-	const color = note.color;
+	const contentJson = props.content as JSONContent;
+	const starTimeStamp = formatTimeStamp(props.startTime);
+	const endTimeStamp = formatTimeStamp(props.endTime);
+	const color = props.color;
 
 	// hooks
 	const [editable, setEditable] = useState(false);
+	const [pencilModal, setPencilModalOpen] = useState(false);
+	const [trashModal, setTrashModalOpen] = useState(false);
 
 	// helper func
+	function handleSeekTo(seconds: number) {
+		if (props.playerRef?.current) {
+			props.playerRef.current.currentTime = Math.max(
+				0,
+				Math.min(props.playerRef.current.duration, seconds),
+			);
+		}
+		return;
+	}
+
 	function handleEdit() {
 		return; // TBD
 	}
@@ -29,7 +43,45 @@ const NoteCard = (note: Note) => {
 		setEditable(false);
 	}
 	return (
-		<div className="p-4 card card-md shadow-md shadow-primary rounded-md">
+		<div className="card card-md shadow-md shadow-primary rounded-lg">
+			<div
+				className="card-title rounded-t-lg flex gap-2 justify-evenly"
+				style={{ backgroundColor: color }}
+			>
+				<button
+					className="btn btn-square btn-ghost btn-md"
+					onClick={() => setPencilModalOpen(true)}
+				>
+					<PencilLine className="w-6 h-6" color="white" />
+				</button>
+				<button
+					className="btn btn-square btn-ghost btn-md"
+					onClick={() => setTrashModalOpen(true)}
+				>
+					<Shredder className="w-6 h-6" color="white" />
+				</button>
+			</div>
+			<div className="border-b border-accent px-4 py-2">
+				<div className="flex gap-2 items-center justify-center">
+					<button
+						onClick={() => handleSeekTo(props.startTime)}
+						className="btn btn-xs btn-primary"
+					>
+						{starTimeStamp}
+					</button>
+					{props.startTime !== props.endTime && (
+						<>
+							<span className="text-2xl">➨</span>
+							<button
+								onClick={() => handleSeekTo(props.endTime)}
+								className="btn btn-xs btn-primary"
+							>
+								{endTimeStamp}
+							</button>
+						</>
+					)}
+				</div>
+			</div>
 			<div className="card-body">
 				{editable ? (
 					<TextEditor contentJson={contentJson} />

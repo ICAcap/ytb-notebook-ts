@@ -1,10 +1,10 @@
 import Sidebar from "../../../_components/sidebar";
-import VideoPlayer from "./_components/VideoPlayer";
 import CollectionBadgeList from "../_components/CollectionBadgeList";
 import { getVideoById } from "../../../../lib/dbTableAction/videoTableAction";
 import requireSession from "../../../../lib/requireSession";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import VideoPlayerAndNotes from "./_components/VideoPlayerAndNotes";
 
 // helper function to fetch video details by id for the authenticated user
 // https://www.slingacademy.com/article/next-js-how-to-set-page-title-and-meta-description/#static-title-and-meta-description
@@ -66,12 +66,7 @@ export default async function VidViewPage({
 							)}
 						</div>
 					</div>
-					<VideoPlayer
-						videoId={video.videoId}
-						userId={userId}
-						url={`https://www.youtube.com/watch?v=${video.youtubeVidID}`}
-						lastPlayedTime={video.lastPlayedTime}
-					/>
+					<VideoPlayerAndNotes userId={userId} video={video} />
 				</main>
 			</div>
 		</>
