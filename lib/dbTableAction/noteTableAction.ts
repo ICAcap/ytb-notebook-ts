@@ -40,10 +40,7 @@ export const getNotesByVideo = cache(async function (
 					videoId: videoId,
 					userId: userId,
 				},
-				orderBy: [
-					{ startTime: "asc" },
-					{ createdAt: "asc" },
-				],
+				orderBy: [{ startTime: "asc" }, { createdAt: "asc" }],
 			});
 			return noteList;
 		} catch (error) {
@@ -79,10 +76,7 @@ export const getUpcomingNotesInVideo = cache(async function (
 					videoId: videoId,
 					startTime: { gte: currentTime + timeWindow },
 				},
-				orderBy: [
-					{ startTime: "asc" },
-					{ createdAt: "asc" },
-				],
+				orderBy: [{ startTime: "asc" }, { createdAt: "asc" }],
 			});
 			return activeNotes;
 		} catch (error) {
@@ -113,10 +107,7 @@ export const getNotesByColor = cache(async function (
 					videoId: videoId,
 					color: color,
 				},
-				orderBy: [
-					{ startTime: "asc" },
-					{ createdAt: "asc" },
-				],
+				orderBy: [{ startTime: "asc" }, { createdAt: "asc" }],
 			});
 			return notes;
 		} catch (error) {
@@ -325,7 +316,8 @@ export async function deleteNote(
 			});
 			return deletion;
 		} catch (error) {
-			console.error("Note Deletion failed, fallback to null return");
+			console.error("Note Deletion failed, fallback to null return", error);
+			return null;
 		}
 	}
 

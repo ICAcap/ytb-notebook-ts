@@ -3,6 +3,7 @@
 import ReactPlayer from "react-player";
 import { RefObject, useRef } from "react";
 import { updateVideoPlayedTime } from "../../../../../lib/dbTableAction/videoTableAction";
+import { memo } from "react";
 
 interface VideoPlayerProps {
 	videoId: string;
@@ -98,4 +99,4 @@ const VideoPlayer = ({
 	);
 };
 
-export default VideoPlayer;
+export default memo(VideoPlayer);
