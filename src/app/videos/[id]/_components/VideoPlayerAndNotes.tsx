@@ -45,7 +45,7 @@ const VideoPlayerAndNotes = ({
 			</div>
 			{/* note cards */}
 			<div className="w-fit">
-				<span>There are {noteCount} Notes</span>
+				<span className="font-bold">There are {noteCount} Notes</span>
 				<br />
 				<div>
 					{noteCount > 0 ? (

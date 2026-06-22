@@ -9,7 +9,7 @@ export function ThemeProviders({ children }: { children: React.ReactNode }) {
 		<ThemeProvider
 			attribute="data-theme"
 			defaultTheme="light"
-			value={{ light: "emerald", dark: "abyss" }}
+			value={{ light: "nord", dark: "abyss" }}
 		>
 			{children}
 		</ThemeProvider>
