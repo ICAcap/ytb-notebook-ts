@@ -1,10 +1,12 @@
 "use client";
 
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEffect } from "react";
+import { useEditor, useEditorState, EditorContent } from "@tiptap/react";
 import { useTheme } from "next-themes";
 import MenuBar from "./MenuBar";
-import { TiptapExtensions } from "./TiptapExtension";
+import { TiptapExtensions, limit } from "./TiptapExtension";
 
+// main component
 const TextEditor = ({ contentJson }: { contentJson?: any }) => {
 	// current theme
 	const currentStyle = useTheme().theme ?? "light";
@@ -22,17 +24,41 @@ const TextEditor = ({ contentJson }: { contentJson?: any }) => {
 		immediatelyRender: false,
 	});
 
+	// reference: https://tiptap.dev/docs/editor/extensions/functionality/character-count
+	const { charactersCount = 0, wordsCount = 0 } =
+		useEditorState({
+			editor,
+			selector: (context): { charactersCount: number; wordsCount: number } => ({
+				charactersCount:
+					context.editor?.storage.characterCount.characters() ?? 0,
+				wordsCount: context.editor?.storage.characterCount.words() ?? 0,
+			}),
+		}) ?? {};
+
+	useEffect(() => {
+		if (editor) {
+			editor.commands.focus("start");
+		}
+	}, [editor]); // auto focus on the editor when it renders
+
 	return (
 		<>
 			<style>{`.ProseMirror:focus { outline: none; border: none; }`}</style>
 			<div>
 				{/* static menu tool bar */}
 				<MenuBar editor={editor} />
+				{/* editor */}
 				<EditorContent
 					editor={editor}
 					className={`border m-2 p-2 min-h-15 rounded-md ${currentStyle === "light" ? themeStyles.light : themeStyles.dark}`}
 					suppressHydrationWarning
 				/>
+				{/* word count */}
+				<div
+					className={`character-count ${charactersCount === limit ? "character-count--warning" : ""}`}
+				>
+					{charactersCount} / {limit} ({wordsCount} words)
+				</div>
 			</div>
 		</>
 	);
