@@ -85,7 +85,7 @@ const EditableNoteCard = (props: Props) => {
 		<div>
 			<header>
 				<h1 className="text-lg font-semibold text-center">
-					{props.noteId ? "Update Note: " : "Add Note: "}
+					{props.noteId ? "--Updating Note--" : "--Adding Note--"}
 				</h1>
 			</header>
 			{/* Note color picker - radio dial (https://daisyui.com/components/radio/) */}
@@ -292,14 +292,18 @@ const EditableNoteCard = (props: Props) => {
 				/>
 
 				{/* action buttons */}
-				<div>
-					<button type="button" onClick={cancelEditing} className="btn">
+				<div className="flex justify-between">
+					<button
+						type="button"
+						onClick={cancelEditing}
+						className="btn border-accent-content"
+					>
 						Cancel
 					</button>
 					<button
 						type="submit"
 						disabled={isSubmitting}
-						className="btn btn-primary"
+						className="btn btn-primary border-accent-content"
 					>
 						{isSubmitting ? (
 							<span className="loading loading-spinner loading-sm">
