@@ -43,8 +43,8 @@ const VideoPlayerAndNotes = ({
 					lastPlayedTime={video.lastPlayedTime}
 				/>
 			</div>
-			{/* testing with one note card */}
-			<div className="w-80">
+			{/* note cards */}
+			<div>
 				<span>There are {noteCount} Notes</span>
 				<div>
 					{noteCount > 0 ? (

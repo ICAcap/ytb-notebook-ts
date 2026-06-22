@@ -45,16 +45,13 @@ const NoteCard = (props: Props) => {
 	// helper func
 	function handleSeekTo(seconds: number) {
 		if (props.playerRef?.current) {
+			props.playerRef.current.play();
 			props.playerRef.current.currentTime = Math.max(
 				0,
 				Math.min(props.playerRef.current.duration, seconds),
 			);
 		}
 		return;
-	}
-
-	function handleEdit() {
-		setEditable(true);
 	}
 
 	const handleDeleteNote = async () => {
