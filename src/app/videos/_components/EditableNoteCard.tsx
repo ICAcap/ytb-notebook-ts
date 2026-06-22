@@ -2,8 +2,8 @@
 
 import React, { Dispatch, SetStateAction } from "react";
 import TextEditor from "@/_components/RichTextEditor/TextEditor";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { InputJsonValue } from "../../../../generated/prisma/runtime/client";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { JSONContent } from "@tiptap/react";
 import { Note } from "../../../../generated/prisma";
 import { getH, getM, getS } from "../../../../utils/formatTimeStamp";
 import { NOTE_COLORS } from "../../../../utils/noteColors";
@@ -23,7 +23,7 @@ type noteForm = {
 	endTimeM: number;
 	endTimeS: number;
 	color: string;
-	content: InputJsonValue;
+	content: JSONContent;
 };
 
 // main component
@@ -31,6 +31,7 @@ const EditableNoteCard = (props: Props) => {
 	// RHF hook
 	const {
 		register,
+		control,
 		handleSubmit,
 		reset,
 		getValues,
@@ -56,7 +57,14 @@ const EditableNoteCard = (props: Props) => {
 				? getS(props.endTime)
 				: getS(props.playerRef?.current?.currentTime ?? 0),
 			color: props.color,
-			content: props.content ? props.content : {},
+			content: (props.content || {
+				type: "doc",
+				content: [
+					{
+						type: "paragraph",
+					},
+				],
+			}) as JSONContent,
 		},
 	});
 
@@ -80,6 +88,39 @@ const EditableNoteCard = (props: Props) => {
 					{props.noteId ? "Update Note: " : "Add Note: "}
 				</h1>
 			</header>
+			{/* Note color picker - radio dial (https://daisyui.com/components/radio/) */}
+			<div>
+				<label className="label">
+					<span className="label-text font-semibold">Note Color Tag</span>
+				</label>
+				<div className="flex gap-4">
+					{NOTE_COLORS.map((c) => (
+						<label key={c.name} className="cursor-pointer" title={c.name}>
+							<input
+								type="radio"
+								value={c.value}
+								defaultChecked={
+									props.color
+										? c.value === props.color
+										: c.value === NOTE_COLORS[0].value
+								}
+								disabled={isSubmitting}
+								className={"radio checked:text-white"}
+								style={{ backgroundColor: c.value, borderColor: c.value }}
+								{...register("color", { required: "Please pick a color" })}
+							/>
+						</label>
+					))}
+				</div>
+				{errors?.color && (
+					<div className="label mt-2">
+						<span className="label-text-alt text-error flex items-center gap-2">
+							<AlertCircle size={16} />
+							{errors.color.message}
+						</span>
+					</div>
+				)}
+			</div>
 			<form onSubmit={handleSubmit(onSubmitNote)}>
 				<div>
 					{/* start time */}
@@ -237,42 +278,20 @@ const EditableNoteCard = (props: Props) => {
 						</div>
 					)}
 				</div>
-				{/* Note color picker - radio dial (https://daisyui.com/components/radio/) */}
-				<div>
-					<label className="label">
-						<span className="label-text font-semibold">Note Color</span>
-					</label>
-					<div className="flex gap-4">
-						{NOTE_COLORS.map((c) => (
-							<label key={c.name} className="cursor-pointer" title={c.name}>
-								<input
-									type="radio"
-									value={c.value}
-									defaultChecked={
-										props.color
-											? c.value === props.color
-											: c.value === NOTE_COLORS[0].value
-									}
-									disabled={isSubmitting}
-									className={"radio checked:text-white"}
-									style={{ backgroundColor: c.value, borderColor: c.value }}
-									{...register("color", { required: "Please pick a color" })}
-								/>
-							</label>
-						))}
-					</div>
-					{errors?.color && (
-						<div className="label mt-2">
-							<span className="label-text-alt text-error flex items-center gap-2">
-								<AlertCircle size={16} />
-								{errors.color.message}
-							</span>
-						</div>
-					)}
-				</div>
 
 				{/* content - text editor */}
-				<TextEditor contentJson={props.content} />
+				<Controller
+					name="content"
+					control={control}
+					render={({ field }) => (
+						<TextEditor
+							contentJson={props.content as JSONContent}
+							onChange={field.onChange}
+						/>
+					)}
+				/>
+
+				{/* action buttons */}
 				<div>
 					<button type="button" onClick={cancelEditing} className="btn">
 						Cancel
