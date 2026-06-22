@@ -8,6 +8,11 @@ import { Note } from "../../../../generated/prisma";
 import { getH, getM, getS } from "../../../../utils/formatTimeStamp";
 import { NOTE_COLORS } from "../../../../utils/noteColors";
 import { AlertCircle } from "lucide-react";
+import toast from "react-hot-toast";
+import {
+	createNote,
+	updateNote,
+} from "../../../../lib/dbTableAction/noteTableAction";
 
 type Props = (Note | null) & {
 	playerRef?: React.RefObject<HTMLVideoElement | null>;
@@ -70,10 +75,53 @@ const EditableNoteCard = (props: Props) => {
 
 	// helpers
 	const onSubmitNote: SubmitHandler<noteForm> = async (data) => {
-		//TBD
-		console.log(data.content);
-		console.log(data.startTimeH, data.startTimeM, data.startTimeS);
-		console.log(data.endTimeH, data.endTimeM, data.endTimeS);
+		// retrieve data
+		const startH = data.startTimeH;
+		const startM = data.startTimeM;
+		const startS = data.startTimeS;
+		const endH = data.endTimeH;
+		const endM = data.endTimeM;
+		const endS = data.endTimeS;
+
+		const colorTag = data.color;
+		const contentJson = data.content;
+
+		// convert to seconds
+		const startTotalSeconds = 3600 * startH + 60 * startM + startS;
+		const endTotalSeconds = 3600 * endH + 60 * endM + endS;
+
+		let noteUpserted = null;
+
+		// update existing note
+		if (props.userId && props.videoId && props.noteId) {
+			noteUpserted = await updateNote({
+				userId: props.userId,
+				noteId: props.noteId,
+				startTime: startTotalSeconds,
+				endTime: endTotalSeconds,
+				content: contentJson,
+				color: colorTag,
+			});
+		}
+
+		// create new note
+		else if (props.userId && props.videoId) {
+			noteUpserted = await createNote({
+				userId: props.userId,
+				videoId: props.videoId,
+				startTime: startTotalSeconds,
+				endTime: endTotalSeconds,
+				content: contentJson,
+				color: colorTag,
+			});
+		}
+
+		if (noteUpserted) {
+			toast.success("Note Submitted");
+			props.setEditable(false);
+		} else {
+			toast.error("Note Submission Failed, Please Try Again");
+		}
 	};
 
 	function cancelEditing() {
@@ -279,7 +327,7 @@ const EditableNoteCard = (props: Props) => {
 					)}
 				</div>
 
-				{/* content - text editor */}
+				{/* controller - text editor */}
 				<Controller
 					name="content"
 					control={control}

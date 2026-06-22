@@ -73,6 +73,7 @@ const TextEditor = ({
 				>
 					{charactersCount} / {limit} ({wordsCount} words)
 				</div>
+				<br />
 			</div>
 		</>
 	);
