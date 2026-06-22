@@ -32,7 +32,7 @@ const VideoPlayerAndNotes = ({
 	const noteCount = noteList ? noteList.length : 0;
 
 	return (
-		<div className="flex gap-6 mt-4">
+		<div className="flex gap-2 mt-1">
 			<Toaster />
 			<div className="flex-1">
 				<VideoPlayer
@@ -44,8 +44,9 @@ const VideoPlayerAndNotes = ({
 				/>
 			</div>
 			{/* note cards */}
-			<div>
+			<div className="w-fit">
 				<span>There are {noteCount} Notes</span>
+				<br />
 				<div>
 					{noteCount > 0 ? (
 						noteList.map((note) => (
@@ -66,7 +67,7 @@ const VideoPlayerAndNotes = ({
 							/>
 						))
 					) : (
-						<span className="text-xl label">
+						<span className="text-2xl label">
 							No notes related to this video...
 						</span>
 					)}
