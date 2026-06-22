@@ -5,8 +5,14 @@ import TextAlign from "@tiptap/extension-text-align";
 import { Color, TextStyle } from "@tiptap/extension-text-style";
 import StarterKit from "@tiptap/starter-kit";
 import { createLowlight, all } from "lowlight";
+import { CharacterCount } from "@tiptap/extensions";
+
+/**
+ * Tiptap extensions config here
+ */
 
 const lowlight = createLowlight(all); // create a lowlight instance with all prog languages loaded
+export const limit = 2000;
 
 export const TiptapExtensions = [
 	StarterKit.configure({
@@ -23,4 +29,5 @@ export const TiptapExtensions = [
 	}),
 	TextStyle,
 	Color,
+	CharacterCount.configure({ limit }),
 ];
