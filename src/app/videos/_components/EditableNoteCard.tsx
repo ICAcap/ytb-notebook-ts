@@ -9,7 +9,7 @@ import { getH, getM, getS } from "../../../../utils/formatTimeStamp";
 import { NOTE_COLORS } from "../../../../utils/noteColors";
 import { AlertCircle } from "lucide-react";
 
-type Props = Note & {
+type Props = (Note | null) & {
 	playerRef?: React.RefObject<HTMLVideoElement | null>;
 	setEditable: Dispatch<SetStateAction<boolean>>;
 };
@@ -248,7 +248,11 @@ const EditableNoteCard = (props: Props) => {
 								<input
 									type="radio"
 									value={c.value}
-									defaultChecked={c.value === props.color}
+									defaultChecked={
+										props.color
+											? c.value === props.color
+											: c.value === NOTE_COLORS[0].value
+									}
 									disabled={isSubmitting}
 									className={"radio checked:text-white"}
 									style={{ backgroundColor: c.value, borderColor: c.value }}
