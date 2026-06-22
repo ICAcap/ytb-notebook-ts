@@ -1,13 +1,24 @@
 "use client";
 
 import { useEffect } from "react";
-import { useEditor, useEditorState, EditorContent } from "@tiptap/react";
+import {
+	useEditor,
+	useEditorState,
+	EditorContent,
+	JSONContent,
+} from "@tiptap/react";
 import { useTheme } from "next-themes";
 import MenuBar from "./MenuBar";
 import { TiptapExtensions, limit } from "./TiptapExtension";
 
 // main component
-const TextEditor = ({ contentJson }: { contentJson?: any }) => {
+const TextEditor = ({
+	contentJson,
+	onChange, // content change handler from parent component
+}: {
+	contentJson?: JSONContent;
+	onChange?: (json: JSONContent) => void;
+}) => {
 	// current theme
 	const currentStyle = useTheme().theme ?? "light";
 
@@ -22,6 +33,9 @@ const TextEditor = ({ contentJson }: { contentJson?: any }) => {
 		extensions: TiptapExtensions,
 		content: contentJson ?? {},
 		immediatelyRender: false,
+		onUpdate: ({ editor }) => {
+			onChange?.(editor.getJSON());
+		},
 	});
 
 	// reference: https://tiptap.dev/docs/editor/extensions/functionality/character-count
