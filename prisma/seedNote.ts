@@ -1,14 +1,17 @@
 import { prisma } from "../lib/prisma";
+import { NOTE_COLORS } from "../utils/noteColors";
 
 const TEST_USER_ID = "80NiPuUDjCKqKX5de08KQxLUIFpwHnzY";
 const TEST_VID_ID = "cmqn28l5r0000jou21ty2pid4";
+
+const colorValues = NOTE_COLORS.map((c) => c.value);
 
 // Tiptap JSON with various styling variations
 const notes = [
   {
     startTime: 0,
     endTime: 10,
-    color: "#FF6B6B",
+    color: colorValues[0],
     content: {
       type: "doc",
       content: [
@@ -28,7 +31,7 @@ const notes = [
   {
     startTime: 15,
     endTime: 30,
-    color: "#4ECDC4",
+    color: colorValues[1],
     content: {
       type: "doc",
       content: [
@@ -48,7 +51,7 @@ const notes = [
   {
     startTime: 35,
     endTime: 50,
-    color: "#FFE66D",
+    color: colorValues[2],
     content: {
       type: "doc",
       content: [
@@ -77,7 +80,7 @@ const notes = [
   {
     startTime: 55,
     endTime: 75,
-    color: "#95E1D3",
+    color: colorValues[3],
     content: {
       type: "doc",
       content: [
@@ -97,7 +100,7 @@ const notes = [
   {
     startTime: 80,
     endTime: 100,
-    color: "#F38181",
+    color: colorValues[4],
     content: {
       type: "doc",
       content: [
@@ -116,7 +119,7 @@ const notes = [
   {
     startTime: 105,
     endTime: 120,
-    color: "#AA96DA",
+    color: colorValues[0],
     content: {
       type: "doc",
       content: [
@@ -136,7 +139,7 @@ const notes = [
   {
     startTime: 125,
     endTime: 140,
-    color: "#FCBAD3",
+    color: colorValues[1],
     content: {
       type: "doc",
       content: [
@@ -156,7 +159,7 @@ const notes = [
   {
     startTime: 145,
     endTime: 160,
-    color: "#A8E6CF",
+    color: colorValues[2],
     content: {
       type: "doc",
       content: [
@@ -176,7 +179,7 @@ const notes = [
   {
     startTime: 165,
     endTime: 180,
-    color: "#FFD3B6",
+    color: colorValues[3],
     content: {
       type: "doc",
       content: [
@@ -205,7 +208,7 @@ const notes = [
   {
     startTime: 185,
     endTime: 200,
-    color: "#FFDDC1",
+    color: colorValues[4],
     content: {
       type: "doc",
       content: [

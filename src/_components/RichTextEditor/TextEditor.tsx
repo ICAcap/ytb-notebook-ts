@@ -1,11 +1,11 @@
 "use client";
 
-import { useEditor, EditorContent, JSONContent } from "@tiptap/react";
+import { useEditor, EditorContent } from "@tiptap/react";
 import { useTheme } from "next-themes";
 import MenuBar from "./MenuBar";
 import { TiptapExtensions } from "./TiptapExtension";
 
-const TextEditor = ({ contentJson }: { contentJson?: JSONContent }) => {
+const TextEditor = ({ contentJson }: { contentJson?: any }) => {
 	// current theme
 	const currentStyle = useTheme().theme ?? "light";
 

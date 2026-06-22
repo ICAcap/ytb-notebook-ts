@@ -2,16 +2,20 @@
 
 import TextEditor from "@/_components/RichTextEditor/TextEditor";
 import { Note } from "../../../../generated/prisma";
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import { AlertCircle, PencilLine, Shredder } from "lucide-react";
 import { JSONContent } from "@tiptap/react";
 import { renderToReactElement } from "@tiptap/static-renderer/pm/react";
 import { formatTimeStamp } from "../../../../utils/formatTimeStamp";
 import { TiptapExtensions } from "@/_components/RichTextEditor/TiptapExtension";
-import "@/_components/RichTextEditor/styles.scss";
-import { deleteNote } from "../../../../lib/dbTableAction/noteTableAction";
+import EditableNoteCard from "./EditableNoteCard";
+import {
+	updateNote,
+	deleteNote,
+} from "../../../../lib/dbTableAction/noteTableAction";
 import Modal from "@/_components/ModalSkeleton";
 import toast from "react-hot-toast";
+import "@/_components/RichTextEditor/styles.scss";
 
 type Props = Note & {
 	playerRef?: React.RefObject<HTMLVideoElement | null>; // DOM ref to connect to react player
@@ -35,7 +39,6 @@ const NoteCard = (props: Props) => {
 
 	// hooks
 	const [editable, setEditable] = useState(false);
-	const [pencilModalOpen, setPencilModalOpen] = useState(false);
 	const [trashModalOpen, setTrashModalOpen] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
 
@@ -51,7 +54,7 @@ const NoteCard = (props: Props) => {
 	}
 
 	function handleEdit() {
-		return; // TBD
+		setEditable(true);
 	}
 
 	const handleDeleteNote = async () => {
@@ -86,8 +89,11 @@ const NoteCard = (props: Props) => {
 			>
 				<div className="flex gap-2">
 					<button
+						disabled={editable}
+						onClick={() => {
+							setEditable(true);
+						}}
 						className="btn btn-square btn-ghost btn-md"
-						onClick={() => setPencilModalOpen(true)}
 					>
 						<PencilLine className="w-6 h-6" color="white" />
 					</button>
@@ -133,7 +139,19 @@ const NoteCard = (props: Props) => {
 			</div>
 			<div className="card-body">
 				{editable ? (
-					<TextEditor contentJson={contentJson} />
+					<EditableNoteCard
+						noteId={props.noteId}
+						userId={props.userId}
+						videoId={props.videoId}
+						startTime={props.startTime}
+						endTime={props.endTime}
+						content={props.content}
+						color={props.color}
+						screenshotUrl={props.screenshotUrl}
+						createdAt={props.createdAt}
+						updatedAt={props.updatedAt}
+						setEditable={setEditable}
+					/>
 				) : (
 					<div className="tiptap">
 						{/* Render static content here - */}
