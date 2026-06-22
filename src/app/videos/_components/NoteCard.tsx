@@ -82,7 +82,10 @@ const NoteCard = (props: Props) => {
 	};
 
 	return (
-		<div className="card card-md shadow-md shadow-primary rounded-lg">
+		<div
+			className="card card-md rounded-lg"
+			style={{ boxShadow: `0 4px 8px ${color}80` }}
+		>
 			<div
 				className="card-title rounded-t-lg flex gap-2 justify-end"
 				style={{ backgroundColor: color }}
@@ -114,7 +117,7 @@ const NoteCard = (props: Props) => {
 						className="text-xs text-base-content/60 truncate"
 						title={updatedAtLabel}
 					>
-						Updated {updatedAtLabel}
+						updated {updatedAtLabel}
 					</span>
 					<div className="flex gap-2 items-center">
 						<button
