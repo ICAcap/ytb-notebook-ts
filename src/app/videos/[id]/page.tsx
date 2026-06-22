@@ -58,8 +58,8 @@ export default async function VidViewPage({
 						</h1>
 					</div>
 					<div className="mt-4">
-						<h2 className="text-xl text-base-content/60">Collections:</h2>
-						<div className="flex flex-wrap gap-2 mt-2">
+						<h2 className="text-md text-base-content/60">Collections:</h2>
+						<div className="flex flex-wrap gap-2 mt-1">
 							{video.collections && video.collections.length > 0 ? (
 								<CollectionBadgeList collections={video.collections} />
 							) : (

@@ -44,7 +44,7 @@ export default function Sidebar({
 
 	return (
 		<aside
-			className={`${isCollapsed ? "w-20" : "w-75"} flex flex-col bg-neutral text-neutral-content min-h-screen z-10 transition-all duration-300 ease-out`}
+			className={`${isCollapsed ? "w-20" : "w-75"} flex flex-col bg-accent text-accent-content min-h-screen z-10 transition-all duration-300 ease-out`}
 		>
 			<div
 				className={`flex items-center p-4 mb-2 ${
@@ -54,7 +54,12 @@ export default function Sidebar({
 				{!isCollapsed && (
 					<div className="flex items-center gap-2 flex-1 min-w-0">
 						<NotebookPen className="w-8 h-8 text-amber-300 shrink-0" />
-						<span className="text-xl font-bold truncate">YTB Notebook</span>
+						<span
+							className="text-xl font-bold truncate"
+							style={{ fontFamily: "Comic Sans MS, cursive" }}
+						>
+							YTB Notebook
+						</span>
 					</div>
 				)}
 				<div className="flex items-center gap-1">
