@@ -17,6 +17,7 @@ import {
 type Props = (Note | null) & {
 	playerRef?: React.RefObject<HTMLVideoElement | null>;
 	setEditable: Dispatch<SetStateAction<boolean>>;
+	onUpdated?: (note: Note) => void;
 };
 
 // for RHF type and form validation
@@ -84,7 +85,8 @@ const EditableNoteCard = (props: Props) => {
 		const endS = data.endTimeS;
 
 		const colorTag = data.color;
-		const contentJson = data.content;
+		// sanitize json
+		const contentJson = JSON.parse(JSON.stringify(data.content)) as JSONContent;
 
 		// convert to seconds
 		const startTotalSeconds = 3600 * startH + 60 * startM + startS;
@@ -101,6 +103,7 @@ const EditableNoteCard = (props: Props) => {
 				endTime: endTotalSeconds,
 				content: contentJson,
 				color: colorTag,
+				screenshotUrl: props.screenshotUrl ?? undefined,
 			});
 		}
 
@@ -118,6 +121,7 @@ const EditableNoteCard = (props: Props) => {
 
 		if (noteUpserted) {
 			toast.success("Note Submitted");
+			props.onUpdated?.(noteUpserted);
 			props.setEditable(false);
 		} else {
 			toast.error("Note Submission Failed, Please Try Again");

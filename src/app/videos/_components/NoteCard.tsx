@@ -1,18 +1,14 @@
 "use client";
 
-import TextEditor from "@/_components/RichTextEditor/TextEditor";
 import { Note } from "../../../../generated/prisma";
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 import { AlertCircle, PencilLine, Shredder } from "lucide-react";
 import { JSONContent } from "@tiptap/react";
 import { renderToReactElement } from "@tiptap/static-renderer/pm/react";
 import { formatTimeStamp } from "../../../../utils/formatTimeStamp";
 import { TiptapExtensions } from "@/_components/RichTextEditor/TiptapExtension";
 import EditableNoteCard from "./EditableNoteCard";
-import {
-	updateNote,
-	deleteNote,
-} from "../../../../lib/dbTableAction/noteTableAction";
+import { deleteNote } from "../../../../lib/dbTableAction/noteTableAction";
 import Modal from "@/_components/ModalSkeleton";
 import toast from "react-hot-toast";
 import "@/_components/RichTextEditor/styles.scss";
@@ -20,6 +16,7 @@ import "@/_components/RichTextEditor/styles.scss";
 type Props = Note & {
 	playerRef?: React.RefObject<HTMLVideoElement | null>; // DOM ref to connect to react player
 	onDeleted?: (noteId: string) => void; // parent component's handler func when a note is deleted
+	onUpdated?: (note: Note) => void; // parent component's handler func when a note is updated (upserted)
 };
 
 const NoteCard = (props: Props) => {
@@ -140,6 +137,7 @@ const NoteCard = (props: Props) => {
 			<div className="card-body">
 				{editable ? (
 					<EditableNoteCard
+						key={props.updatedAt.getTime()}
 						noteId={props.noteId}
 						userId={props.userId}
 						videoId={props.videoId}
@@ -151,6 +149,7 @@ const NoteCard = (props: Props) => {
 						createdAt={props.createdAt}
 						updatedAt={props.updatedAt}
 						setEditable={setEditable}
+						onUpdated={props.onUpdated}
 					/>
 				) : (
 					<div className="tiptap">

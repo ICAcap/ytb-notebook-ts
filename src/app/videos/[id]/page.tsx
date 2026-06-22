@@ -5,7 +5,7 @@ import { getNotesByVideo } from "../../../../lib/dbTableAction/noteTableAction";
 import requireSession from "../../../../lib/requireSession";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import VideoPlayerAndNotes from "./_components/VideoPlayerAndNotes";
+import VideoPlayerAndNotesContainer from "./_components/VideoPlayerAndNotesContainer";
 
 // helper function to fetch video details by id for the authenticated user
 // https://www.slingacademy.com/article/next-js-how-to-set-page-title-and-meta-description/#static-title-and-meta-description
@@ -69,7 +69,11 @@ export default async function VidViewPage({
 							)}
 						</div>
 					</div>
-					<VideoPlayerAndNotes userId={userId} video={video} notes={vidNotes} />
+					<VideoPlayerAndNotesContainer
+						userId={userId}
+						video={video}
+						notes={vidNotes}
+					/>
 				</main>
 			</div>
 		</>
