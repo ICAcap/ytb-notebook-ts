@@ -25,10 +25,10 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-// styling
+// styling for active/inactive setting button
 const activeClass =
-	"flex items-center justify-center w-8 h-8 rounded-full bg-accent";
-const inactiveClass = "flex items-center justify-center w-8 h-8 rounded-full";
+	"flex items-center justify-center w-4 h-4 bg-accent rounded-xs";
+const inactiveClass = "flex items-center justify-center w-4 h-4 rounded-xs";
 
 // color picker sub-component
 // reference: https://tiptap.dev/docs/editor/extensions/functionality/color
@@ -37,7 +37,7 @@ const TextColorPicker = ({ editor }: { editor: Editor | null }) => {
 	const colors = [
 		{ hex: "#E53935", key: "isTextRed", title: "Red" },
 		{ hex: "#F4511E", key: "isTextOrange", title: "Orange" },
-		{ hex: "#F9A825", key: "isTextYellow", title: "Gold" },
+		{ hex: "#FF9026", key: "isTextGold", title: "Gold" },
 		{ hex: "#1E88E5", key: "isTextBlue", title: "Blue" },
 		{ hex: "#00897B", key: "isTextTeal", title: "Teal" },
 		{ hex: "#43A047", key: "isTextGreen", title: "Green" },
@@ -49,7 +49,7 @@ const TextColorPicker = ({ editor }: { editor: Editor | null }) => {
 			// preset colors
 			isTextRed: editor?.isActive("textStyle", { color: "#E53935" }),
 			isTextOrange: editor?.isActive("textStyle", { color: "#F4511E" }),
-			isTextYellow: editor?.isActive("textStyle", { color: "#F9A825" }),
+			isTextGold: editor?.isActive("textStyle", { color: "#FF9026" }),
 			isTextBlue: editor?.isActive("textStyle", { color: "#1E88E5" }),
 			isTextTeal: editor?.isActive("textStyle", { color: "#00897B" }),
 			isTextGreen: editor?.isActive("textStyle", { color: "#43A047" }),
@@ -177,7 +177,10 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 				</button>
 
 				{/* Text color and palette toggle */}
-				<div className="dropdown" title="Text Color">
+				<div
+					className="dropdown dropdown-center dropdown-top"
+					title="Text Color"
+				>
 					<button tabIndex={0} className="btn btn-xs btn-square">
 						<Baseline
 							size={20}
