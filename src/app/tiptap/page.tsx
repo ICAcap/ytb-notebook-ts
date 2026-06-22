@@ -112,7 +112,6 @@ const page = () => {
 		<div className="flex min-h-screen">
 			<Sidebar />
 			<main className="flex-1 p-6">
-				<TextEditor contentJson={sampleJson} />
 				<NoteCard
 					content={sampleJson}
 					noteId={"1"}
