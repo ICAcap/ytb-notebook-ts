@@ -2,7 +2,7 @@
 
 import {
 	ChevronLeft,
-	NotebookPen,
+	SwatchBook,
 	LayoutPanelLeft,
 	Tv,
 	FolderBookmark,
@@ -53,10 +53,10 @@ export default function Sidebar({
 			>
 				{!isCollapsed && (
 					<div className="flex items-center gap-2 flex-1 min-w-0">
-						<NotebookPen className="w-8 h-8 text-amber-300 shrink-0" />
+						<SwatchBook className="w-8 h-8 text-amber-300 shrink-0" />
 						<span
 							className="text-xl font-bold truncate"
-							style={{ fontFamily: "Comic Sans MS, cursive" }}
+							style={{ fontFamily: "Comic Sans MS" }}
 						>
 							YTB Notebook
 						</span>
@@ -106,7 +106,7 @@ export default function Sidebar({
 								title={isCollapsed ? item.name : undefined}
 								className={`rounded-xl transition-colors duration-200 ${
 									isActive
-										? "bg-accent/30 text-primary font-semibold"
+										? "bg-secondary text-secondary-content font-semibold"
 										: "hover:bg-neutral-content/10"
 								}`}
 							>
