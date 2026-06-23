@@ -32,7 +32,12 @@ const VideoPlayerAndNotesContainer = ({
 					lastPlayedTime={video.lastPlayedTime}
 				/>
 			</div>
-			<NoteContainer notes={notes} playerRef={playerRef} />
+			<NoteContainer
+				userId={userId}
+				videoId={video.videoId}
+				notes={notes}
+				playerRef={playerRef}
+			/>
 		</div>
 	);
 };

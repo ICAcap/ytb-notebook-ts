@@ -9,6 +9,8 @@ export function ThemeProviders({ children }: { children: React.ReactNode }) {
 		<ThemeProvider
 			attribute="data-theme"
 			defaultTheme="light"
+			enableSystem={false}
+			storageKey="theme"
 			value={{ light: "retro", dark: "abyss" }}
 		>
 			{children}
