@@ -31,7 +31,7 @@ const TextEditor = ({
 	// editor config
 	const editor = useEditor({
 		extensions: TiptapExtensions,
-		content: contentJson ?? {},
+		content: contentJson,
 		immediatelyRender: false,
 		onUpdate: ({ editor }) => {
 			onChange?.(editor.getJSON());

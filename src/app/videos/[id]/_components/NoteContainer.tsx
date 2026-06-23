@@ -58,7 +58,9 @@ const NoteContainer = ({
 			{/* Notes count + Add note collapsible (by daisy UI) */}
 			<div className="sticky top-0 w-full bg-accent rounded-t-lg z-10">
 				<div className="flex flex-col py-2 gap-2">
-					<span className="label px-4 font-bold">{noteCount} Notes</span>
+					<span className="badge badge-info badge-sm ml-2 font-bold">
+						{noteCount} Notes
+					</span>
 					<div className="collapse collapse-arrow">
 						<input
 							type="checkbox"
