@@ -146,13 +146,12 @@ const NoteCard = (props: Props) => {
 						content={props.content}
 						color={props.color}
 						screenshotUrl={props.screenshotUrl}
-						createdAt={props.createdAt}
-						updatedAt={props.updatedAt}
+						playerRef={props.playerRef}
 						setEditable={setEditable}
 						onUpdated={props.onUpdated}
 					/>
 				) : (
-					<div className="tiptap">
+					<div className="tiptap prose prose-sm max-w-none wrap-break-word">
 						{/* Render static content here - */}
 						{/* reference: https://tiptap.dev/docs/editor/api/utilities/static-renderer#generating-react-components-from-json */}
 						{renderToReactElement({

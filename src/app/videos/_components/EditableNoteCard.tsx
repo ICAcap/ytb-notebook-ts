@@ -14,9 +14,9 @@ import {
 	updateNote,
 } from "../../../../lib/dbTableAction/noteTableAction";
 
-type Props = (Note | null) & {
+type Props = (Omit<Note, "createdAt" | "updatedAt"> | null) & {
 	playerRef?: React.RefObject<HTMLVideoElement | null>;
-	setEditable: Dispatch<SetStateAction<boolean>>;
+	setEditable?: Dispatch<SetStateAction<boolean>>;
 	onUpdated?: (note: Note) => void;
 };
 
@@ -41,6 +41,7 @@ const EditableNoteCard = (props: Props) => {
 		handleSubmit,
 		reset,
 		getValues,
+		setValue,
 		formState: { errors, isSubmitting },
 	} = useForm<noteForm>({
 		defaultValues: {
@@ -122,14 +123,14 @@ const EditableNoteCard = (props: Props) => {
 		if (noteUpserted) {
 			toast.success("Note Submitted");
 			props.onUpdated?.(noteUpserted);
-			props.setEditable(false);
+			props.setEditable?.(false);
 		} else {
 			toast.error("Note Submission Failed, Please Try Again");
 		}
 	};
 
 	function cancelEditing() {
-		props.setEditable(false);
+		props.setEditable?.(false);
 		reset(); // reset the form inputs to default values
 	}
 
@@ -233,7 +234,20 @@ const EditableNoteCard = (props: Props) => {
 								max: { value: 59, message: "Second cannot exceed 59" },
 							})}
 						/>
+						<button
+							onClick={() => {
+								const currentTime = props.playerRef?.current?.currentTime ?? 0;
+								setValue("startTimeH", getH(currentTime));
+								setValue("startTimeM", getM(currentTime));
+								setValue("startTimeS", getS(currentTime));
+							}}
+							type="button"
+							className="btn btn-info btn-xs font-semibold"
+						>
+							sync current time
+						</button>
 					</div>
+
 					{(errors?.startTimeH || errors?.startTimeM || errors?.startTimeS) && (
 						<div className="label mt-2">
 							<span className="label-text-alt text-error flex items-center gap-2">
@@ -318,6 +332,18 @@ const EditableNoteCard = (props: Props) => {
 								},
 							})}
 						/>
+						<button
+							onClick={() => {
+								const currentTime = props.playerRef?.current?.currentTime ?? 0;
+								setValue("endTimeH", getH(currentTime));
+								setValue("endTimeM", getM(currentTime));
+								setValue("endTimeS", getS(currentTime));
+							}}
+							type="button"
+							className="btn btn-info btn-xs font-semibold"
+						>
+							sync current time
+						</button>
 					</div>
 					{(errors?.endTimeH || errors?.endTimeM || errors?.endTimeS) && (
 						<div className="label mt-2">
@@ -346,6 +372,7 @@ const EditableNoteCard = (props: Props) => {
 				{/* action buttons */}
 				<div className="flex justify-between">
 					<button
+						hidden={props.noteId ? false : true} //hidden cancel btn if it's adding new note
 						type="button"
 						onClick={cancelEditing}
 						className="btn border-accent-content"
