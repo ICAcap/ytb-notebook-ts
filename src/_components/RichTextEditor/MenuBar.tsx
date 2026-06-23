@@ -63,6 +63,7 @@ const TextColorPicker = ({ editor }: { editor: Editor | null }) => {
 					<button
 						key={hex}
 						title={title}
+						type="button"
 						onClick={() => editor?.chain().focus().setColor(hex).run()}
 					>
 						<div
@@ -78,6 +79,7 @@ const TextColorPicker = ({ editor }: { editor: Editor | null }) => {
 				{/* unset text color */}
 				<button
 					title="Unset Text Color"
+					type="button"
 					onClick={() => editor?.chain().focus().unsetColor().run()}
 				>
 					<Ban size={20} strokeWidth={2.5} className="w-5 h-5 rounded-full" />
@@ -143,6 +145,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 
 				{/* Heading level controls */}
 				<button
+					type="button"
 					onClick={() =>
 						editor.chain().focus().toggleHeading({ level: 1 }).run()
 					}
@@ -154,6 +157,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					</span>
 				</button>
 				<button
+					type="button"
 					onClick={() =>
 						editor.chain().focus().toggleHeading({ level: 2 }).run()
 					}
@@ -165,6 +169,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					</span>
 				</button>
 				<button
+					type="button"
 					onClick={() =>
 						editor.chain().focus().toggleHeading({ level: 3 }).run()
 					}
@@ -181,7 +186,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					className="dropdown dropdown-center dropdown-top"
 					title="Text Color"
 				>
-					<button tabIndex={0} className="btn btn-xs btn-square">
+					<button type="button" tabIndex={0} className="btn btn-xs btn-square">
 						<Baseline
 							size={20}
 							strokeWidth={2.5}
@@ -193,6 +198,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 
 				{/* Text styling controls */}
 				<button
+					type="button"
 					onClick={() => editor.chain().focus().toggleBold().run()}
 					className="btn btn-xs btn-square"
 					title="Bold (Ctrl+B / ⌘+B)"
@@ -202,6 +208,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					</span>
 				</button>
 				<button
+					type="button"
 					onClick={() => editor.chain().focus().toggleItalic().run()}
 					className="btn btn-xs btn-square"
 					title="Italic (Ctrl+I / ⌘+I)"
@@ -211,6 +218,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					</span>
 				</button>
 				<button
+					type="button"
 					onClick={() => editor.chain().focus().toggleUnderline().run()}
 					className="btn btn-xs btn-square"
 					title="Underline (Ctrl+U / ⌘+U)"
@@ -222,6 +230,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					</span>
 				</button>
 				<button
+					type="button"
 					onClick={() => editor.chain().focus().toggleStrike().run()}
 					className="btn btn-xs btn-square"
 					title="Strikethrough (Ctrl+Shift+S / ⌘+Shift+S)"
@@ -231,6 +240,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					</span>
 				</button>
 				<button
+					type="button"
 					onClick={() => editor.chain().focus().toggleHighlight().run()}
 					className="btn btn-xs btn-square"
 					title="Highlight (Ctrl+Shift+H / ⌘+Shift+H)"
@@ -244,6 +254,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 
 				{/* Text alignment controls */}
 				<button
+					type="button"
 					onClick={() => editor.chain().focus().setTextAlign("left").run()}
 					className="btn btn-xs btn-square"
 					title="Align Left (Ctrl+Shift+L / ⌘+Shift+L)"
@@ -255,6 +266,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					</span>
 				</button>
 				<button
+					type="button"
 					onClick={() => editor.chain().focus().setTextAlign("center").run()}
 					className="btn btn-xs btn-square"
 					title="Align Center (Ctrl+Shift+E / ⌘+Shift+E)"
@@ -266,6 +278,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					</span>
 				</button>
 				<button
+					type="button"
 					onClick={() => editor.chain().focus().setTextAlign("right").run()}
 					className="btn btn-xs btn-square"
 					title="Align Right (Ctrl+Shift+R / ⌘+Shift+R)"
@@ -277,6 +290,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					</span>
 				</button>
 				<button
+					type="button"
 					onClick={() => editor.chain().focus().setTextAlign("justify").run()}
 					className="btn btn-xs btn-square"
 					title="Align Justify (Ctrl+Shift+J / ⌘+Shift+J)"
@@ -290,6 +304,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 
 				{/* Block and list controls */}
 				<button
+					type="button"
 					onClick={() => editor.chain().focus().toggleCodeBlock().run()}
 					className="btn btn-xs btn-square"
 					title="Code Block (Ctrl+Alt+C / ⌘+Alt+C)"
@@ -301,6 +316,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					</span>
 				</button>
 				<button
+					type="button"
 					onClick={() => editor.chain().focus().toggleBulletList().run()}
 					className="btn btn-xs btn-square"
 					title="Bullet List (Ctrl+Shift+8 / ⌘+Shift+8)"
@@ -312,6 +328,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 					</span>
 				</button>
 				<button
+					type="button"
 					onClick={() => editor.chain().focus().toggleOrderedList().run()}
 					className="btn btn-xs btn-square"
 					title="Ordered List (Ctrl+Shift+7 / ⌘+Shift+7)"
