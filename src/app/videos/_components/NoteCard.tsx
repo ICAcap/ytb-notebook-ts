@@ -77,7 +77,7 @@ const NoteCard = (props: Props) => {
 
 	return (
 		<div
-			className="card rounded-lg w-full max-w-full"
+			className="card rounded-lg w-full"
 			style={{ boxShadow: `0 4px 8px ${color}80` }}
 		>
 			<div
