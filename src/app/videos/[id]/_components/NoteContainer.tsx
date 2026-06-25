@@ -35,7 +35,7 @@ const NoteContainer = ({
 		count: noteList.length,
 		estimateSize: () => 0,
 		getScrollElement: () => scrollRef.current,
-		overscan: 20,
+		overscan: 5,
 	});
 	const virtualItems = virtualizer.getVirtualItems();
 
