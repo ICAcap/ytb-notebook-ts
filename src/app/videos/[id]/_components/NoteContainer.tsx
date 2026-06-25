@@ -3,9 +3,11 @@
 import { useRef, useState } from "react";
 import NoteCard from "../../_components/NoteCard";
 import { Note } from "../../../../../generated/prisma";
-import { StickyNoteOff, Plus, Minus } from "lucide-react";
+import { StickyNoteOff, Plus, Minus, AlertCircle } from "lucide-react";
 import EditableNoteCard from "../../_components/EditableNoteCard";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import Modal from "@/_components/ModalSkeleton";
+import { memo } from "react";
 
 // component
 const NoteContainer = ({
@@ -24,6 +26,8 @@ const NoteContainer = ({
 	const [noteList, setNoteList] = useState(notes ?? []);
 	// bool to toggle Note addition collapsible on/off
 	const [openCollapse, setOpenCollapse] = useState(false);
+	// bool to toggle new note cancel modal
+	const [openNoteCancelModal, setOpenNoteCancelModal] = useState(false);
 
 	// virtualization stuff
 	const scrollRef = useRef<HTMLDivElement>(null);
@@ -79,7 +83,15 @@ const NoteContainer = ({
 						<input
 							type="checkbox"
 							checked={openCollapse}
-							onChange={(e) => setOpenCollapse(e.target.checked)}
+							onChange={(e) => {
+								if (e.target.checked) {
+									setOpenCollapse(true);
+								} else {
+									setOpenNoteCancelModal(true);
+									// pause the vid as well
+									playerRef.current?.pause();
+								}
+							}}
 						/>
 						<div className="collapse-title btn btn-sm border-secondary-content bg-secondary font-semibold text-secondary-content text-center">
 							<div className="flex items-center gap-2">
@@ -143,7 +155,7 @@ const NoteContainer = ({
 				</div>
 			) : (
 				// empty notes placeholder
-				<div className="w-full border border-dashed rounded-b-lg p-4 flex items-center justify-center min-h-[200px]">
+				<div className="w-full border border-dashed rounded-b-lg p-4 flex items-center justify-center min-h-50">
 					<span className="card card-xl card-dash text-center items-center text-2xl font-semibold">
 						<p>No notes related to this video</p>
 						<br />
@@ -153,8 +165,39 @@ const NoteContainer = ({
 					</span>
 				</div>
 			)}
+
+			<Modal
+				isOpen={openNoteCancelModal}
+				onClose={() => setOpenNoteCancelModal(false)}
+			>
+				<div role="dialog" className="flex flex-col gap-6">
+					<div className="flex items-center gap-3">
+						<AlertCircle size={40} className="text-error shrink-0" />
+						<span className="text-lg font-semibold">
+							Are you sure you want to discard this new note?
+						</span>
+					</div>
+					<div className="flex gap-3 justify-between">
+						<button
+							onClick={() => setOpenNoteCancelModal(false)}
+							className="btn btn-outline flex-1"
+						>
+							Keep
+						</button>
+						<button
+							className="btn btn-error flex-1"
+							onClick={() => {
+								setOpenNoteCancelModal(false);
+								setOpenCollapse(false);
+							}}
+						>
+							Discard
+						</button>
+					</div>
+				</div>
+			</Modal>
 		</div>
 	);
 };
 
-export default NoteContainer;
+export default memo(NoteContainer);

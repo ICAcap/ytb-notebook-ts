@@ -242,7 +242,8 @@ const EditableNoteCard = (props: Props) => {
 								setValue("startTimeS", getS(currentTime));
 							}}
 							type="button"
-							className="btn btn-info btn-xs font-semibold"
+							title="sync current time"
+							className="btn btn-info btn-xs font-semibold min-w-2 shrink truncate block text-left"
 						>
 							sync current time
 						</button>
@@ -340,7 +341,8 @@ const EditableNoteCard = (props: Props) => {
 								setValue("endTimeS", getS(currentTime));
 							}}
 							type="button"
-							className="btn btn-info btn-xs font-semibold"
+							title="sync current time"
+							className="btn btn-info btn-xs font-semibold min-w-2 shrink truncate block text-left"
 						>
 							sync current time
 						</button>
