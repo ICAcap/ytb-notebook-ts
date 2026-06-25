@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import NoteCard from "../../_components/NoteCard";
 import { Note } from "../../../../../generated/prisma";
 import { StickyNoteOff, Plus, Minus } from "lucide-react";
 import EditableNoteCard from "../../_components/EditableNoteCard";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
+// component
 const NoteContainer = ({
 	userId,
 	videoId,
@@ -17,11 +19,20 @@ const NoteContainer = ({
 	notes: Note[] | null;
 	playerRef: React.RefObject<HTMLVideoElement | null>;
 }) => {
-	// hooks
+	// hooks //
 	// client state for notes array, to trigger re-rendering after note deletion/modification
 	const [noteList, setNoteList] = useState(notes ?? []);
 	// bool to toggle Note addition collapsible on/off
 	const [openCollapse, setOpenCollapse] = useState(false);
+
+	// virtualization stuff
+	const scrollRef = useRef<HTMLDivElement>(null);
+	const virtualizer = useVirtualizer({
+		count: noteList.length,
+		estimateSize: () => 500, //TBD, need to be dynamic
+		getScrollElement: () => scrollRef.current,
+	});
+	const virtualItems = virtualizer.getVirtualItems();
 
 	// handler
 	// function to trigger current note list filtering out the one note deleted,
@@ -54,7 +65,10 @@ const NoteContainer = ({
 	});
 
 	return (
-		<div className="flex flex-col items-center w-md">
+		<div
+			ref={scrollRef}
+			className="flex flex-col items-center w-md h-[90dvh] overflow-auto"
+		>
 			{/* Notes count + Add note collapsible (by daisy UI) */}
 			<div className="sticky top-0 w-full bg-accent rounded-t-lg z-10">
 				<div className="flex flex-col py-2 gap-2">
@@ -94,39 +108,51 @@ const NoteContainer = ({
 					</div>
 				</div>
 			</div>
-			{/* Note cards */}
-			<div className="w-full border border-dashed rounded-b-lg p-4 max-h-150 overflow-y-auto">
-				<div className="mt-1">
-					{noteCount > 0 ? (
-						sortedNoteList.map((note) => (
-							<NoteCard
+			{noteCount > 0 ? (
+				<div
+					className="relative w-full border border-dashed rounded-b-lg p-4"
+					style={{ height: `${virtualizer.getTotalSize()}px` }}
+				>
+					{/* Note cards with virtualization */}
+					{virtualItems.map((vItem) => {
+						const note = sortedNoteList[vItem.index];
+						return (
+							<div
 								key={note.noteId}
-								noteId={note.noteId}
-								userId={note.userId}
-								videoId={note.videoId}
-								startTime={note.startTime}
-								endTime={note.endTime}
-								content={note.content}
-								color={note.color}
-								screenshotUrl={note.screenshotUrl}
-								createdAt={note.createdAt}
-								updatedAt={note.updatedAt}
-								playerRef={playerRef}
-								onDeleted={() => handleNoteDeleted(note.noteId)}
-								onUpdated={handleNoteUpserted}
-							/>
-						))
-					) : (
-						<span className="card card-xl card-dash text-center items-center text-2xl font-semibold">
-							<p>No notes related to this video</p>
-							<br />
-							<p>
-								<StickyNoteOff size={80} />
-							</p>
-						</span>
-					)}
+								className="absolute w-full"
+								style={{ transform: `translateY(${vItem.start}px)` }}
+							>
+								<NoteCard
+									noteId={note.noteId}
+									userId={note.userId}
+									videoId={note.videoId}
+									startTime={note.startTime}
+									endTime={note.endTime}
+									content={note.content}
+									color={note.color}
+									screenshotUrl={note.screenshotUrl}
+									createdAt={note.createdAt}
+									updatedAt={note.updatedAt}
+									playerRef={playerRef}
+									onDeleted={() => handleNoteDeleted(note.noteId)}
+									onUpdated={handleNoteUpserted}
+								/>
+							</div>
+						);
+					})}
 				</div>
-			</div>
+			) : (
+				// empty notes placeholder
+				<div className="w-full border border-dashed rounded-b-lg p-4 flex items-center justify-center min-h-[200px]">
+					<span className="card card-xl card-dash text-center items-center text-2xl font-semibold">
+						<p>No notes related to this video</p>
+						<br />
+						<p>
+							<StickyNoteOff size={80} />
+						</p>
+					</span>
+				</div>
+			)}
 		</div>
 	);
 };
