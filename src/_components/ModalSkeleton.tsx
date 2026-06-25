@@ -34,7 +34,7 @@ const Modal = ({ isOpen, onClose, children }: Props) => {
 				<button
 					onClick={onClose}
 					type="button"
-					className="btn btn-sm btn-circle btn-ghost btn-error absolute top-2 right-2 cursor-pointer"
+					className="btn btn-sm btn-square btn-ghost btn-error absolute top-2 right-2 cursor-pointer"
 				>
 					<X size={20} />
 				</button>
