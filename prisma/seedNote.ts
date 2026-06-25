@@ -6,229 +6,111 @@ const TEST_VID_ID = "cmqn28l5r0000jou21ty2pid4";
 
 const colorValues = NOTE_COLORS.map((c) => c.value);
 
-// Tiptap JSON with various styling variations
-const notes = [
-  {
-    startTime: 0,
-    endTime: 10,
-    color: colorValues[0],
-    content: {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-              marks: [{ type: "bold" }],
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    startTime: 15,
-    endTime: 30,
-    color: colorValues[1],
-    content: {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-              marks: [{ type: "italic" }],
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    startTime: 35,
-    endTime: 50,
-    color: colorValues[2],
-    content: {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Ut enim ad minim veniam, quis nostrud exercitation.",
-            },
-          ],
-        },
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-              marks: [{ type: "underline" }],
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    startTime: 55,
-    endTime: 75,
-    color: colorValues[3],
-    content: {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum.",
-              marks: [{ type: "bold" }, { type: "italic" }],
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    startTime: 80,
-    endTime: 100,
-    color: colorValues[4],
-    content: {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.",
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    startTime: 105,
-    endTime: 120,
-    color: colorValues[0],
-    content: {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Sunt in culpa qui officia deserunt mollit anim id est laborum.",
-              marks: [{ type: "underline" }],
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    startTime: 125,
-    endTime: 140,
-    color: colorValues[1],
-    content: {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.",
-              marks: [{ type: "bold" }],
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    startTime: 145,
-    endTime: 160,
-    color: colorValues[2],
-    content: {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
-              marks: [{ type: "italic" }],
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    startTime: 165,
-    endTime: 180,
-    color: colorValues[3],
-    content: {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores.",
-            },
-          ],
-        },
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Eos qui ratione voluptatem sequi nesciunt.",
-              marks: [{ type: "underline" }],
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    startTime: 185,
-    endTime: 200,
-    color: colorValues[4],
-    content: {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [
-            {
-              type: "text",
-              text: "Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.",
-              marks: [{ type: "bold" }, { type: "italic" }, { type: "underline" }],
-            },
-          ],
-        },
-      ],
-    },
-  },
+const loremSentences = [
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  "Ut enim ad minim veniam, quis nostrud exercitation.",
+  "Ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+  "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum.",
+  "Dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.",
+  "Sunt in culpa qui officia deserunt mollit anim id est laborum.",
+  "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium.",
+  "Doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore.",
+  "Veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
+  "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.",
+  "Sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.",
+  "Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.",
+  "Consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt.",
+  "Ut labore et dolore magnam aliquam quaerat voluptatem.",
 ];
+
+function getRandomInt(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getRandomColor(): string {
+  return colorValues[getRandomInt(0, colorValues.length - 1)];
+}
+
+function getRandomMarks(): { type: string }[] {
+  const marks: { type: string }[] = [];
+  if (Math.random() > 0.7) marks.push({ type: "bold" });
+  if (Math.random() > 0.7) marks.push({ type: "italic" });
+  if (Math.random() > 0.8) marks.push({ type: "underline" });
+  return marks;
+}
+
+function generateLoremContent(lengthType: "short" | "medium" | "long"): string {
+  let sentenceCount = 1;
+  if (lengthType === "medium") sentenceCount = getRandomInt(2, 4);
+  if (lengthType === "long") sentenceCount = getRandomInt(5, 8);
+
+  const sentences: string[] = [];
+  for (let i = 0; i < sentenceCount; i++) {
+    sentences.push(loremSentences[getRandomInt(0, loremSentences.length - 1)]);
+  }
+  return sentences.join(" ");
+}
+
+function generateTiptapContent(text: string) {
+  const lengthType =
+    text.length < 100 ? "short" : text.length < 300 ? "medium" : "long";
+  const sentenceCount =
+    lengthType === "short" ? 1 : lengthType === "medium" ? getRandomInt(1, 2) : getRandomInt(2, 3);
+
+  const sentences = text.split(". ").slice(0, sentenceCount);
+  const paragraphs = sentences.map((sentence) => ({
+    type: "paragraph",
+    content: [
+      {
+        type: "text",
+        text: sentence.endsWith(".") ? sentence : sentence + ".",
+        marks: getRandomMarks(),
+      },
+    ],
+  }));
+
+  return {
+    type: "doc",
+    content: paragraphs.length > 0 ? paragraphs : [
+      {
+        type: "paragraph",
+        content: [{ type: "text", text: text }],
+      },
+    ],
+  };
+}
+
+function generateRandomNotes(count: number) {
+  const notes = [];
+  let currentTime = 0;
+
+  for (let i = 0; i < count; i++) {
+    const lengthType = ["short", "medium", "long"][
+      getRandomInt(0, 2)
+    ] as "short" | "medium" | "long";
+    const loremText = generateLoremContent(lengthType);
+    const duration = getRandomInt(5, 30);
+    const startTime = currentTime;
+    const endTime = startTime + duration;
+
+    notes.push({
+      startTime,
+      endTime,
+      color: getRandomColor(),
+      content: generateTiptapContent(loremText),
+    });
+
+    currentTime = endTime + getRandomInt(1, 15);
+  }
+
+  return notes;
+}
 
 async function seedNotes() {
   try {
+    const notes = generateRandomNotes(500);
+
     for (const note of notes) {
       await prisma.note.create({
         data: {
@@ -241,7 +123,7 @@ async function seedNotes() {
         },
       });
     }
-    console.log("✅ Seeded 10 notes");
+    console.log("✅ Seeded 500 randomized notes with various content lengths");
   } catch (error) {
     console.error("Failed to seed notes:", error);
     throw error;

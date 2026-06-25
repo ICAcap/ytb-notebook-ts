@@ -53,7 +53,7 @@ export default function Sidebar({
 			>
 				{!isCollapsed && (
 					<div className="flex items-center gap-2 flex-1 min-w-0">
-						<SwatchBook className="w-8 h-8 text-amber-300 shrink-0" />
+						<SwatchBook className="w-8 h-8 text-accent-content shrink-0" />
 						<span
 							className="text-xl font-bold truncate"
 							style={{ fontFamily: "Comic Sans MS" }}
@@ -91,8 +91,8 @@ export default function Sidebar({
 			</div>
 
 			<ul
-				className={`menu flex-1 px-2 py-4 overflow-y-auto ${
-					isCollapsed ? "flex flex-col items-center" : ""
+				className={`menu gap-5 px-2 py-4 overflow-y-auto ${
+					isCollapsed ? "flex flex-col flex-1 items-center" : ""
 				}`}
 			>
 				{navigation.map((item) => {
@@ -104,7 +104,7 @@ export default function Sidebar({
 							<Link
 								href={item.href}
 								title={isCollapsed ? item.name : undefined}
-								className={`rounded-xl transition-colors duration-200 ${
+								className={`rounded-lg ${
 									isActive
 										? "bg-secondary text-secondary-content font-semibold"
 										: "hover:bg-neutral-content/10"

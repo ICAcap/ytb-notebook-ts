@@ -135,7 +135,7 @@ const EditableNoteCard = (props: Props) => {
 	}
 
 	return (
-		<div>
+		<div className="w-full max-w-full">
 			<header>
 				<h1 className="text-lg font-semibold text-center">
 					{props.noteId ? "--Updating Note--" : "--Adding Note--"}
@@ -183,7 +183,7 @@ const EditableNoteCard = (props: Props) => {
 						</span>
 					</label>
 					{/* Individual HH MM SS input */}
-					<div className="flex gap-1 items-center">
+					<div className="flex gap-1 items-center min-w-0">
 						<input
 							disabled={isSubmitting}
 							type="number"
@@ -242,7 +242,8 @@ const EditableNoteCard = (props: Props) => {
 								setValue("startTimeS", getS(currentTime));
 							}}
 							type="button"
-							className="btn btn-info btn-xs font-semibold"
+							title="sync current time"
+							className="btn btn-info btn-xs font-semibold min-w-2 shrink truncate block text-left"
 						>
 							sync current time
 						</button>
@@ -267,7 +268,7 @@ const EditableNoteCard = (props: Props) => {
 						</span>
 					</label>
 					{/* Individual HH MM SS input */}
-					<div className="flex gap-1 items-center">
+					<div className="flex gap-1 items-center min-w-0">
 						<input
 							disabled={isSubmitting}
 							type="number"
@@ -340,7 +341,8 @@ const EditableNoteCard = (props: Props) => {
 								setValue("endTimeS", getS(currentTime));
 							}}
 							type="button"
-							className="btn btn-info btn-xs font-semibold"
+							title="sync current time"
+							className="btn btn-info btn-xs font-semibold min-w-2 shrink truncate block text-left"
 						>
 							sync current time
 						</button>
@@ -371,14 +373,16 @@ const EditableNoteCard = (props: Props) => {
 
 				{/* action buttons */}
 				<div className="flex justify-between">
-					<button
-						hidden={props.noteId ? false : true} //hidden cancel btn if it's adding new note
-						type="button"
-						onClick={cancelEditing}
-						className="btn border-accent-content"
-					>
-						Cancel
-					</button>
+					{/* don't render cancel btn if it's adding new note					 */}
+					{props.noteId && (
+						<button
+							type="button"
+							onClick={cancelEditing}
+							className="btn border-accent-content"
+						>
+							Cancel
+						</button>
+					)}
 					<button
 						type="submit"
 						disabled={isSubmitting}

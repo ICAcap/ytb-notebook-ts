@@ -51,6 +51,7 @@ YouTube Notebook: A Next.js 16 application for managing video collections with t
 
 ### Video Detail Components (`src/app/videos/[id]/_components/`)
 - `VideoPlayer.tsx` — ReactPlayer wrapper; saves playback position via `updateVideoPlayedTime`; throttle (30s heartbeat) + debounce (3s on pause/seek/end); resumes from `lastPlayedTime` on mount; uses lodash for throttle/debounce
+- `NoteContainer.tsx` — Manages notes display and creation; sticky header with collapsible "Add New Note" form; sorts notes by `startTime` then `createdAt`; handles note deletion/upserts via child callbacks; receives `playerRef` to capture current playback time for new notes
 
 ### Collection Components (`src/app/collection/_components/`)
 - `CollectionContextProvider.tsx` — Context provider for collection userId

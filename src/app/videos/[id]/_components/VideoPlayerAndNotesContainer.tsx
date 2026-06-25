@@ -5,7 +5,6 @@ import VideoPlayer from "./VideoPlayer";
 import NoteContainer from "./NoteContainer";
 import { VideoDetailType } from "../../../../../lib/dbTableAction/videoTableAction";
 import { Note } from "../../../../../generated/prisma";
-import { Toaster } from "react-hot-toast";
 
 const VideoPlayerAndNotesContainer = ({
 	userId,
@@ -21,17 +20,15 @@ const VideoPlayerAndNotesContainer = ({
 	const playerRef = useRef<HTMLVideoElement | null>(null);
 
 	return (
-		<div className="flex gap-2 mt-1">
-			<Toaster />
-			<div className="flex-1">
-				<VideoPlayer
-					videoId={video.videoId}
-					userId={userId}
-					url={`https://www.youtube.com/watch?v=${video.youtubeVidID}`}
-					playerRef={playerRef}
-					lastPlayedTime={video.lastPlayedTime}
-				/>
-			</div>
+		<div className="flex flex-row gap-3 mt-2">
+			<VideoPlayer
+				videoId={video.videoId}
+				userId={userId}
+				url={`https://www.youtube.com/watch?v=${video.youtubeVidID}`}
+				playerRef={playerRef}
+				lastPlayedTime={video.lastPlayedTime}
+			/>
+
 			<NoteContainer
 				userId={userId}
 				videoId={video.videoId}
