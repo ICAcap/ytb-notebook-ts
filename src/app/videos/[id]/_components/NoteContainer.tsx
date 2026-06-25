@@ -75,7 +75,7 @@ const NoteContainer = ({
 					<span className="badge badge-info badge-sm ml-2 font-bold">
 						{noteCount} Notes
 					</span>
-					<div className="collapse collapse-arrow">
+					<div className="collapse collapse-arrow px-1">
 						<input
 							type="checkbox"
 							checked={openCollapse}
@@ -110,7 +110,7 @@ const NoteContainer = ({
 			</div>
 			{noteCount > 0 ? (
 				<div
-					className="relative w-full border border-dashed rounded-b-lg p-4"
+					className="relative w-full border border-dashed rounded-b-lg"
 					style={{ height: `${virtualizer.getTotalSize()}px` }}
 				>
 					{/* Note cards with virtualization */}
