@@ -20,7 +20,7 @@ const VideoPlayerAndNotesContainer = ({
 	const playerRef = useRef<HTMLVideoElement | null>(null);
 
 	return (
-		<div className="flex flex-row gap-3 mt-1">
+		<div className="flex flex-row gap-3 mt-2">
 			<VideoPlayer
 				videoId={video.videoId}
 				userId={userId}
