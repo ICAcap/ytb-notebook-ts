@@ -33,7 +33,7 @@ const NoteContainer = ({
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const virtualizer = useVirtualizer({
 		count: noteList.length,
-		estimateSize: () => 500, //TBD, need to be dynamic
+		estimateSize: () => 0,
 		getScrollElement: () => scrollRef.current,
 	});
 	const virtualItems = virtualizer.getVirtualItems();
@@ -71,7 +71,8 @@ const NoteContainer = ({
 	return (
 		<div
 			ref={scrollRef}
-			className="flex flex-col items-center grow h-[90dvh] overflow-auto"
+			// h-[90dvh]
+			className="flex flex-col items-center grow h-dvh overflow-auto"
 		>
 			{/* Notes count + Add note collapsible (by daisy UI) */}
 			<div className="sticky top-0 w-full bg-accent rounded-t-lg z-10">
@@ -125,33 +126,41 @@ const NoteContainer = ({
 					className="relative w-full rounded-b-lg"
 					style={{ height: `${virtualizer.getTotalSize()}px` }}
 				>
-					{/* Note cards with virtualization */}
-					{virtualItems.map((vItem) => {
-						const note = sortedNoteList[vItem.index];
-						return (
-							<div
-								key={note.noteId}
-								className="absolute w-full"
-								style={{ transform: `translateY(${vItem.start}px)` }}
-							>
-								<NoteCard
-									noteId={note.noteId}
-									userId={note.userId}
-									videoId={note.videoId}
-									startTime={note.startTime}
-									endTime={note.endTime}
-									content={note.content}
-									color={note.color}
-									screenshotUrl={note.screenshotUrl}
-									createdAt={note.createdAt}
-									updatedAt={note.updatedAt}
-									playerRef={playerRef}
-									onDeleted={() => handleNoteDeleted(note.noteId)}
-									onUpdated={handleNoteUpserted}
-								/>
-							</div>
-						);
-					})}
+					{/* Note cards with dynamic virtualization - reference: https://www.youtube.com/watch?v=DBdo7mmuGx4&t=845s */}
+					<div
+						className="absolute w-full"
+						style={{
+							transform: `translateY(${virtualItems[0]?.start ?? 0}px)`,
+						}}
+					>
+						{virtualItems.map((vItem) => {
+							const note = sortedNoteList[vItem.index];
+							return (
+								<div
+									key={vItem.key}
+									data-index={vItem.index}
+									ref={virtualizer.measureElement}
+									className="mb-3"
+								>
+									<NoteCard
+										noteId={note.noteId}
+										userId={note.userId}
+										videoId={note.videoId}
+										startTime={note.startTime}
+										endTime={note.endTime}
+										content={note.content}
+										color={note.color}
+										screenshotUrl={note.screenshotUrl}
+										createdAt={note.createdAt}
+										updatedAt={note.updatedAt}
+										playerRef={playerRef}
+										onDeleted={() => handleNoteDeleted(note.noteId)}
+										onUpdated={handleNoteUpserted}
+									/>
+								</div>
+							);
+						})}
+					</div>
 				</div>
 			) : (
 				// empty notes placeholder
