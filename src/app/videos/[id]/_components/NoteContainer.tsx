@@ -75,7 +75,7 @@ const NoteContainer = ({
 			className="flex flex-col items-center grow h-dvh overflow-auto"
 		>
 			{/* Notes count + Add note collapsible (by daisy UI) */}
-			<div className="sticky top-0 w-full bg-accent rounded-t-lg z-10">
+			<div className="sticky top-0 w-full bg-accent rounded-t-lg z-10 px-1">
 				<div className="flex flex-col py-2 gap-2">
 					<span className="badge badge-info badge-sm ml-2 font-bold">
 						{noteCount} Notes
@@ -140,7 +140,7 @@ const NoteContainer = ({
 									key={vItem.key}
 									data-index={vItem.index}
 									ref={virtualizer.measureElement}
-									className="mb-3"
+									className="mb-3 px-1"
 								>
 									<NoteCard
 										noteId={note.noteId}
