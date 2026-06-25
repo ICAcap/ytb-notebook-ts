@@ -135,7 +135,7 @@ const EditableNoteCard = (props: Props) => {
 	}
 
 	return (
-		<div>
+		<div className="w-full max-w-full">
 			<header>
 				<h1 className="text-lg font-semibold text-center">
 					{props.noteId ? "--Updating Note--" : "--Adding Note--"}
@@ -183,7 +183,7 @@ const EditableNoteCard = (props: Props) => {
 						</span>
 					</label>
 					{/* Individual HH MM SS input */}
-					<div className="flex gap-1 items-center">
+					<div className="flex gap-1 items-center min-w-0">
 						<input
 							disabled={isSubmitting}
 							type="number"
@@ -268,7 +268,7 @@ const EditableNoteCard = (props: Props) => {
 						</span>
 					</label>
 					{/* Individual HH MM SS input */}
-					<div className="flex gap-1 items-center">
+					<div className="flex gap-1 items-center min-w-0">
 						<input
 							disabled={isSubmitting}
 							type="number"

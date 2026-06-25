@@ -72,11 +72,10 @@ const NoteContainer = ({
 	return (
 		<div
 			ref={scrollRef}
-			// h-[90dvh]
 			className="flex flex-col items-center grow h-dvh overflow-auto"
 		>
 			{/* Notes count + Add note collapsible (by daisy UI) */}
-			<div className="sticky top-0 w-full bg-accent rounded-t-lg z-10 px-1">
+			<div className="sticky top-0 grow-0 w-full min-w-0 bg-accent rounded-t-lg z-10 px-1">
 				<div className="flex flex-col py-2 gap-2">
 					<span className="badge badge-info badge-sm ml-2 font-bold">
 						{noteCount} Notes
