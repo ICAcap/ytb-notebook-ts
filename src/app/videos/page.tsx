@@ -66,7 +66,7 @@ export default async function VideoPage({
 						{q && (
 							<Link
 								href="/videos"
-								className="join-item btn btn-ghost"
+								className="join-item btn btn-square btn-error btn-ghost"
 								title="Clear search"
 							>
 								<X size={25} strokeWidth={5} />

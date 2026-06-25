@@ -6,6 +6,7 @@ import requireSession from "../../../../lib/requireSession";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import VideoPlayerAndNotesContainer from "./_components/VideoPlayerAndNotesContainer";
+import { Toaster } from "react-hot-toast";
 
 // helper function to fetch video details by id for the authenticated user
 // https://www.slingacademy.com/article/next-js-how-to-set-page-title-and-meta-description/#static-title-and-meta-description
@@ -51,7 +52,8 @@ export default async function VidViewPage({
 		<>
 			<div className="flex min-h-screen">
 				<Sidebar currentPath="/videos" />
-				<main className="flex-1 p-6">
+				<main className="flex-1 p-3">
+					<Toaster />
 					<div className="flex mb-0.5">
 						<h1 className="text-2xl text-wrap font-semibold">
 							{`${video.title || "Unknown Video"}`}

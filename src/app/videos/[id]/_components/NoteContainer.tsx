@@ -1,11 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import NoteCard from "../../_components/NoteCard";
 import { Note } from "../../../../../generated/prisma";
-import { StickyNoteOff, Plus, Minus } from "lucide-react";
+import { StickyNoteOff, Plus, Minus, AlertCircle } from "lucide-react";
 import EditableNoteCard from "../../_components/EditableNoteCard";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import Modal from "@/_components/ModalSkeleton";
+import { memo } from "react";
 
+// component
 const NoteContainer = ({
 	userId,
 	videoId,
@@ -17,11 +21,23 @@ const NoteContainer = ({
 	notes: Note[] | null;
 	playerRef: React.RefObject<HTMLVideoElement | null>;
 }) => {
-	// hooks
+	// hooks //
 	// client state for notes array, to trigger re-rendering after note deletion/modification
 	const [noteList, setNoteList] = useState(notes ?? []);
 	// bool to toggle Note addition collapsible on/off
 	const [openCollapse, setOpenCollapse] = useState(false);
+	// bool to toggle new note cancel modal
+	const [openNoteCancelModal, setOpenNoteCancelModal] = useState(false);
+
+	// virtualization stuff
+	const scrollRef = useRef<HTMLDivElement>(null);
+	const virtualizer = useVirtualizer({
+		count: noteList.length,
+		estimateSize: () => 0,
+		getScrollElement: () => scrollRef.current,
+		overscan: 5,
+	});
+	const virtualItems = virtualizer.getVirtualItems();
 
 	// handler
 	// function to trigger current note list filtering out the one note deleted,
@@ -54,16 +70,29 @@ const NoteContainer = ({
 	});
 
 	return (
-		<div className="flex flex-col items-center w-md">
+		<div
+			ref={scrollRef}
+			className="flex flex-col items-center grow h-dvh overflow-auto"
+		>
 			{/* Notes count + Add note collapsible (by daisy UI) */}
-			<div className="sticky top-0 w-full bg-accent rounded-t-lg z-10">
+			<div className="sticky top-0 grow-0 w-full min-w-0 bg-accent rounded-t-lg z-10 px-1">
 				<div className="flex flex-col py-2 gap-2">
-					<span className="label px-4 font-bold">{noteCount} Notes</span>
-					<div className="collapse collapse-arrow">
+					<span className="badge badge-info badge-sm ml-2 font-bold">
+						{noteCount} Notes
+					</span>
+					<div className="collapse collapse-arrow px-1">
 						<input
 							type="checkbox"
 							checked={openCollapse}
-							onChange={(e) => setOpenCollapse(e.target.checked)}
+							onChange={(e) => {
+								if (e.target.checked) {
+									setOpenCollapse(true);
+								} else {
+									setOpenNoteCancelModal(true);
+									// pause the vid as well
+									playerRef.current?.pause();
+								}
+							}}
 						/>
 						<div className="collapse-title btn btn-sm border-secondary-content bg-secondary font-semibold text-secondary-content text-center">
 							<div className="flex items-center gap-2">
@@ -92,41 +121,92 @@ const NoteContainer = ({
 					</div>
 				</div>
 			</div>
-			{/* Note cards */}
-			<div className="w-full border border-dashed rounded-b-lg p-4 max-h-150 overflow-y-auto">
-				<div className="mt-1">
-					{noteCount > 0 ? (
-						sortedNoteList.map((note) => (
-							<NoteCard
-								key={note.noteId}
-								noteId={note.noteId}
-								userId={note.userId}
-								videoId={note.videoId}
-								startTime={note.startTime}
-								endTime={note.endTime}
-								content={note.content}
-								color={note.color}
-								screenshotUrl={note.screenshotUrl}
-								createdAt={note.createdAt}
-								updatedAt={note.updatedAt}
-								playerRef={playerRef}
-								onDeleted={() => handleNoteDeleted(note.noteId)}
-								onUpdated={handleNoteUpserted}
-							/>
-						))
-					) : (
-						<span className="card card-xl card-dash text-center items-center text-2xl font-semibold">
-							<p>No notes related to this video</p>
-							<br />
-							<p>
-								<StickyNoteOff size={80} />
-							</p>
-						</span>
-					)}
+			{noteCount > 0 ? (
+				<div
+					className="relative w-full rounded-b-lg"
+					style={{ height: `${virtualizer.getTotalSize()}px` }}
+				>
+					{/* Note cards with dynamic virtualization - reference: https://www.youtube.com/watch?v=DBdo7mmuGx4&t=845s */}
+					<div
+						className="absolute w-full"
+						style={{
+							transform: `translateY(${virtualItems[0]?.start ?? 0}px)`,
+						}}
+					>
+						{virtualItems.map((vItem) => {
+							const note = sortedNoteList[vItem.index];
+							return (
+								<div
+									key={vItem.key}
+									data-index={vItem.index}
+									ref={virtualizer.measureElement}
+									className="mt-2.5 px-1"
+								>
+									<NoteCard
+										noteId={note.noteId}
+										userId={note.userId}
+										videoId={note.videoId}
+										startTime={note.startTime}
+										endTime={note.endTime}
+										content={note.content}
+										color={note.color}
+										screenshotUrl={note.screenshotUrl}
+										createdAt={note.createdAt}
+										updatedAt={note.updatedAt}
+										playerRef={playerRef}
+										onDeleted={() => handleNoteDeleted(note.noteId)}
+										onUpdated={handleNoteUpserted}
+									/>
+								</div>
+							);
+						})}
+					</div>
 				</div>
-			</div>
+			) : (
+				// empty notes placeholder
+				<div className="w-full border border-dashed rounded-b-lg p-4 flex items-center justify-center min-h-50">
+					<span className="card card-xl card-dash text-center items-center text-2xl font-semibold">
+						<p>No notes related to this video</p>
+						<br />
+						<p>
+							<StickyNoteOff size={80} />
+						</p>
+					</span>
+				</div>
+			)}
+
+			<Modal
+				isOpen={openNoteCancelModal}
+				onClose={() => setOpenNoteCancelModal(false)}
+			>
+				<div role="dialog" className="flex flex-col gap-6">
+					<div className="flex items-center gap-3">
+						<AlertCircle size={40} className="text-error shrink-0" />
+						<span className="text-lg font-semibold">
+							Are you sure you want to discard this new note?
+						</span>
+					</div>
+					<div className="flex gap-3 justify-between">
+						<button
+							onClick={() => setOpenNoteCancelModal(false)}
+							className="btn btn-outline flex-1"
+						>
+							Keep
+						</button>
+						<button
+							className="btn btn-error flex-1"
+							onClick={() => {
+								setOpenNoteCancelModal(false);
+								setOpenCollapse(false);
+							}}
+						>
+							Discard
+						</button>
+					</div>
+				</div>
+			</Modal>
 		</div>
 	);
 };
 
-export default NoteContainer;
+export default memo(NoteContainer);

@@ -31,7 +31,7 @@ const TextEditor = ({
 	// editor config
 	const editor = useEditor({
 		extensions: TiptapExtensions,
-		content: contentJson ?? {},
+		content: contentJson,
 		immediatelyRender: false,
 		onUpdate: ({ editor }) => {
 			onChange?.(editor.getJSON());
@@ -58,13 +58,13 @@ const TextEditor = ({
 	return (
 		<>
 			<style>{`.ProseMirror:focus { outline: none; border: none; }`}</style>
-			<div>
+			<div className="w-full max-w-full">
 				{/* static menu tool bar */}
 				<MenuBar editor={editor} />
 				{/* editor */}
 				<EditorContent
 					editor={editor}
-					className={`border m-2 p-2 min-h-15 rounded-md ${currentStyle === "light" ? themeStyles.light : themeStyles.dark}`}
+					className={`border m-2 p-2 min-h-10 rounded-md max-w-xl ${currentStyle === "light" ? themeStyles.light : themeStyles.dark}`}
 					suppressHydrationWarning
 				/>
 				{/* word count */}

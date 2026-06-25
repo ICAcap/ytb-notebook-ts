@@ -1,5 +1,9 @@
 /* Basic editor styles */
 .tiptap {
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+
   :first-child {
     margin-top: 0;
   }
@@ -66,6 +70,8 @@
     font-family: 'JetBrainsMono', monospace;
     margin: 1.5rem 0;
     padding: 0.75rem 1rem;
+    max-width: 100%;
+    overflow-x: auto;
 
     code {
       background: none;
