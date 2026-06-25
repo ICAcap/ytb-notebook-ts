@@ -140,7 +140,7 @@ const NoteContainer = ({
 									key={vItem.key}
 									data-index={vItem.index}
 									ref={virtualizer.measureElement}
-									className="mb-3 px-1"
+									className="mt-2.5 px-1"
 								>
 									<NoteCard
 										noteId={note.noteId}
