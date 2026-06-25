@@ -71,7 +71,7 @@ const NoteContainer = ({
 	return (
 		<div
 			ref={scrollRef}
-			className="flex flex-col items-center w-md h-[90dvh] overflow-auto"
+			className="flex flex-col items-center grow h-[90dvh] overflow-auto"
 		>
 			{/* Notes count + Add note collapsible (by daisy UI) */}
 			<div className="sticky top-0 w-full bg-accent rounded-t-lg z-10">
@@ -122,7 +122,7 @@ const NoteContainer = ({
 			</div>
 			{noteCount > 0 ? (
 				<div
-					className="relative w-full border border-dashed rounded-b-lg"
+					className="relative w-full rounded-b-lg"
 					style={{ height: `${virtualizer.getTotalSize()}px` }}
 				>
 					{/* Note cards with virtualization */}
