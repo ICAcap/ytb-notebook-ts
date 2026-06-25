@@ -373,14 +373,16 @@ const EditableNoteCard = (props: Props) => {
 
 				{/* action buttons */}
 				<div className="flex justify-between">
-					<button
-						hidden={props.noteId ? false : true} //hidden cancel btn if it's adding new note
-						type="button"
-						onClick={cancelEditing}
-						className="btn border-accent-content"
-					>
-						Cancel
-					</button>
+					{/* don't render cancel btn if it's adding new note					 */}
+					{props.noteId && (
+						<button
+							type="button"
+							onClick={cancelEditing}
+							className="btn border-accent-content"
+						>
+							Cancel
+						</button>
+					)}
 					<button
 						type="submit"
 						disabled={isSubmitting}
