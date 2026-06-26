@@ -1,7 +1,7 @@
 "use client";
 
 import { Note } from "../../../../generated/prisma";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { AlertCircle, PencilLine, Shredder } from "lucide-react";
 import { JSONContent } from "@tiptap/react";
 import { renderToReactElement } from "@tiptap/static-renderer/pm/react";
@@ -200,4 +200,4 @@ const NoteCard = (props: Props) => {
 	);
 };
 
-export default NoteCard;
+export default memo(NoteCard);

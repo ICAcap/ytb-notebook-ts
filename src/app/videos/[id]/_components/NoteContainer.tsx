@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import NoteCard from "../../_components/NoteCard";
 import { Note } from "../../../../../generated/prisma";
 import { StickyNoteOff, Plus, Minus, AlertCircle } from "lucide-react";
@@ -9,17 +9,21 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import Modal from "@/_components/ModalSkeleton";
 import { memo } from "react";
 
+const _ = require("lodash"); // for debounce & throttle purpose
+
 // component
 const NoteContainer = ({
 	userId,
 	videoId,
 	notes,
 	playerRef,
+	lastPlayedTime,
 }: {
 	userId: string;
 	videoId: string;
 	notes: Note[] | null;
 	playerRef: React.RefObject<HTMLVideoElement | null>;
+	lastPlayedTime?: number;
 }) => {
 	// hooks //
 	// client state for notes array, to trigger re-rendering after note deletion/modification
@@ -28,27 +32,32 @@ const NoteContainer = ({
 	const [openCollapse, setOpenCollapse] = useState(false);
 	// bool to toggle new note cancel modal
 	const [openNoteCancelModal, setOpenNoteCancelModal] = useState(false);
+	// state to store current player playtime, for time sync
+	const [throttledPlayTime, setThrottledPlayTime] = useState(
+		lastPlayedTime ?? 0,
+	);
 
-	// virtualization stuff
+	// virtualization stuffs
+	// reference:https://www.youtube.com/watch?v=DBdo7mmuGx4
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const virtualizer = useVirtualizer({
 		count: noteList.length,
 		estimateSize: () => 0,
 		getScrollElement: () => scrollRef.current,
-		overscan: 5,
+		overscan: 3,
 	});
 	const virtualItems = virtualizer.getVirtualItems();
 
-	// handler
+	// handler/helper //
 	// function to trigger current note list filtering out the one note deleted,
 	// further trigger the current component re-rendering only
-	function handleNoteDeleted(noteId: string) {
+	const handleNoteDeleted = useCallback((noteId: string) => {
 		setNoteList((prev) => prev.filter((note) => note.noteId !== noteId));
-	}
+	}, []);
 
 	// function to update an existing note or append a new one to the list
 	// to further trigger the current component re-rendering only
-	function handleNoteUpserted(updated: Note) {
+	const handleNoteUpserted = useCallback((updated: Note) => {
 		setNoteList((prev) => {
 			const existing = prev.find((note) => note.noteId === updated.noteId);
 			if (existing) {
@@ -59,16 +68,57 @@ const NoteContainer = ({
 				return [...prev, updated];
 			}
 		});
-	}
+	}, []);
 
+	// function to handle play time update for throttled auto-time-sync of note container
+
+	const throttledSetPlayTime = useRef(
+		_.throttle((seconds: number) => setThrottledPlayTime(seconds), 600),
+	).current;
+
+	useEffect(() => {
+		const video = playerRef.current;
+		if (!video) return;
+		const handleTimeUpdate = () => throttledSetPlayTime(video.currentTime);
+		video.addEventListener("timeupdate", handleTimeUpdate);
+		return () => video.removeEventListener("timeupdate", handleTimeUpdate);
+	}, [playerRef, throttledSetPlayTime]);
+
+	// note num & sort note
 	const noteCount = noteList ? noteList.length : 0;
-	const sortedNoteList = noteList.toSorted((a, b) => {
-		if (a.startTime !== b.startTime) {
-			return a.startTime - b.startTime;
-		}
-		return a.createdAt.getTime() - b.createdAt.getTime();
-	});
+	const sortedNoteList = useMemo(
+		() =>
+			noteList.toSorted((a, b) => {
+				if (a.startTime !== b.startTime) {
+					return a.startTime - b.startTime;
+				}
+				return a.createdAt.getTime() - b.createdAt.getTime();
+			}),
+		[noteList],
+	);
 
+	// from lodash
+	// last note whose startTime <= current play time.
+	// sortedLastIndexBy finds where { startTime: throttledPlayTime } would be
+	// inserted into sortedNoteList to keep it sorted by startTime, landing after
+	// any ties ("last"). Subtracting 1 turns that insert position into the index
+	// of the floor element (last note with startTime <= throttledPlayTime).
+	const activeIndex =
+		_.sortedLastIndexBy(
+			sortedNoteList,
+			{ startTime: throttledPlayTime },
+			(n: Note) => n.startTime,
+		) - 1;
+
+	// handler scroll to active row via virtualizer
+	useEffect(() => {
+		virtualizer.scrollToIndex(activeIndex >= 0 ? activeIndex : 0, {
+			align: "center",
+			behavior: "smooth",
+		});
+	}, [activeIndex]);
+
+	// component
 	return (
 		<div
 			ref={scrollRef}
@@ -154,7 +204,7 @@ const NoteContainer = ({
 										createdAt={note.createdAt}
 										updatedAt={note.updatedAt}
 										playerRef={playerRef}
-										onDeleted={() => handleNoteDeleted(note.noteId)}
+										onDeleted={handleNoteDeleted}
 										onUpdated={handleNoteUpserted}
 									/>
 								</div>
