@@ -11,6 +11,7 @@ interface VideoPlayerProps {
 	url: string;
 	playerRef?: RefObject<HTMLVideoElement | null>;
 	lastPlayedTime?: number;
+	onTimeUpdate?: (seconds: number) => void;
 }
 
 const _ = require("lodash"); // for debounce & throttle purpose
@@ -22,6 +23,7 @@ const VideoPlayer = ({
 	url,
 	playerRef,
 	lastPlayedTime = 0,
+	onTimeUpdate,
 }: VideoPlayerProps) => {
 	// hooks
 	const internalRef = useRef<HTMLVideoElement | null>(null);
@@ -91,6 +93,7 @@ const VideoPlayer = ({
 						if (reactPlayerRef.current) {
 							const seconds = Math.floor(reactPlayerRef.current.currentTime);
 							heartbeat(seconds);
+							onTimeUpdate?.(seconds);
 						}
 					}}
 				/>

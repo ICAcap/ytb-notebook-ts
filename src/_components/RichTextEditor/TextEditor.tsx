@@ -58,13 +58,13 @@ const TextEditor = ({
 	return (
 		<>
 			<style>{`.ProseMirror:focus { outline: none; border: none; }`}</style>
-			<div className="w-full max-w-full">
+			<div className="max-w-full">
 				{/* static menu tool bar */}
 				<MenuBar editor={editor} />
 				{/* editor */}
 				<EditorContent
 					editor={editor}
-					className={`border m-2 p-2 min-h-10 w-full max-w-full ${currentStyle === "light" ? themeStyles.light : themeStyles.dark}`}
+					className={`tiptap border m-2 p-2 min-h-10 w-full max-w-full grow-0 ${currentStyle === "light" ? themeStyles.light : themeStyles.dark}`}
 					suppressHydrationWarning
 				/>
 				{/* word count */}

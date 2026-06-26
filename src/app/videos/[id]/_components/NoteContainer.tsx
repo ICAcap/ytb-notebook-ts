@@ -17,13 +17,13 @@ const NoteContainer = ({
 	videoId,
 	notes,
 	playerRef,
-	lastPlayedTime,
+	throttledPlayTime,
 }: {
 	userId: string;
 	videoId: string;
 	notes: Note[] | null;
 	playerRef: React.RefObject<HTMLVideoElement | null>;
-	lastPlayedTime?: number;
+	throttledPlayTime: number;
 }) => {
 	// hooks //
 	// client state for notes array, to trigger re-rendering after note deletion/modification
@@ -32,10 +32,6 @@ const NoteContainer = ({
 	const [openCollapse, setOpenCollapse] = useState(false);
 	// bool to toggle new note cancel modal
 	const [openNoteCancelModal, setOpenNoteCancelModal] = useState(false);
-	// state to store current player playtime, for time sync
-	const [throttledPlayTime, setThrottledPlayTime] = useState(
-		lastPlayedTime ?? 0,
-	);
 
 	// virtualization stuffs
 	// reference:https://www.youtube.com/watch?v=DBdo7mmuGx4
@@ -70,20 +66,6 @@ const NoteContainer = ({
 		});
 	}, []);
 
-	// function to handle play time update for throttled auto-time-sync of note container
-
-	const throttledSetPlayTime = useRef(
-		_.throttle((seconds: number) => setThrottledPlayTime(seconds), 600),
-	).current;
-
-	useEffect(() => {
-		const video = playerRef.current;
-		if (!video) return;
-		const handleTimeUpdate = () => throttledSetPlayTime(video.currentTime);
-		video.addEventListener("timeupdate", handleTimeUpdate);
-		return () => video.removeEventListener("timeupdate", handleTimeUpdate);
-	}, [playerRef, throttledSetPlayTime]);
-
 	// note num & sort note
 	const noteCount = noteList ? noteList.length : 0;
 	const sortedNoteList = useMemo(
@@ -114,7 +96,7 @@ const NoteContainer = ({
 	useEffect(() => {
 		virtualizer.scrollToIndex(activeIndex >= 0 ? activeIndex : 0, {
 			align: "center",
-			behavior: "smooth",
+			behavior: "auto",
 		});
 	}, [activeIndex]);
 
@@ -122,7 +104,8 @@ const NoteContainer = ({
 	return (
 		<div
 			ref={scrollRef}
-			className="flex flex-col items-center grow h-dvh overflow-auto"
+			className="flex flex-col items-center flex-1 min-w-0 h-dvh overflow-auto"
+			style={{ height: "90dvh" }}
 		>
 			{/* Notes count + Add note collapsible (by daisy UI) */}
 			<div className="sticky top-0 grow-0 w-full min-w-0 bg-accent rounded-t-lg z-10 px-1">
@@ -190,7 +173,7 @@ const NoteContainer = ({
 									key={vItem.key}
 									data-index={vItem.index}
 									ref={virtualizer.measureElement}
-									className="mt-2.5 px-1"
+									className="my-2 px-1"
 								>
 									<NoteCard
 										noteId={note.noteId}
@@ -210,6 +193,16 @@ const NoteContainer = ({
 								</div>
 							);
 						})}
+						<div
+							key={"end-of-notes"}
+							data-index={noteCount}
+							ref={virtualizer.measureElement}
+							className="border-t-2 mt-1 border-dashed text-center"
+						>
+							<span className="text-accent-content text-lg font-semibold">
+								End of the Notes
+							</span>
+						</div>
 					</div>
 				</div>
 			) : (
