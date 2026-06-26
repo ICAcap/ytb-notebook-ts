@@ -27,7 +27,7 @@ import { useState } from "react";
 
 // styling for active/inactive setting button
 const activeClass =
-	"flex items-center justify-center w-4 h-4 bg-accent rounded-xs";
+	"flex items-center justify-center w-4 h-4 bg-secondary text-secondary-content rounded-xs";
 const inactiveClass = "flex items-center justify-center w-4 h-4 rounded-xs";
 
 // color picker sub-component
@@ -121,7 +121,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 	}
 
 	return (
-		<div className="control-group flex justify-center mt-2">
+		<div className="control-group flex justify-start mt-2">
 			<div className="flex gap-1 flex-wrap">
 				{/* History controls */}
 				<button
