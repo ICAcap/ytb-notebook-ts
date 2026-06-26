@@ -26,6 +26,8 @@ export const TiptapExtensions = [
 	Heading,
 	CodeBlockLowlight.configure({
 		lowlight,
+		enableTabIndentation: true,
+		defaultLanguage: "typescript",
 	}),
 	TextStyle,
 	Color,
