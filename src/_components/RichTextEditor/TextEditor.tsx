@@ -64,7 +64,7 @@ const TextEditor = ({
 				{/* editor */}
 				<EditorContent
 					editor={editor}
-					className={`border m-2 p-2 min-h-10 rounded-md max-w-xl ${currentStyle === "light" ? themeStyles.light : themeStyles.dark}`}
+					className={`border m-2 p-2 min-h-10 w-full max-w-full ${currentStyle === "light" ? themeStyles.light : themeStyles.dark}`}
 					suppressHydrationWarning
 				/>
 				{/* word count */}
