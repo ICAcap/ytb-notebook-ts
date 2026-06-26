@@ -34,6 +34,7 @@ const VideoPlayerAndNotesContainer = ({
 				videoId={video.videoId}
 				notes={notes}
 				playerRef={playerRef}
+				lastPlayedTime={video.lastPlayedTime}
 			/>
 		</div>
 	);

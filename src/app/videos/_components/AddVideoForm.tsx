@@ -163,7 +163,7 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 
 						<div className="form-control w-full">
 							<label className="label">
-								<span className="label-text font-semibold my-0.5">
+								<span className="label-text font-semibold my-1.5">
 									YouTube Video URL
 								</span>
 							</label>
