@@ -35,9 +35,9 @@ export default function AddVideoButton({ userId }: { userId: string }) {
 			<div>
 				<button
 					onClick={() => setModalOpen(true)}
-					className="btn btn-primary btn-sm gap-2"
+					className="btn btn-primary btn-sm text-lg gap-2"
 				>
-					<Plus size={18} />
+					<Plus size={20} />
 					New Video
 				</button>
 
