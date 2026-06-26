@@ -3,7 +3,6 @@ import Heading from "@tiptap/extension-heading";
 import Highlight from "@tiptap/extension-highlight";
 import TextAlign from "@tiptap/extension-text-align";
 import { Color, TextStyle } from "@tiptap/extension-text-style";
-import { BulletList, OrderedList } from "@tiptap/extension-list";
 import StarterKit from "@tiptap/starter-kit";
 import { createLowlight, all } from "lowlight";
 import { CharacterCount } from "@tiptap/extensions";
@@ -32,7 +31,5 @@ export const TiptapExtensions = [
 	}),
 	TextStyle,
 	Color,
-	OrderedList,
-	BulletList,
 	CharacterCount.configure({ limit }),
 ];
