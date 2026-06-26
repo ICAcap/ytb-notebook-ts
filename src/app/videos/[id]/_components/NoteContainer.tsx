@@ -173,7 +173,7 @@ const NoteContainer = ({
 									key={vItem.key}
 									data-index={vItem.index}
 									ref={virtualizer.measureElement}
-									className="my-2 px-1"
+									className={`my-2 ${vItem.index === activeIndex && "border-primary border-6 rounded-xl"} transition-colors`}
 								>
 									<NoteCard
 										noteId={note.noteId}
