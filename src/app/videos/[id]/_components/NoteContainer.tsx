@@ -104,7 +104,7 @@ const NoteContainer = ({
 	return (
 		<div
 			ref={scrollRef}
-			className="flex flex-col items-center flex-1 min-w-0 h-dvh overflow-auto"
+			className="flex flex-col border-l-2 items-center flex-1 min-w-0 h-dvh overflow-auto"
 			style={{ height: "90dvh" }}
 		>
 			{/* current note position + Notes count + Add note collapsible (by daisy UI) */}
@@ -173,23 +173,25 @@ const NoteContainer = ({
 									key={vItem.key}
 									data-index={vItem.index}
 									ref={virtualizer.measureElement}
-									className={`my-2 ${vItem.index === activeIndex && "border-primary border-6 rounded-xl"} transition-colors`}
+									className={`${vItem.index === activeIndex && "aura aura-xl aura-holo"}  w-full max-w-full mb-4`}
 								>
-									<NoteCard
-										noteId={note.noteId}
-										userId={note.userId}
-										videoId={note.videoId}
-										startTime={note.startTime}
-										endTime={note.endTime}
-										content={note.content}
-										color={note.color}
-										screenshotUrl={note.screenshotUrl}
-										createdAt={note.createdAt}
-										updatedAt={note.updatedAt}
-										playerRef={playerRef}
-										onDeleted={handleNoteDeleted}
-										onUpdated={handleNoteUpserted}
-									/>
+									<div className="bg-base-100">
+										<NoteCard
+											noteId={note.noteId}
+											userId={note.userId}
+											videoId={note.videoId}
+											startTime={note.startTime}
+											endTime={note.endTime}
+											content={note.content}
+											color={note.color}
+											screenshotUrl={note.screenshotUrl}
+											createdAt={note.createdAt}
+											updatedAt={note.updatedAt}
+											playerRef={playerRef}
+											onDeleted={handleNoteDeleted}
+											onUpdated={handleNoteUpserted}
+										/>
+									</div>
 								</div>
 							);
 						})}
