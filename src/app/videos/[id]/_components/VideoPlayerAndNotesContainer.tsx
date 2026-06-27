@@ -29,7 +29,7 @@ const VideoPlayerAndNotesContainer = ({
 		video.lastPlayedTime ?? 0,
 	);
 	const throttledSetPlayTime = useRef(
-		_.throttle(setThrottledPlayTime, 600),
+		_.throttle(setThrottledPlayTime, 750),
 	).current;
 
 	return (
