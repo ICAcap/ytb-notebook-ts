@@ -33,7 +33,7 @@ type noteForm = {
 };
 
 // main component
-const EditableNoteCard = (props: Props) => {
+const EditableNoteForm = (props: Props) => {
 	// RHF hook
 	const {
 		register,
@@ -402,4 +402,4 @@ const EditableNoteCard = (props: Props) => {
 	);
 };
 
-export default EditableNoteCard;
+export default EditableNoteForm;

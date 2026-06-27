@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import NoteCard from "../../_components/NoteCard";
 import { Note } from "../../../../../generated/prisma";
 import { StickyNoteOff, Plus, Minus, AlertCircle } from "lucide-react";
-import EditableNoteCard from "../../_components/EditableNoteCard";
+import EditableNoteForm from "../../_components/EditableNoteForm";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import Modal from "@/_components/ModalSkeleton";
 import { memo } from "react";
@@ -107,11 +107,11 @@ const NoteContainer = ({
 			className="flex flex-col items-center flex-1 min-w-0 h-dvh overflow-auto"
 			style={{ height: "90dvh" }}
 		>
-			{/* Notes count + Add note collapsible (by daisy UI) */}
+			{/* current note position + Notes count + Add note collapsible (by daisy UI) */}
 			<div className="sticky top-0 grow-0 w-full min-w-0 bg-accent rounded-t-lg z-10 px-1">
 				<div className="flex flex-col py-2 gap-2">
 					<span className="badge badge-info badge-sm ml-2 font-bold">
-						{noteCount} Notes
+						{activeIndex + 1}/{noteCount} Notes
 					</span>
 					<div className="collapse collapse-arrow px-1">
 						<input
@@ -134,7 +134,7 @@ const NoteContainer = ({
 							</div>
 						</div>
 						<div className="collapse-content bg-base-200">
-							<EditableNoteCard
+							<EditableNoteForm
 								key={openCollapse ? "open" : "closed"} //use key to trigger editor re-render/reset
 								noteId={""}
 								userId={userId}

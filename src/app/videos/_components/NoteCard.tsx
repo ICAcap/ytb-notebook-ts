@@ -7,7 +7,7 @@ import { JSONContent } from "@tiptap/react";
 import { renderToReactElement } from "@tiptap/static-renderer/pm/react";
 import { formatTimeStamp } from "../../../../utils/formatTimeStamp";
 import { TiptapExtensions } from "@/_components/RichTextEditor/TiptapExtension";
-import EditableNoteCard from "./EditableNoteCard";
+import EditableNoteForm from "./EditableNoteForm";
 import { deleteNote } from "../../../../lib/dbTableAction/noteTableAction";
 import Modal from "@/_components/ModalSkeleton";
 import toast from "react-hot-toast";
@@ -136,7 +136,7 @@ const NoteCard = (props: Props) => {
 			</div>
 			<div className="card-body">
 				{editable ? (
-					<EditableNoteCard
+					<EditableNoteForm
 						key={props.updatedAt.getTime()}
 						noteId={props.noteId}
 						userId={props.userId}
