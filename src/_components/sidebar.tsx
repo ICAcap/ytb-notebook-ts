@@ -70,9 +70,9 @@ export default function Sidebar({
 						{!mounted ? (
 							<div className="animate-spin rounded-full h-5 w-5" />
 						) : resolvedTheme === "light" ? (
-							<Sun className="h-5 w-5" />
+							<Sun className="h-5 w-5 text-accent-content" />
 						) : (
-							<Moon className="h-5 w-5" />
+							<Moon className="h-5 w-5 text-accent-content" />
 						)}
 					</button>
 					<button
@@ -82,7 +82,7 @@ export default function Sidebar({
 						title={isCollapsed ? "Expand" : "Collapse"}
 					>
 						<ChevronLeft
-							className={`h-5 w-5 transition-transform duration-300 ${
+							className={`h-5 w-5 text-accent-content transition-transform duration-300 ${
 								isCollapsed ? "rotate-180" : ""
 							}`}
 						/>

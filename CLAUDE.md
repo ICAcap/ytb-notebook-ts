@@ -37,11 +37,11 @@ YouTube Notebook: A Next.js 16 application for managing video collections with t
 - `src/app/layout.tsx` — Root layout with Tailwind + Geist font
 
 ### Shared Components
-- `components/sidebar.tsx` — Navigation sidebar with collapse/expand, theme toggle (light: retro, dark: abyss via DaisyUI)
+- `components/sidebar.tsx` — Navigation sidebar with collapse/expand, theme toggle (light: retro, dark: sunset via DaisyUI)
 - `components/ModalSkeleton.tsx` — Reusable modal wrapper using HTML `<dialog>` element
 - `components/pagination.tsx` — Pagination controls
 - `components/SignOutButton.tsx` — Sign-out action button
-- `src/app/themeProvider.tsx` — `ThemeProviders` wrapper using `next-themes`; sets `data-theme` attribute (light: "retro", dark: "abyss"); prevents theme flash on load
+- `src/app/themeProvider.tsx` — `ThemeProviders` wrapper using `next-themes`; sets `data-theme` attribute (light: "retro", dark: "sunset"); prevents theme flash on load
 
 ### Video Components (`src/app/videos/_components/`)
 - `VideoCard.tsx` — Video list item display
@@ -122,7 +122,7 @@ See `node_modules/next/dist/docs/` — this version has breaking changes in APIs
 - **Tailwind CSS v4** (via `@tailwindcss/postcss`)
 - **DaisyUI**: Tailwind component library for buttons, cards, modals, etc.
 - **Font**: Geist (auto-optimized via `next/font`)
-- **Theme System**: `next-themes` via `ThemeProviders` (`src/app/themeProvider.tsx`); `data-theme` attribute on `<html>` (light: "retro", dark: "abyss"); prevents flash on load
+- **Theme System**: `next-themes` via `ThemeProviders` (`src/app/themeProvider.tsx`); `data-theme` attribute on `<html>` (light: "retro", dark: "sunset"); prevents flash on load
 - React Compiler enabled in `next.config.ts`
 
 ### Utilities & Helpers
