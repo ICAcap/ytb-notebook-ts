@@ -58,42 +58,6 @@ export const getNotesByVideo = cache(async function (
 	return null;
 });
 
-/**
- * Logic:
- * start time >= current time + time window
- */
-export const getUpcomingNotesInVideo = cache(async function (
-	userId: string,
-	videoId: string,
-	currentTime: number,
-	timeWindow: number = 900,
-): Promise<Note[] | null> {
-	if (userId && videoId) {
-		try {
-			const activeNotes = await prisma.note.findMany({
-				where: {
-					userId: userId,
-					videoId: videoId,
-					startTime: { gte: currentTime + timeWindow },
-				},
-				orderBy: [{ startTime: "asc" }, { createdAt: "asc" }],
-			});
-			return activeNotes;
-		} catch (error) {
-			console.error(
-				"Get Active Notes processed failed, fallback to null return",
-				error,
-			);
-			return null;
-		}
-	}
-
-	console.error(
-		"Get Active Notes failed, userId or videoId is undefined, fallback to null return",
-	);
-	return null;
-});
-
 export const getNotesByColor = cache(async function (
 	userId: string,
 	videoId: string,

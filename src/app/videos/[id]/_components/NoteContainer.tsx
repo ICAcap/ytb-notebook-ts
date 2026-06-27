@@ -33,6 +33,9 @@ const NoteContainer = ({
 	// bool to toggle new note cancel modal
 	const [openNoteCancelModal, setOpenNoteCancelModal] = useState(false);
 
+	// bool to enable auto scrolling
+	const autoscrollEnabled = useRef(true);
+
 	// virtualization stuffs
 	// reference:https://www.youtube.com/watch?v=DBdo7mmuGx4
 	const scrollRef = useRef<HTMLDivElement>(null);
@@ -92,13 +95,46 @@ const NoteContainer = ({
 			(n: Note) => n.startTime,
 		) - 1;
 
-	// handler scroll to active row via virtualizer
-	useEffect(() => {
+	// handler auto scroll to active row via virtualizer
+	const autoScrollToIdx = () => {
 		virtualizer.scrollToIndex(activeIndex >= 0 ? activeIndex : 0, {
 			align: "center",
 			behavior: "auto",
 		});
+	};
+
+	useEffect(() => {
+		if (autoscrollEnabled.current) {
+			autoScrollToIdx();
+		}
 	}, [activeIndex]);
+
+	// handle disabling virtualization div container
+	// and then restore after a period
+	const tempDisableAutoscroll = _.throttle(() => {
+		// only trigger if the player is currently playing and the auto-scrolling is not manual set to disabled by user checkbox
+		const paused = playerRef.current?.paused;
+		const checked = (
+			document.getElementById("autoscroll-checkbox") as HTMLInputElement
+		).checked;
+
+		(
+			document.getElementById("auto-follow-label") as HTMLLabelElement
+		).textContent = "Auto-follow paused";
+
+		if (!paused && checked) {
+			autoscrollEnabled.current = false;
+			setTimeout(() => {
+				autoscrollEnabled.current = true;
+				(
+					document.getElementById("auto-follow-label") as HTMLLabelElement
+				).textContent = "Auto-follow?";
+			}, 4000);
+		}
+	}, 300); // Limit execution
+
+	const virtualDiv = document.getElementById("virtual-container");
+	virtualDiv?.addEventListener("wheel", tempDisableAutoscroll);
 
 	// component
 	return (
@@ -110,9 +146,29 @@ const NoteContainer = ({
 			{/* current note position + Notes count + Add note collapsible (by daisy UI) */}
 			<div className="sticky top-0 grow-0 w-full min-w-0 bg-accent rounded-t-lg z-10 px-1">
 				<div className="flex flex-col py-2 gap-2">
-					<span className="badge badge-info badge-sm ml-2 font-bold">
-						{activeIndex + 1}/{noteCount} Notes
-					</span>
+					<div className="flex flex-row gap-2 justify-between">
+						<button
+							title="click to jump to current note"
+							className="btn btn-xs btn-info ml-2 font-bold"
+							onClick={_.throttle(autoScrollToIdx, 300)}
+						>
+							{activeIndex + 1}/{noteCount} Notes
+						</button>
+						<div className="flex flex-row gap-2 mr-1">
+							<label id="auto-follow-label" className="badge">
+								Auto-follow?
+							</label>
+							<input
+								id="autoscroll-checkbox"
+								type="checkbox"
+								checked={autoscrollEnabled.current}
+								onChange={(e) => {
+									autoscrollEnabled.current = e.target.checked;
+								}}
+								className="checkbox checkbox-info"
+							/>
+						</div>
+					</div>
 					<div className="collapse collapse-arrow px-1">
 						<input
 							type="checkbox"
@@ -135,7 +191,7 @@ const NoteContainer = ({
 						</div>
 						<div className="collapse-content bg-base-200">
 							<EditableNoteForm
-								key={openCollapse ? "open" : "closed"} //use key to trigger editor re-render/reset
+								key={openCollapse ? "open" : "closed"} //use key change to force remount the editor thus reset the form
 								noteId={""}
 								userId={userId}
 								videoId={videoId}
@@ -165,6 +221,7 @@ const NoteContainer = ({
 						style={{
 							transform: `translateY(${virtualItems[0]?.start ?? 0}px)`,
 						}}
+						id="virtual-container"
 					>
 						{virtualItems.map((vItem) => {
 							const note = sortedNoteList[vItem.index];
@@ -173,7 +230,7 @@ const NoteContainer = ({
 									key={vItem.key}
 									data-index={vItem.index}
 									ref={virtualizer.measureElement}
-									className={`${vItem.index === activeIndex && "aura aura-xl aura-holo"}  w-full max-w-full mb-4`}
+									className={`${vItem.index === activeIndex && "aura aura-lx aura-holo"}  w-full max-w-full mb-4`}
 								>
 									<div className="bg-base-100">
 										<NoteCard
@@ -201,9 +258,7 @@ const NoteContainer = ({
 							ref={virtualizer.measureElement}
 							className="border-t-2 mt-1 border-dashed text-center"
 						>
-							<span className="text-accent-content text-lg font-semibold">
-								End of the Notes
-							</span>
+							<span className="text-lg font-semibold">End of the Notes</span>
 						</div>
 					</div>
 				</div>
