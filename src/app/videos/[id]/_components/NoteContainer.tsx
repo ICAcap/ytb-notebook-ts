@@ -146,7 +146,7 @@ const NoteContainer = ({
 		<div
 			ref={scrollRef}
 			className="flex flex-col border-l-2 items-center flex-1 min-w-0 h-dvh overflow-auto"
-			style={{ height: "90dvh" }}
+			style={{ height: "98dvh" }}
 		>
 			{/* current note position + Notes count + Add note collapsible (by daisy UI) */}
 			<div className="sticky top-0 grow-0 w-full min-w-0 bg-accent rounded-t-lg z-10 px-1">

@@ -1,5 +1,4 @@
 import Sidebar from "../../../_components/sidebar";
-import CollectionBadgeList from "../_components/CollectionBadgeList";
 import { getVideoById } from "../../../../lib/dbTableAction/videoTableAction";
 import { getNotesByVideo } from "../../../../lib/dbTableAction/noteTableAction";
 import requireSession from "../../../../lib/requireSession";
@@ -52,25 +51,9 @@ export default async function VidViewPage({
 		<>
 			<div className="flex min-h-screen">
 				<Sidebar currentPath="/videos" />
-				<main className="flex-1 p-3">
+				<main className="flex-1 p-1">
 					<Toaster />
-					<div className="flex mb-0.5">
-						<h1 className="text-2xl text-wrap font-semibold">
-							{`${video.title || "Unknown Video"}`}
-						</h1>
-					</div>
-					<div className="mt-4">
-						<h2 className="text-md text-base-content/60">Collections:</h2>
-						<div className="flex flex-wrap gap-2 mt-1">
-							{video.collections && video.collections.length > 0 ? (
-								<CollectionBadgeList collections={video.collections} />
-							) : (
-								<p className="text-base-content/50">
-									Not Part of Any Collections.
-								</p>
-							)}
-						</div>
-					</div>
+
 					<VideoPlayerAndNotesContainer
 						userId={userId}
 						video={video}
