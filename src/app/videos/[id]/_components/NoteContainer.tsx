@@ -69,6 +69,11 @@ const NoteContainer = ({
 		});
 	}, []);
 
+	// function to help pause auto-scrolling when there is a note in editing mode
+	const handleMarkNoteInEdition = useCallback(() => {
+		autoscrollEnabled.current = false;
+	}, []);
+
 	// note num & sort note
 	const noteCount = noteList ? noteList.length : 0;
 	const sortedNoteList = useMemo(
@@ -109,27 +114,27 @@ const NoteContainer = ({
 		}
 	}, [activeIndex]);
 
-	// handle disabling virtualization div container
+	// handle disabling auto scrolling
 	// and then restore after a period
 	const tempDisableAutoscroll = _.throttle(() => {
+		const pauseMs = 4000;
 		// only trigger if the player is currently playing and the auto-scrolling is not manual set to disabled by user checkbox
 		const paused = playerRef.current?.paused;
-		const checked = (
+		const checkboxChecked = (
 			document.getElementById("autoscroll-checkbox") as HTMLInputElement
 		).checked;
 
-		(
-			document.getElementById("auto-follow-label") as HTMLLabelElement
-		).textContent = "Auto-follow paused";
-
-		if (!paused && checked) {
+		if (!paused && checkboxChecked) {
+			(
+				document.getElementById("auto-follow-label") as HTMLLabelElement
+			).textContent = "Auto-follow paused";
 			autoscrollEnabled.current = false;
 			setTimeout(() => {
 				autoscrollEnabled.current = true;
 				(
 					document.getElementById("auto-follow-label") as HTMLLabelElement
 				).textContent = "Auto-follow?";
-			}, 4000);
+			}, pauseMs);
 		}
 	}, 300); // Limit execution
 
@@ -247,6 +252,7 @@ const NoteContainer = ({
 											playerRef={playerRef}
 											onDeleted={handleNoteDeleted}
 											onUpdated={handleNoteUpserted}
+											onOpenEdit={handleMarkNoteInEdition}
 										/>
 									</div>
 								</div>

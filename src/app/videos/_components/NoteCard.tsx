@@ -17,6 +17,7 @@ type Props = Note & {
 	playerRef?: React.RefObject<HTMLVideoElement | null>; // DOM ref to connect to react player
 	onDeleted?: (noteId: string) => void; // parent component's handler func when a note is deleted
 	onUpdated?: (note: Note) => void; // parent component's handler func when a note is updated (upserted)
+	onOpenEdit?: () => void;
 };
 
 const NoteCard = (props: Props) => {
@@ -89,6 +90,7 @@ const NoteCard = (props: Props) => {
 						disabled={editable}
 						onClick={() => {
 							setEditable(true);
+							props.onOpenEdit?.();
 						}}
 						className="btn btn-square btn-ghost btn-md"
 					>
@@ -163,7 +165,12 @@ const NoteCard = (props: Props) => {
 			</div>
 
 			{/* Delete Note Modal */}
-			<Modal isOpen={trashModalOpen} onClose={() => setTrashModalOpen(false)}>
+			<Modal
+				isOpen={trashModalOpen}
+				onClose={() => {
+					setTrashModalOpen(false);
+				}}
+			>
 				<div role="dialog" className="flex flex-col gap-6">
 					<div className="flex items-center gap-3">
 						<AlertCircle size={40} className="text-error shrink-0" />
