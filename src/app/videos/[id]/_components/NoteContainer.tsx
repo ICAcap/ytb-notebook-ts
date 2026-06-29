@@ -147,26 +147,41 @@ const NoteContainer = ({
 				(
 					document.getElementById("auto-follow-label") as HTMLLabelElement
 				).textContent = "Auto-follow?";
+				toast("Resume auto-scroll", {
+					id: "ms-scroll-info",
+					position: "bottom-center",
+					toasterId: "note-container",
+				});
 				autoScrollToCurrIdxRef.current();
 			}, pauseMs);
 		}, 300), // Limit execution
 	);
 
 	const toastWheel = useRef(
-		_.throttle(() => {
-			toast("Manual scrolling detected; pausing auto-scroll temporarily.", {
-				id: "ms-scroll-info",
-				position: "bottom-center",
-				toasterId: "note-container",
-			});
-		}, 5100),
+		_.throttle(
+			() => {
+				toast("Manual scrolling detected; pausing auto-scroll temporarily.", {
+					id: "ms-scroll-info",
+					position: "bottom-center",
+					toasterId: "note-container",
+				});
+			},
+			8000,
+			{ trailing: false },
+		),
 	);
 
 	useEffect(() => {
 		const virtualDiv = document.getElementById("virtual-container");
 		const handleWheel = () => {
-			toastWheel.current();
-			tempDisableAutoscroll.current();
+			const paused = (playerRef.current as HTMLVideoElement).paused;
+			const checked = (
+				document.getElementById("autoscroll-checkbox") as HTMLInputElement
+			).checked;
+			if (checked && !paused) {
+				toastWheel.current();
+				tempDisableAutoscroll.current();
+			}
 		};
 		virtualDiv?.addEventListener("wheel", handleWheel);
 		return () => virtualDiv?.removeEventListener("wheel", handleWheel);
