@@ -8,6 +8,7 @@ import EditableNoteForm from "../../_components/EditableNoteForm";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import Modal from "@/_components/ModalSkeleton";
 import { memo } from "react";
+import { Toaster, toast } from "react-hot-toast";
 
 const _ = require("lodash"); // for debounce & throttle purpose
 
@@ -33,7 +34,9 @@ const NoteContainer = ({
 	// bool to toggle new note cancel modal
 	const [openNoteCancelModal, setOpenNoteCancelModal] = useState(false);
 
-	// bool to enable auto scrolling
+	// internal auto-scroll flag for temporary pauses (e.g. wheel-scroll timer);
+	// ANDed with the user's auto-follow checkbox, which takes priority -
+	// i.e. this flag flipping back to true
 	const autoscrollEnabled = useRef(true);
 
 	// virtualization stuffs
@@ -69,9 +72,16 @@ const NoteContainer = ({
 		});
 	}, []);
 
-	// function to help pause auto-scrolling when there is a note in editing mode
+	// function to pause auto-scrolling when there is a note in editing mode
 	const handleMarkNoteInEdition = useCallback(() => {
-		autoscrollEnabled.current = false;
+		(
+			document.getElementById("autoscroll-checkbox") as HTMLInputElement
+		).checked = false;
+		toast("Note card edition detected; pausing auto-scroll.", {
+			id: "ne-scroll-info",
+			position: "bottom-center",
+			toasterId: "note-container",
+		});
 	}, []);
 
 	// note num & sort note
@@ -108,39 +118,59 @@ const NoteContainer = ({
 		});
 	};
 
+	// kept up to date every render so the long-lived debounced/throttled
+	// callbacks below (frozen at first render via useRef) always resync to
+	// the current note instead of whichever one was active on mount
+	const autoScrollToCurrIdxRef = useRef(autoScrollToCurrIdx);
+	autoScrollToCurrIdxRef.current = autoScrollToCurrIdx;
+
 	useEffect(() => {
-		if (autoscrollEnabled.current) {
+		const userHardOverrideScrollEnabled = (
+			document.getElementById("autoscroll-checkbox") as HTMLInputElement
+		).checked;
+		if (autoscrollEnabled.current && userHardOverrideScrollEnabled) {
 			autoScrollToCurrIdx();
 		}
 	}, [activeIndex]);
 
 	// handle disabling auto scrolling
 	// and then restore after a period
-	const tempDisableAutoscroll = _.throttle(() => {
-		const pauseMs = 7000;
-		// only trigger if the player is currently playing and the auto-scrolling is not manual set to disabled by user checkbox
-		const paused = playerRef.current?.paused;
-		const checkboxChecked = (
-			document.getElementById("autoscroll-checkbox") as HTMLInputElement
-		).checked;
-
-		if (!paused && checkboxChecked) {
-			(
-				document.getElementById("auto-follow-label") as HTMLLabelElement
-			).textContent = "Auto-follow paused";
+	// kept in a ref so the same debounced instance (and its internal timer
+	// state) survives across re-renders, instead of a fresh one - with its
+	// own reset throttle/debounce clock - being created and attached every render
+	const tempDisableAutoscroll = useRef(
+		_.debounce(() => {
+			const pauseMs = 5000;
 			autoscrollEnabled.current = false;
 			setTimeout(() => {
 				autoscrollEnabled.current = true;
 				(
 					document.getElementById("auto-follow-label") as HTMLLabelElement
 				).textContent = "Auto-follow?";
-				autoScrollToCurrIdx();
+				autoScrollToCurrIdxRef.current();
 			}, pauseMs);
-		}
-	}, 300); // Limit execution
+		}, 300), // Limit execution
+	);
 
-	const virtualDiv = document.getElementById("virtual-container");
-	virtualDiv?.addEventListener("wheel", tempDisableAutoscroll);
+	const toastWheel = useRef(
+		_.throttle(() => {
+			toast("Manual scrolling detected; pausing auto-scroll temporarily.", {
+				id: "ms-scroll-info",
+				position: "bottom-center",
+				toasterId: "note-container",
+			});
+		}, 5100),
+	);
+
+	useEffect(() => {
+		const virtualDiv = document.getElementById("virtual-container");
+		const handleWheel = () => {
+			toastWheel.current();
+			tempDisableAutoscroll.current();
+		};
+		virtualDiv?.addEventListener("wheel", handleWheel);
+		return () => virtualDiv?.removeEventListener("wheel", handleWheel);
+	}, [noteCount]);
 
 	// component
 	return (
@@ -149,6 +179,7 @@ const NoteContainer = ({
 			className="flex flex-col border-l-2 items-center flex-1 min-w-0 h-dvh overflow-auto"
 			style={{ height: "98dvh" }}
 		>
+			<Toaster toasterId="note-container" />
 			{/* current note position + Notes count + Add note collapsible (by daisy UI) */}
 			<div className="sticky top-0 grow-0 w-full min-w-0 bg-accent rounded-t-lg z-10 px-1">
 				<div className="flex flex-col py-2 gap-2">
@@ -167,10 +198,7 @@ const NoteContainer = ({
 							<input
 								id="autoscroll-checkbox"
 								type="checkbox"
-								checked={autoscrollEnabled.current}
-								onChange={(e) => {
-									autoscrollEnabled.current = e.target.checked;
-								}}
+								defaultChecked
 								className="checkbox checkbox-info"
 							/>
 						</div>
