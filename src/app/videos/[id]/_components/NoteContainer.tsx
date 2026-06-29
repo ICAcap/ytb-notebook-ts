@@ -101,7 +101,7 @@ const NoteContainer = ({
 		) - 1;
 
 	// handler auto scroll to active row via virtualizer
-	const autoScrollToIdx = () => {
+	const autoScrollToCurrIdx = () => {
 		virtualizer.scrollToIndex(activeIndex >= 0 ? activeIndex : 0, {
 			align: "center",
 			behavior: "auto",
@@ -110,14 +110,14 @@ const NoteContainer = ({
 
 	useEffect(() => {
 		if (autoscrollEnabled.current) {
-			autoScrollToIdx();
+			autoScrollToCurrIdx();
 		}
 	}, [activeIndex]);
 
 	// handle disabling auto scrolling
 	// and then restore after a period
 	const tempDisableAutoscroll = _.throttle(() => {
-		const pauseMs = 4000;
+		const pauseMs = 7000;
 		// only trigger if the player is currently playing and the auto-scrolling is not manual set to disabled by user checkbox
 		const paused = playerRef.current?.paused;
 		const checkboxChecked = (
@@ -134,6 +134,7 @@ const NoteContainer = ({
 				(
 					document.getElementById("auto-follow-label") as HTMLLabelElement
 				).textContent = "Auto-follow?";
+				autoScrollToCurrIdx();
 			}, pauseMs);
 		}
 	}, 300); // Limit execution
@@ -155,7 +156,7 @@ const NoteContainer = ({
 						<button
 							title="click to jump to current note"
 							className="btn btn-xs btn-info ml-2 font-bold"
-							onClick={_.throttle(autoScrollToIdx, 300)}
+							onClick={_.throttle(autoScrollToCurrIdx, 300)}
 						>
 							{activeIndex + 1}/{noteCount} Notes
 						</button>

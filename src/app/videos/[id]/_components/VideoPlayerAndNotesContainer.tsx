@@ -44,12 +44,12 @@ const VideoPlayerAndNotesContainer = ({
 					lastPlayedTime={video.lastPlayedTime}
 					onTimeUpdate={throttledSetPlayTime}
 				/>
-				<div className="flex mt-2">
+				<div className="flex mt-2 pl-2">
 					<h1 className="text-wrap text-xl font-semibold">
 						{`${video.title || "Unknown Video"}`}
 					</h1>
 				</div>
-				<div className="mt-2">
+				<div className="mt-2 pl-2">
 					<h2 className="text-sm text-base-content/60">Collections:</h2>
 					<div className="flex flex-wrap gap-2 mt-1">
 						{video.collections && video.collections.length > 0 ? (
