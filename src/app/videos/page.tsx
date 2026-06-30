@@ -31,7 +31,7 @@ export default async function VideoPage({
 	const q = (params.q ?? "").trim();
 	const page = Math.max(1, Number(params.page ?? 1)); // Prevent negative or zero page indices.
 	const collection = (params.collection ?? "").trim();
-	const pageSize = 15;
+	const pageSize = 20;
 
 	// fetch data from db video table
 	const [totalCount, videoCards] = await Promise.all([

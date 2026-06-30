@@ -35,7 +35,7 @@ const VideoPlayerAndNotesContainer = ({
 
 	return (
 		<div className="flex flex-row gap-3 mt-2">
-			<div className="flex flex-col w-full max-w-5xl">
+			<div className="flex flex-col w-full max-w-6xl">
 				<VideoPlayer
 					videoId={video.videoId}
 					userId={userId}
