@@ -44,7 +44,7 @@ export default function Sidebar({
 
 	return (
 		<aside
-			className={`${isCollapsed ? "w-20" : "w-75"} flex flex-col bg-accent text-accent-content min-h-screen z-10 transition-all duration-300 ease-out`}
+			className={`${isCollapsed ? "w-20" : "w-56"} flex flex-col bg-accent text-accent-content min-h-screen z-10 transition-all duration-300 ease-out`}
 		>
 			<div
 				className={`flex items-center p-4 mb-2 ${
@@ -53,13 +53,8 @@ export default function Sidebar({
 			>
 				{!isCollapsed && (
 					<div className="flex items-center gap-2 flex-1 min-w-0">
-						<SwatchBook className="w-8 h-8 text-accent-content shrink-0" />
-						<span
-							className="text-xl font-bold truncate"
-							style={{ fontFamily: "Comic Sans MS" }}
-						>
-							YTB Notebook
-						</span>
+						<SwatchBook className="w-6 h-6 text-accent-content shrink-0" />
+						<span className="text-base font-bold">YTB</span>
 					</div>
 				)}
 				<div className="flex items-center gap-1">
@@ -110,9 +105,9 @@ export default function Sidebar({
 										: "hover:bg-neutral-content/10"
 								}`}
 							>
-								<IconComponent className="w-7 h-7 shrink-0" />
+								<IconComponent className="w-6 h-6 shrink-0" />
 								{!isCollapsed && (
-									<span className="text-2xl font-semibold truncate">
+									<span className="text-base font-semibold truncate">
 										{item.name}
 									</span>
 								)}
@@ -124,8 +119,8 @@ export default function Sidebar({
 
 			<div className="p-3 space-y-2 border-t border-base-content/20">
 				{!isCollapsed && (
-					<p className="text-base font-semibold text-center">
-						© {new Date().getFullYear()} YTB Notebook
+					<p className="text-xs font-semibold text-center">
+						© {new Date().getFullYear()} YTB Notebook - By TW
 					</p>
 				)}
 			</div>
