@@ -64,6 +64,7 @@ const NoteCard = (props: Props) => {
 					id: "note-deletion-success",
 				},
 			);
+			setIsDeleting(false);
 			setTrashModalOpen(false);
 		} else {
 			toast.error(
