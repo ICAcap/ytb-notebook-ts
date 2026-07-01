@@ -14,7 +14,7 @@ import { X } from "lucide-react";
 import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
-	title: "Videos",
+	title: "My Videos",
 	description: "This is the page showing all the videos",
 };
 
