@@ -9,17 +9,18 @@ export default function SignIn() {
 	const [loading, setLoading] = useState(false);
 	const router = useRouter();
 	const { data: session, isPending } = authClient.useSession();
+	const redirectRoute = "/dashboard";
 
 	useEffect(() => {
 		// Manually update the browser tab title
-		document.title = "Sign In - YTB Notebook";
+		document.title = "Sign In to YTB Notebook";
 	}, []);
 
 	useEffect(() => {
 		if (!isPending && session) {
-			router.replace("/dashboard");
+			router.replace(redirectRoute);
 		}
-	}, [session, isPending, router]); // redirect to dashboard if already signed in
+	}, [session, isPending, router]); // redirect to dashboard if already signed in when land on /sign-in
 
 	const handleLogin = async () => {
 		try {
@@ -27,7 +28,7 @@ export default function SignIn() {
 			setLoading(true);
 			await authClient.signIn.social({
 				provider: "google",
-				callbackURL: "/dashboard",
+				callbackURL: redirectRoute,
 			});
 		} catch (err) {
 			const message =
@@ -49,14 +50,10 @@ export default function SignIn() {
 						Sign in to continue to YTB Notebook
 					</p>
 				</div>
-				{error && (
-					<div className="alert alert-error text-sm">
-						{error}
-					</div>
-				)}
+				{error && <div className="alert alert-error text-sm">{error}</div>}
 				<button
 					onClick={handleLogin}
-					disabled={loading}
+					disabled={loading || ((!isPending && session) as boolean)}
 					className="btn btn-neutral gap-3"
 				>
 					{!loading && (
