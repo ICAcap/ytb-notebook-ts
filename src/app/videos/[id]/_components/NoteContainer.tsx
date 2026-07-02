@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import NoteCard from "../../_components/NoteCard";
 import { Note } from "../../../../../generated/prisma";
-import { StickyNoteOff, Plus, Minus, AlertCircle } from "lucide-react";
+import { StickyNoteOff, Plus, Minus, AlertCircle, Search } from "lucide-react";
 import EditableNoteForm from "../../_components/EditableNoteForm";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import Modal from "@/_components/ModalSkeleton";
@@ -29,6 +29,7 @@ const NoteContainer = ({
 	// hooks //
 	// client state for notes array, to trigger re-rendering after note deletion/modification
 	const [noteList, setNoteList] = useState(notes ?? []);
+
 	// bool to toggle Note addition collapsible on/off
 	const [openCollapse, setOpenCollapse] = useState(false);
 	// bool to toggle new note cancel modal
@@ -97,6 +98,9 @@ const NoteContainer = ({
 		[noteList],
 	);
 
+	// for search note usage
+	const [searchedNoteList, setSearchedNoteList] = useState(sortedNoteList);
+
 	// from lodash
 	// last note whose startTime <= current play time.
 	// sortedLastIndexBy finds where { startTime: throttledPlayTime } would be
@@ -105,7 +109,7 @@ const NoteContainer = ({
 	// of the floor element (last note with startTime <= throttledPlayTime).
 	const activeIndex =
 		_.sortedLastIndexBy(
-			sortedNoteList,
+			searchedNoteList,
 			{ startTime: throttledPlayTime },
 			(n: Note) => n.startTime,
 		) - 1;
@@ -185,7 +189,8 @@ const NoteContainer = ({
 		};
 		virtualDiv?.addEventListener("wheel", handleWheel);
 		return () => virtualDiv?.removeEventListener("wheel", handleWheel);
-	}, [noteCount]);
+		// virtual-container event listener only mounts/unmounts on the empty <-> non-empty
+	}, [noteCount > 0]);
 
 	// component
 	return (
@@ -206,6 +211,10 @@ const NoteContainer = ({
 						>
 							{activeIndex + 1}/{noteCount} Notes
 						</button>
+						<div className="input input-xs">
+							<Search className="h-[1em]" />
+							<input type="search" placeholder="Search Note" />
+						</div>
 						<div className="flex flex-row gap-2 mr-1">
 							<label id="auto-follow-label" className="badge">
 								Auto-follow?
@@ -274,6 +283,7 @@ const NoteContainer = ({
 					>
 						{virtualItems.map((vItem) => {
 							const note = sortedNoteList[vItem.index];
+							// const note = searchedNoteList[vItem.index];
 							return (
 								<div
 									key={vItem.key}
