@@ -81,6 +81,8 @@ function generateTiptapContent(text: string) {
   };
 }
 
+const MAX_TIME_SECONDS = 20 * 60; // notes limited to first 20 minutes
+
 function generateRandomNotes(count: number) {
   const notes = [];
   let currentTime = 0;
@@ -91,8 +93,8 @@ function generateRandomNotes(count: number) {
     ] as "short" | "medium" | "long";
     const loremText = generateLoremContent(lengthType);
     const duration = getRandomInt(5, 30);
-    const startTime = currentTime;
-    const endTime = startTime + duration;
+    const startTime = currentTime % MAX_TIME_SECONDS;
+    const endTime = Math.min(startTime + duration, MAX_TIME_SECONDS);
 
     notes.push({
       startTime,
@@ -101,7 +103,7 @@ function generateRandomNotes(count: number) {
       content: generateTiptapContent(loremText),
     });
 
-    currentTime = endTime + getRandomInt(1, 15);
+    currentTime = (endTime + getRandomInt(1, 15)) % MAX_TIME_SECONDS;
   }
 
   return notes;
@@ -109,7 +111,7 @@ function generateRandomNotes(count: number) {
 
 async function seedNotes() {
   try {
-    const notes = generateRandomNotes(500);
+    const notes = generateRandomNotes(200);
 
     for (const note of notes) {
       await prisma.note.create({
@@ -123,7 +125,7 @@ async function seedNotes() {
         },
       });
     }
-    console.log("✅ Seeded 500 randomized notes with various content lengths");
+    console.log("✅ Seeded 200 randomized notes with various content lengths");
   } catch (error) {
     console.error("Failed to seed notes:", error);
     throw error;
