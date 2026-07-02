@@ -93,17 +93,17 @@ export default function Sidebar({
 						<div className="join w-full">
 							<button
 								onClick={() => handleThemeToggle("light")}
-								className={`join-item flex-1 flex items-center justify-center py-1.5 text-sm font-semibold rounded-l-lg ${resolvedTheme === "light" && mounted ? "bg-secondary text-secondary-content" : "hover:bg-neutral-content/10"}`}
+								className={`join-item btn btn-square flex-1 flex items-center justify-center py-1.5 ${resolvedTheme === "light" && mounted ? "bg-secondary text-secondary-content" : "hover:bg-neutral-content/10"}`}
 								title="Light"
 							>
-								<Sun className="h-4 w-4" />
+								<Sun className="h-5 w-5" />
 							</button>
 							<button
 								onClick={() => handleThemeToggle("dark")}
-								className={`join-item flex-1 flex items-center justify-center py-1.5 text-sm font-semibold rounded-r-lg ${resolvedTheme === "dark" && mounted ? "bg-secondary text-secondary-content" : "hover:bg-neutral-content/10"}`}
+								className={`join-item btn btn-square flex-1 flex items-center justify-center py-1.5 ${resolvedTheme === "dark" && mounted ? "bg-secondary text-secondary-content" : "hover:bg-neutral-content/10"}`}
 								title="Dark"
 							>
-								<Moon className="h-4 w-4" />
+								<Moon className="h-5 w-5" />
 							</button>
 						</div>
 					)}
