@@ -69,7 +69,7 @@ export default async function VideoPage({
 								className="join-item btn btn-square btn-error btn-ghost"
 								title="Clear search"
 							>
-								<X size={25} strokeWidth={5} />
+								<X size={25} strokeWidth={3} />
 							</Link>
 						)}
 					</form>
