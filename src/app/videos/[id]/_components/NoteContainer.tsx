@@ -92,11 +92,13 @@ const NoteContainer = ({
 			),
 		[sortedNoteList],
 	);
-
 	// for search filtering note usage
 	// set up fuse for note search
 	const fuse = new Fuse(sortedNoteStrList, {
+		threshold: 0.3,
+		ignoreLocation: true,
 		useTokenSearch: true,
+		tokenMatch: "all",
 	});
 
 	const [searchedNoteList, setSearchedNoteList] = useState(sortedNoteList);
@@ -108,11 +110,20 @@ const NoteContainer = ({
 					.search(searchQ)
 					.map((result) => result.refIndex);
 
+				// map indices back to the sorted list to maintain chronological order.
 				const filteredNotes = searchedIdxList.map((idx) => sortedNoteList[idx]);
-
 				setSearchedNoteList(filteredNotes);
-			} else setSearchedNoteList(sortedNoteList);
-		}, 300), // debounce execution
+
+				// show the best ranked by scrolling
+				if (filteredNotes.length > 0)
+					virtualizer.scrollToIndex(0, {
+						align: "start",
+						behavior: "auto",
+					});
+			}
+			// no search Q
+			else setSearchedNoteList(sortedNoteList);
+		}, 300), // Delay execution to avoid excessive re-renders during typing.
 	);
 
 	// internal auto-scroll flag for temporary pauses (e.g. wheel-scroll timer);
@@ -318,7 +329,7 @@ const NoteContainer = ({
 									key={vItem.key}
 									data-index={vItem.index}
 									ref={virtualizer.measureElement}
-									className={`${vItem.index === activeIndex && "aura aura-lx aura-holo"}  w-full max-w-full mb-4`}
+									className={`${vItem.index === activeIndex && note.startTime <= throttledPlayTime && note.endTime >= throttledPlayTime && "aura aura-lg aura-holo"}  w-full max-w-full mb-4`}
 								>
 									<div className="bg-base-100">
 										<NoteCard
