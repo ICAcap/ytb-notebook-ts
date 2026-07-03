@@ -240,25 +240,25 @@ const NoteContainer = ({
 			{/* current note position + Notes count + Add note collapsible (by daisy UI) */}
 			<div className="sticky top-0 grow-0 w-full min-w-0 bg-accent rounded-t-lg z-10 px-1">
 				<div className="flex flex-col py-2 gap-2">
-					<div className="flex flex-row gap-2 justify-between">
+					<div className="flex flex-row gap-2 justify-evenly">
 						<button
 							title="click to jump to current note"
-							className="btn btn-xs btn-info ml-2 font-bold"
+							className="btn btn-sm btn-info ml-1 font-bold"
 							onClick={_.throttle(autoScrollToCurrIdx, 300)}
 						>
 							{activeIndex + 1}/{noteCount} Notes
 						</button>
-						<div className="input input-xs">
+						<div className="input input-sm">
 							<Search className="h-[1em]" />
 							<input
 								type="search"
-								placeholder="Search Note"
+								placeholder="Search Note, results ranked by relevance..."
 								onChange={(e) => handleSearchNote.current(e.target.value)}
 							/>
 						</div>
 						<div className="flex flex-row gap-1">
-							<label id="auto-follow-label" className="badge badge-sm text-xs">
-								auto-follow
+							<label className="label text-sm text-info-content">
+								Auto-follow
 							</label>
 							<input
 								id="autoscroll-checkbox"
