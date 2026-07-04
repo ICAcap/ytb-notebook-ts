@@ -5,13 +5,12 @@ import requireSession from "../../../lib/requireSession";
 import VideoCard from "./_components/VideoCard";
 import AddVideoButton from "./_components/AddVideoButton";
 import { Metadata } from "next";
-import Link from "next/link";
 import {
+	getAllUniqueVideoTitles,
 	getVideoCardsWithSearchParam,
 	getVideoNumWithSearchParam,
 } from "../../../lib/dbTableAction/videoTableAction";
 import { Suspense } from "react";
-import { X } from "lucide-react";
 import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
@@ -35,7 +34,8 @@ export default async function VideoPage({
 	const pageSize = 20;
 
 	// fetch data from db video table
-	const [totalCount, videoCards] = await Promise.all([
+	const [unqVidTitles, totalCount, videoCards] = await Promise.all([
+		getAllUniqueVideoTitles(userId),
 		getVideoNumWithSearchParam(userId, q, collection),
 		getVideoCardsWithSearchParam(userId, page, pageSize, q, collection),
 	]);
@@ -55,10 +55,10 @@ export default async function VideoPage({
 					<AddVideoButton userId={userId} />
 				</header>
 				{/* Search bar */}
-				<VideoSearchBar q={q} />
+				<VideoSearchBar unqVidTitles={unqVidTitles} q={q} />
 
 				{videoCards.length > 0 && (
-					<div className="label">
+					<div className="label mb-3">
 						Page {page} of {totalPagesNum}, showing {1 + (page - 1) * pageSize}{" "}
 						to {(page - 1) * pageSize + Math.min(videoCards.length, pageSize)}{" "}
 						out of {totalCount} results
@@ -73,10 +73,15 @@ export default async function VideoPage({
 				>
 					{videoCards.length > 0 ? (
 						<ul className="list bg-base-100 rounded-box shadow-md">
-							{videoCards.map((video) => (
-								<li key={video.videoId} className="list-row">
-									<VideoCard {...video} userId={userId} />
-								</li>
+							{videoCards.map((video, idx) => (
+								<div key={video.videoId}>
+									<label className="label ml-1 font-semibold">
+										{idx + 1 + (page - 1) * pageSize}
+									</label>
+									<li className="list-row">
+										<VideoCard {...video} userId={userId} />
+									</li>
+								</div>
 							))}
 						</ul>
 					) : (
