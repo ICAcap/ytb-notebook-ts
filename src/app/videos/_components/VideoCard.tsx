@@ -65,7 +65,7 @@ export default memo(function VideoCard({
 								alt={title}
 								width={200}
 								height={113}
-								className="w-full h-full rounded-xl"
+								className="rounded-xl"
 								loading="eager"
 							/>
 						) : (
