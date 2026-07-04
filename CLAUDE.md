@@ -53,6 +53,7 @@ Full Tiptap-based editor suite. Note content is stored as Tiptap JSON, not plain
 
 ### Video Components (`src/app/videos/_components/`)
 - `VideoCard.tsx` — Video list item display
+- `VideoSearchBar.tsx` — Search input with fuzzy-matched (Fuse.js) title autocomplete dropdown; debounced (250ms) suggestion lookup, closes on outside click/selection/clear, reopens on refocus if suggestions are cached
 - `AddVideoButton.tsx` — Modal trigger + context for multi-stage video add form
 - `AddVideoForm.tsx` — Two-stage form: (1) YouTube URL validation, (2) Title & collections
 - `EditVideoForm.tsx` — Stub for video editing (not yet implemented)
@@ -109,8 +110,9 @@ See `node_modules/next/dist/docs/` — this version has breaking changes in APIs
 - **Database utility**: `lib/prisma.ts` exports singleton PrismaClient
 - **Video queries** (`lib/dbTableAction/videoTableAction.ts`):
   - `getVideoById(userId, videoId)` — Single video with collections (cached); returns `VideoDetailPageProp`
-  - `getVideoCardsWithSearchParam(userId, page, pageSize, q)` — Paginated search with title matching
-  - `getVideoNumWithSearchParam(userId, q)` — Total count for pagination
+  - `getVideoCardsWithSearchParam(userId, page, pageSize, q, collection)` — Paginated search with title matching and collection filter
+  - `getVideoNumWithSearchParam(userId, q, collection)` — Total count for pagination
+  - `getAllUniqueVideoTitles(userId)` — All distinct video titles for a user (cached); used to build the search bar's autocomplete index
   - `getExistingVideo(userId, youtubeVidID)` — Check if video already added
   - `upsertYouTubeVideo(userId, youtubeVidID, title, collectionIds)` — Add/update video with collection associations
   - `updateVideoPlayedTime(videoId, userId, playedTime)` — Persist playback position in seconds
@@ -160,6 +162,7 @@ See `node_modules/next/dist/docs/` — this version has breaking changes in APIs
   - `NOTE_COLORS` — Predefined color palette for notes (gray, blue, green, gold, red)
 - **React Hook Form**: Used for form management (register, Controller, watch, handleSubmit)
 - **React Select**: Multi-select dropdown (collection selection in AddVideoForm)
-- **Lodash**: throttle/debounce for video playback and scroll
+- **Lodash**: throttle/debounce for video playback, scroll, and search input
+- **Fuse.js**: Fuzzy search against video titles for `VideoSearchBar` autocomplete
 - **react-hot-toast**: Toast notifications
 - **@tanstack/react-virtual**: Virtualized list rendering
