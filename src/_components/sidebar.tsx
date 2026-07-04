@@ -2,7 +2,6 @@
 
 import {
 	ChevronLeft,
-	SwatchBook,
 	LayoutPanelLeft,
 	Tv,
 	FolderBookmark,
@@ -31,8 +30,8 @@ export default function Sidebar({
 		setIsCollapsed((prev) => !prev);
 	}
 
-	function handleThemeToggle() {
-		setTheme(resolvedTheme === "light" ? "dark" : "light");
+	function handleThemeToggle(theme: "light" | "dark") {
+		setTheme(theme);
 	}
 
 	const navigation = [
@@ -46,40 +45,23 @@ export default function Sidebar({
 		<aside
 			className={`${isCollapsed ? "w-20" : "w-56"} flex flex-col bg-accent text-accent-content min-h-screen z-10 transition-all duration-300 ease-out`}
 		>
-			<div
-				className={`flex items-center p-4 mb-2 ${
-					isCollapsed ? "justify-center" : "justify-between"
-				}`}
-			>
-				{!isCollapsed && (
-					<div className="flex items-center gap-2 flex-1 min-w-0">
-						<SwatchBook className="w-6 h-6 text-accent-content shrink-0" />
-						<span className="text-base font-bold">YTB</span>
-					</div>
-				)}
-				<div className="flex items-center gap-1">
-					<button
-						onClick={handleThemeToggle}
-						className="btn btn-ghost btn-sm btn-square"
-					>
-						{!mounted ? (
-							<div className="animate-spin rounded-full h-5 w-5" />
-						) : resolvedTheme === "light" ? (
-							<Sun className="h-5 w-5 text-accent-content" />
-						) : (
-							<Moon className="h-5 w-5 text-accent-content" />
-						)}
-					</button>
+			<div className="flex flex-col p-3 mb-2 gap-2">
+				<div className="flex items-center justify-between">
+					<img
+						src="/logo.svg"
+						alt="YTB Notebook"
+						width={32}
+						height={32}
+						className="shrink-0"
+					/>
 					<button
 						onClick={toggleSidebar}
 						aria-label="Toggle Sidebar"
-						className="btn btn-ghost btn-sm btn-square"
+						className="p-1 rounded-lg hover:bg-neutral-content/10"
 						title={isCollapsed ? "Expand" : "Collapse"}
 					>
 						<ChevronLeft
-							className={`h-5 w-5 text-accent-content transition-transform duration-300 ${
-								isCollapsed ? "rotate-180" : ""
-							}`}
+							className={`h-5 w-5 transition-transform duration-300 ${isCollapsed ? "rotate-180" : ""}`}
 						/>
 					</button>
 				</div>
@@ -90,6 +72,42 @@ export default function Sidebar({
 					isCollapsed ? "flex flex-col flex-1 items-center" : ""
 				}`}
 			>
+				<li>
+					{isCollapsed ? (
+						<button
+							onClick={() =>
+								handleThemeToggle(resolvedTheme === "light" ? "dark" : "light")
+							}
+							className="rounded-lg hover:bg-neutral-content/10"
+							title="Toggle theme"
+						>
+							{!mounted ? (
+								<div className="h-5 w-5" />
+							) : resolvedTheme === "light" ? (
+								<Sun className="h-5 w-5" />
+							) : (
+								<Moon className="h-5 w-5" />
+							)}
+						</button>
+					) : (
+						<div className="join w-full">
+							<button
+								onClick={() => handleThemeToggle("light")}
+								className={`join-item btn btn-square flex-1 flex items-center justify-center py-1.5 ${resolvedTheme === "light" && mounted ? "bg-secondary text-secondary-content" : "hover:bg-neutral-content/10"}`}
+								title="Light"
+							>
+								<Sun className="h-5 w-5" />
+							</button>
+							<button
+								onClick={() => handleThemeToggle("dark")}
+								className={`join-item btn btn-square flex-1 flex items-center justify-center py-1.5 ${resolvedTheme === "dark" && mounted ? "bg-secondary text-secondary-content" : "hover:bg-neutral-content/10"}`}
+								title="Dark"
+							>
+								<Moon className="h-5 w-5" />
+							</button>
+						</div>
+					)}
+				</li>
 				{navigation.map((item) => {
 					const IconComponent = item.icon;
 					const isActive =

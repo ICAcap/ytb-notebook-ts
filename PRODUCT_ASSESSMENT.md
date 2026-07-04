@@ -83,7 +83,7 @@ The stack already in place — Next.js 16 + Tailwind v4 + DaisyUI — is enough;
 
 1. **[Cruip's "Open" template](https://github.com/cruip/open-react-template)** — free, Next.js + Tailwind v4, built specifically to "showcase open source projects, SaaS products, and online services." Closest match to this exact use case.
 2. **[ixartz/Next-JS-Landing-Page-Starter-Template](https://github.com/ixartz/Next-JS-Landing-Page-Starter-Template)** — Next.js + TypeScript + Tailwind + ESLint + Prettier preconfigured. Heavier dev-experience scaffold; good if cherry-picking sections into a clean structure.
-3. **Component-level (lighter touch)**: HyperUI or Flowbite's free Tailwind blocks — copy individual hero/feature/footer sections directly rather than adopting a whole template's layout, so it doesn't fight the DaisyUI theming (`retro`/`night`) already driving the rest of the app.
+3. **Component-level (lighter touch)**: HyperUI or Flowbite's free Tailwind blocks — copy individual hero/feature/footer sections directly rather than adopting a whole template's layout, so it doesn't fight the DaisyUI theming (`cmyk`/`night`) already driving the rest of the app.
 
 **Practical recommendation:** don't import a full template wholesale. Pull 3–4 individual sections — hero with a real screenshot/GIF of notes-on-video in action (the most differentiated thing this product does), a 3-icon feature row (timestamped notes / collections / resume playback), and a footer with "Live Demo" + "View Source" buttons — and re-skin them with the existing DaisyUI tokens so the landing page matches the app instead of looking like a different product bolted onto it.
 
