@@ -196,6 +196,33 @@ export const getExistingVideo = cache(async function (
 	}
 });
 
+export const getAllUniqueVideoTitles = cache(async function (
+	userId: string,
+): Promise<string[]> {
+	if (!userId) {
+		console.error("Error fetching video titles, user ID is undefined");
+		return [];
+	}
+
+	try {
+		const allVidTitles = (
+			await prisma.video.findMany({
+				where: {
+					userId: userId,
+				},
+				select: {
+					title: true,
+				},
+			})
+		).map((t) => t.title.toLowerCase().trim());
+		const vidTitlesUnique = [...new Set(allVidTitles)];
+		return vidTitlesUnique;
+	} catch (error) {
+		console.error("Error Getting all video titles, fallback to empty array");
+		return [];
+	}
+});
+
 // --------- CREATE ------------------------------------------------------------------
 
 // --------- UPDATE ------------------------------------------------------------------

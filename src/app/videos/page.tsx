@@ -1,4 +1,5 @@
 import Sidebar from "../../_components/sidebar";
+import VideoSearchBar from "./_components/VideoSearchBar";
 import Pagination from "../../_components/pagination";
 import requireSession from "../../../lib/requireSession";
 import VideoCard from "./_components/VideoCard";
@@ -54,26 +55,7 @@ export default async function VideoPage({
 					<AddVideoButton userId={userId} />
 				</header>
 				{/* Search bar */}
-				<div className="mb-8" title="Search Video Title">
-					<form className="join w-full" action="/videos" method="GET">
-						<input
-							name="q"
-							defaultValue={q}
-							placeholder="Search Video Title..."
-							className="join-item input input-bordered flex-1 focus:outline-none"
-						/>
-						<button className="join-item btn btn-primary">Search</button>
-						{q && (
-							<Link
-								href="/videos"
-								className="join-item btn btn-square btn-error btn-ghost"
-								title="Clear search"
-							>
-								<X size={25} strokeWidth={3} />
-							</Link>
-						)}
-					</form>
-				</div>
+				<VideoSearchBar q={q} />
 
 				{videoCards.length > 0 && (
 					<div className="label">
