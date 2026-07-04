@@ -60,21 +60,25 @@ export default function SignIn() {
 									{error && (
 										<div className="alert alert-error text-sm mb-4">{error}</div>
 									)}
-									<button
-										onClick={handleLogin}
-										disabled={loading || ((!isPending && session) as boolean)}
-										className="btn btn-lg btn-primary gap-3"
-									>
-										{!loading && (
-											<img
-												src="/web_neutral_rd_na.svg"
-												alt="Google"
-												width="20"
-												height="20"
-											/>
-										)}
-										{loading ? "Signing in..." : "Continue with Google"}
-									</button>
+									{isPending || session ? (
+										<div className="skeleton btn btn-lg w-56"></div>
+									) : (
+										<button
+											onClick={handleLogin}
+											disabled={loading}
+											className="btn btn-lg btn-primary gap-3"
+										>
+											{!loading && (
+												<img
+													src="/web_neutral_rd_na.svg"
+													alt="Google"
+													width="20"
+													height="20"
+												/>
+											)}
+											{loading ? "Signing in..." : "Continue with Google"}
+										</button>
+									)}
 								</div>
 							</div>
 						</div>

@@ -101,10 +101,17 @@ const NoteContainer = ({
 		tokenMatch: "all",
 	});
 
+	// kept up to date every render so the debounced search callback below
+	// (frozen at first render via useRef) always searches against the
+	// current notes instead of whichever list existed when it was created
+	const latestSearchDataRef = useRef({ fuse, sortedNoteList });
+	latestSearchDataRef.current = { fuse, sortedNoteList };
+
 	const [searchedNoteList, setSearchedNoteList] = useState(sortedNoteList);
 	const noteCount = searchedNoteList ? searchedNoteList.length : 0;
 	const handleSearchNote = useRef(
 		_.debounce((searchQ: string) => {
+			const { fuse, sortedNoteList } = latestSearchDataRef.current;
 			if (searchQ.trim()) {
 				const searchedIdxList = fuse
 					.search(searchQ)
@@ -126,6 +133,15 @@ const NoteContainer = ({
 		}, 300), // Delay execution to avoid excessive re-renders during typing.
 	);
 
+	useEffect(() => {
+		// still show searched result after adding/deletion/updating
+		setSearchedNoteList(sortedNoteList);
+		const currentSearchQ =
+			(document.getElementById("search-note-q") as HTMLInputElement).value ??
+			"";
+		handleSearchNote.current(currentSearchQ);
+	}, [sortedNoteList]);
+
 	// internal auto-scroll flag for temporary pauses (e.g. wheel-scroll timer);
 	// ANDed with the user's auto-follow checkbox, which takes priority -
 	// i.e. this flag flipping back to true
@@ -138,6 +154,7 @@ const NoteContainer = ({
 		count: searchedNoteList.length,
 		estimateSize: () => 0,
 		getScrollElement: () => scrollRef.current,
+		getItemKey: (index) => searchedNoteList[index]?.noteId ?? index,
 		overscan: 3,
 	});
 	const virtualItems = virtualizer.getVirtualItems();
@@ -248,11 +265,15 @@ const NoteContainer = ({
 						>
 							{activeIndex + 1}/{noteCount} Notes
 						</button>
-						<div className="input input-sm">
+						<div
+							className="input input-sm"
+							title="Search Notes, results ranked by relevance..."
+						>
 							<Search className="h-[1em]" />
 							<input
+								id="search-note-q"
 								type="search"
-								placeholder="Search Note, results ranked by relevance..."
+								placeholder="Search Notes, results ranked by relevance..."
 								onChange={(e) => handleSearchNote.current(e.target.value)}
 							/>
 						</div>
@@ -326,10 +347,10 @@ const NoteContainer = ({
 							const note = searchedNoteList[vItem.index];
 							return (
 								<div
-									key={vItem.key}
+									key={note.noteId}
 									data-index={vItem.index}
 									ref={virtualizer.measureElement}
-									className={`${vItem.index === activeIndex && note.startTime <= throttledPlayTime && note.endTime >= throttledPlayTime && "aura aura-lg aura-holo"}  w-full max-w-full mb-4`}
+									className={`${vItem.index === activeIndex && note.startTime <= throttledPlayTime && note.endTime >= throttledPlayTime && "aura aura-xl aura-holo"}  w-full max-w-full mb-4`}
 								>
 									<div className="bg-base-100">
 										<NoteCard
