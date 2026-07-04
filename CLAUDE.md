@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-YouTube Notebook: A Next.js 16 application for managing video collections with timestamped notes. Users authenticate via Google OAuth, create video collections, and attach time-stamped notes to videos.
+YouTube Notebook: A Next.js 16 application for managing video collections with timestamped notes. Users authenticate via Google OAuth, create video collections, and attach time-stamped rich-text notes to videos.
 
 ## Core Architecture
 
@@ -22,7 +22,7 @@ YouTube Notebook: A Next.js 16 application for managing video collections with t
   - User → many Videos, Collections, Notes (soft relationships)
   - Video → many Notes (hard delete cascade)
   - Collection ↔ Video (many-to-many implicit in schema)
-  - Note is always tied to both User and Video
+  - Note: tied to User and Video; has `startTime`, `endTime`, `color`, and JSON `content` (Tiptap)
 - **Indexes**: Optimized for user_id and user_id+createdAt lookups on Video/Collection/Note
 - **Prisma Client**: Output to `generated/prisma` (generated location)
 
@@ -35,23 +35,35 @@ YouTube Notebook: A Next.js 16 application for managing video collections with t
 - `src/app/setting/page.tsx` — User settings (protected)
 - `src/app/(auth)/sign-in/page.tsx` — Sign-in form component
 - `src/app/layout.tsx` — Root layout with Tailwind + Geist font
+- `src/app/tiptap/page.tsx` — Rich text editor demo/test page (dev only)
 
-### Shared Components
-- `components/sidebar.tsx` — Navigation sidebar with collapse/expand, theme toggle (light: retro, dark: night via DaisyUI)
-- `components/ModalSkeleton.tsx` — Reusable modal wrapper using HTML `<dialog>` element
-- `components/pagination.tsx` — Pagination controls
-- `components/SignOutButton.tsx` — Sign-out action button
-- `src/app/themeProvider.tsx` — `ThemeProviders` wrapper using `next-themes`; sets `data-theme` attribute (light: "retro", dark: "night"); prevents theme flash on load
+### Shared Components (`src/_components/`)
+- `sidebar.tsx` — Navigation sidebar with collapse/expand, theme toggle (light: cmyk, dark: night via DaisyUI)
+- `ModalSkeleton.tsx` — Reusable modal wrapper using HTML `<dialog>` element
+- `pagination.tsx` — Pagination controls
+- `SignOutButton.tsx` — Sign-out action button
+- `src/app/themeProvider.tsx` — `ThemeProviders` wrapper using `next-themes`; sets `data-theme` attribute (light: "cmyk", dark: "night"); prevents theme flash on load
+
+### Rich Text Editor (`src/_components/RichTextEditor/`)
+Full Tiptap-based editor suite. Note content is stored as Tiptap JSON, not plain text.
+- `TextEditor.tsx` — Main editor component; accepts/emits content as JSON
+- `MenuBar.tsx` — Formatting toolbar: bold, italic, headings, colors, alignment, lists, undo/redo
+- `TiptapExtension.ts` — Tiptap extension configuration
+- `styles.scss` — Editor-specific styles (Sass)
 
 ### Video Components (`src/app/videos/_components/`)
 - `VideoCard.tsx` — Video list item display
 - `AddVideoButton.tsx` — Modal trigger + context for multi-stage video add form
 - `AddVideoForm.tsx` — Two-stage form: (1) YouTube URL validation, (2) Title & collections
 - `EditVideoForm.tsx` — Stub for video editing (not yet implemented)
+- `CollectionBadgeList.tsx` — Filterable collection badges; links filter video list by collection
+- `EditableNoteForm.tsx` — Form for creating/editing notes: time range, color picker, rich text (Tiptap)
+- `NoteCard.tsx` — Individual note display: timestamp seeking, rendered rich text, edit/delete actions
 
 ### Video Detail Components (`src/app/videos/[id]/_components/`)
-- `VideoPlayer.tsx` — ReactPlayer wrapper; saves playback position via `updateVideoPlayedTime`; throttle (30s heartbeat) + debounce (3s on pause/seek/end); resumes from `lastPlayedTime` on mount; uses lodash for throttle/debounce
-- `NoteContainer.tsx` — Manages notes display and creation; sticky header with collapsible "Add New Note" form; sorts notes by `startTime` then `createdAt`; handles note deletion/upserts via child callbacks; receives `playerRef` to capture current playback time for new notes
+- `VideoPlayerAndNotesContainer.tsx` — Top-level orchestrator; wires VideoPlayer + NoteContainer + CollectionBadgeList; owns throttled playback time sync (750ms)
+- `VideoPlayer.tsx` — ReactPlayer wrapper; saves playback position via `updateVideoPlayedTime`; throttle (30s heartbeat) + debounce (3s on pause/seek/end); resumes from `lastPlayedTime` on mount; uses lodash
+- `NoteContainer.tsx` — Manages notes display; sticky header with collapsible add form; sorts by `startTime` then `createdAt`; handles CRUD via child callbacks; receives `playerRef` to capture current time
 
 ### Collection Components (`src/app/collection/_components/`)
 - `CollectionContextProvider.tsx` — Context provider for collection userId
@@ -60,12 +72,12 @@ YouTube Notebook: A Next.js 16 application for managing video collections with t
 - `CollectionForm.tsx` — Collection creation/edit form
 
 ### Modal & Context Patterns
-**Modal System**: `ModalSkeleton` component wraps `<dialog>` element and manages `isOpen`/`onClose` props. Used throughout for modals (add video, add collection).
+**Modal System**: `ModalSkeleton` wraps `<dialog>` and manages `isOpen`/`onClose` props. Used for add video, add collection.
 
 **AddVideoButton Pattern**: 
 - Manages modal state (`modalOpen`, `showStage2`) and form data via refs (YouTube ID, existing video check, fetched title, collection options)
 - Provides context (`AddVideoButtonContext`) to child `AddVideoForm`
-- Resets state on modal close (cleanup refs)
+- Resets state on modal close
 
 **CollectionContextProvider**:
 - Simple context wrapping userId for child components (`AddCollectionButton`, forms)
@@ -109,6 +121,15 @@ See `node_modules/next/dist/docs/` — this version has breaking changes in APIs
   - `createCollection({userId, collectionName})` — Create; handles P2002 unique violation
   - `updateCollection({collectionId, collectionName})` — Rename collection
   - `deleteCollectionById(collectionId, userId)` — Delete collection
+- **Note queries** (`lib/dbTableAction/noteTableAction.ts`):
+  - `getNotesByVideo(userId, videoId)` — All notes for a video (cached, sorted by startTime then createdAt)
+  - `getNotesByColor(userId, videoId, color)` — Filter notes by color
+  - `getNoteCountByVideo(userId, videoId)` — Note count for a video
+  - `getNotesByUser(userId, page, pageSize)` — Paginated notes for user
+  - `getNoteCountByUser(userId)` — Total note count for user
+  - `createNote(NoteCreation)` — Create new note
+  - `updateNote(NoteUpdate)` — Update existing note
+  - `deleteNote(userId, noteId)` — Delete note
 - **Session access**:
   - Server-side: `lib/requireSession.ts` validates session and throws redirect if missing
   - Client-side: `lib/auth-client.ts` provides auth utilities (signIn, signOut, etc.)
@@ -122,13 +143,23 @@ See `node_modules/next/dist/docs/` — this version has breaking changes in APIs
 - **Tailwind CSS v4** (via `@tailwindcss/postcss`)
 - **DaisyUI**: Tailwind component library for buttons, cards, modals, etc.
 - **Font**: Geist (auto-optimized via `next/font`)
-- **Theme System**: `next-themes` via `ThemeProviders` (`src/app/themeProvider.tsx`); `data-theme` attribute on `<html>` (light: "retro", dark: "night"); prevents flash on load
+- **Theme System**: `next-themes` via `ThemeProviders` (`src/app/themeProvider.tsx`); `data-theme` attribute on `<html>` (light: "cmyk", dark: "night"); prevents flash on load
+- **Sass**: Used for rich text editor styles (`styles.scss`)
 - React Compiler enabled in `next.config.ts`
 
 ### Utilities & Helpers
 - **YouTube utilities** (`utils/youtube.ts`):
   - `getYoutubeId(url)` — Extract video ID from YouTube URL
   - `YOUTUBE_URL_REGEX` — Regex pattern for URL validation in forms
-  - `fetchYouTubeTitle(videoId)` — Server-side fetch of video title from YouTube API
+- **YouTube server fetch** (`utils/youtubeFetchTitleServerSide.ts`):
+  - `fetchYouTubeTitle(videoId, apiKey)` — Server-side fetch of video title from YouTube API v3 (cached)
+- **Timestamp formatting** (`utils/formatTimeStamp.ts`):
+  - `formatTimeStamp(seconds)` — Format seconds to MM:SS or H:MM:SS
+  - `getH()`, `getM()`, `getS()` — Extract hours/minutes/seconds from a duration
+- **Note colors** (`utils/noteColors.ts`):
+  - `NOTE_COLORS` — Predefined color palette for notes (gray, blue, green, gold, red)
 - **React Hook Form**: Used for form management (register, Controller, watch, handleSubmit)
-- **React Select**: Multi-select dropdown component (used for collection selection in AddVideoForm)
+- **React Select**: Multi-select dropdown (collection selection in AddVideoForm)
+- **Lodash**: throttle/debounce for video playback and scroll
+- **react-hot-toast**: Toast notifications
+- **@tanstack/react-virtual**: Virtualized list rendering

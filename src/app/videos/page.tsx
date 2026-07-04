@@ -14,7 +14,7 @@ import { X } from "lucide-react";
 import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
-	title: "Videos",
+	title: "My Videos",
 	description: "This is the page showing all the videos",
 };
 
@@ -46,7 +46,7 @@ export default async function VideoPage({
 			<Toaster />
 			<Sidebar currentPath="/videos" />
 
-			<main className="flex-1 p-6">
+			<main className="flex-1 p-3">
 				<header className="flex items-center justify-between mb-8">
 					<h1 className="text-3xl font-bold">
 						My Videos {collection ? ` - ${collection}` : ""}
@@ -54,7 +54,7 @@ export default async function VideoPage({
 					<AddVideoButton userId={userId} />
 				</header>
 				{/* Search bar */}
-				<div className="mb-8">
+				<div className="mb-8" title="Search Video Title">
 					<form className="join w-full" action="/videos" method="GET">
 						<input
 							name="q"
@@ -69,11 +69,19 @@ export default async function VideoPage({
 								className="join-item btn btn-square btn-error btn-ghost"
 								title="Clear search"
 							>
-								<X size={25} strokeWidth={5} />
+								<X size={25} strokeWidth={3} />
 							</Link>
 						)}
 					</form>
 				</div>
+
+				{videoCards.length > 0 && (
+					<div className="label">
+						Page {page} of {totalPagesNum}, showing {1 + (page - 1) * pageSize}{" "}
+						to {(page - 1) * pageSize + Math.min(videoCards.length, pageSize)}{" "}
+						out of {totalCount} results
+					</div>
+				)}
 
 				{/* Video Card List */}
 				<Suspense

@@ -3,15 +3,18 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import NoteCard from "../../_components/NoteCard";
 import { Note } from "../../../../../generated/prisma";
-import { StickyNoteOff, Plus, Minus, AlertCircle } from "lucide-react";
+import { StickyNoteOff, Plus, Minus, AlertCircle, Search } from "lucide-react";
 import EditableNoteForm from "../../_components/EditableNoteForm";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import Modal from "@/_components/ModalSkeleton";
 import { memo } from "react";
 import { Toaster, toast } from "react-hot-toast";
+import Fuse from "fuse.js";
+import { JSONContent } from "@tiptap/react";
+import { generateText } from "@tiptap/core";
+import { TiptapExtensions } from "@/_components/RichTextEditor/TiptapExtension";
 
 const _ = require("lodash"); // for debounce & throttle purpose
-
 // component
 const NoteContainer = ({
 	userId,
@@ -29,26 +32,11 @@ const NoteContainer = ({
 	// hooks //
 	// client state for notes array, to trigger re-rendering after note deletion/modification
 	const [noteList, setNoteList] = useState(notes ?? []);
+
 	// bool to toggle Note addition collapsible on/off
 	const [openCollapse, setOpenCollapse] = useState(false);
 	// bool to toggle new note cancel modal
 	const [openNoteCancelModal, setOpenNoteCancelModal] = useState(false);
-
-	// internal auto-scroll flag for temporary pauses (e.g. wheel-scroll timer);
-	// ANDed with the user's auto-follow checkbox, which takes priority -
-	// i.e. this flag flipping back to true
-	const autoscrollEnabled = useRef(true);
-
-	// virtualization stuffs
-	// reference:https://www.youtube.com/watch?v=DBdo7mmuGx4
-	const scrollRef = useRef<HTMLDivElement>(null);
-	const virtualizer = useVirtualizer({
-		count: noteList.length,
-		estimateSize: () => 0,
-		getScrollElement: () => scrollRef.current,
-		overscan: 3,
-	});
-	const virtualItems = virtualizer.getVirtualItems();
 
 	// handler/helper //
 	// function to trigger current note list filtering out the one note deleted,
@@ -84,8 +72,7 @@ const NoteContainer = ({
 		});
 	}, []);
 
-	// note num & sort note
-	const noteCount = noteList ? noteList.length : 0;
+	// note num & sort note & sort note content string
 	const sortedNoteList = useMemo(
 		() =>
 			noteList.toSorted((a, b) => {
@@ -97,7 +84,95 @@ const NoteContainer = ({
 		[noteList],
 	);
 
-	// from lodash
+	const sortedNoteStrList = useMemo<string[]>(
+		() =>
+			sortedNoteList.map((n) =>
+				//https://github.com/ueberdosis/tiptap/discussions/3114
+				generateText(n.content as JSONContent, TiptapExtensions),
+			),
+		[sortedNoteList],
+	);
+	// for search filtering note usage
+	// set up fuse for note search; only rebuild the index when the underlying
+	// text actually changes, not on every render
+	const fuse = useMemo(
+		() =>
+			new Fuse(sortedNoteStrList, {
+				threshold: 0.3,
+				ignoreLocation: true,
+				useTokenSearch: true,
+				tokenMatch: "all",
+			}),
+		[sortedNoteStrList],
+	);
+
+	// kept up to date every render so the debounced search callback below
+	// (frozen at first render via useRef) always searches against the
+	// current notes instead of whichever list existed when it was created
+	const latestSearchDataRef = useRef({ fuse, sortedNoteList });
+	latestSearchDataRef.current = { fuse, sortedNoteList };
+
+	const [searchedNoteList, setSearchedNoteList] = useState(sortedNoteList);
+	const noteCount = searchedNoteList ? searchedNoteList.length : 0;
+
+	// pure filter: given a query, fuse index, and sorted list, return the
+	// matching notes (or the full list when the query is empty) - shared by
+	// both the debounced "user typing" path and the immediate "data changed" path
+	const filterNotes = (
+		searchQ: string,
+		fuse: Fuse<string>,
+		sortedNoteList: Note[],
+	) => {
+		if (!searchQ.trim()) return sortedNoteList;
+		const searchedIdxList = fuse
+			.search(searchQ)
+			.map((result) => result.refIndex);
+		// map indices back to the sorted list to maintain chronological order.
+		return searchedIdxList.map((idx) => sortedNoteList[idx]);
+	};
+
+	const handleSearchNote = useRef(
+		_.debounce((searchQ: string) => {
+			const { fuse, sortedNoteList } = latestSearchDataRef.current;
+			const filteredNotes = filterNotes(searchQ, fuse, sortedNoteList);
+			setSearchedNoteList(filteredNotes);
+
+			// show the best ranked by scrolling, only when the user actually typed a query
+			if (searchQ.trim() && filteredNotes.length > 0)
+				virtualizer.scrollToIndex(0, {
+					align: "start",
+					behavior: "auto",
+				});
+		}, 300), // Delay execution to avoid excessive re-renders during typing.
+	);
+
+	useEffect(() => {
+		// re-apply the current search query immediately (no debounce, no scroll)
+		// so notes added/edited/deleted while a search is active don't flash the
+		// full unfiltered list before the debounced handler catches up
+		const currentSearchQ =
+			(document.getElementById("search-note-q") as HTMLInputElement).value ??
+			"";
+		setSearchedNoteList(filterNotes(currentSearchQ, fuse, sortedNoteList));
+	}, [sortedNoteList, fuse]);
+
+	// internal auto-scroll flag for temporary pauses (e.g. wheel-scroll timer);
+	// ANDed with the user's auto-follow checkbox, which takes priority -
+	// i.e. this flag flipping back to true
+	const autoscrollEnabled = useRef(true);
+
+	// virtualization stuffs
+	// reference:https://www.youtube.com/watch?v=DBdo7mmuGx4
+	const scrollRef = useRef<HTMLDivElement>(null);
+	const virtualizer = useVirtualizer({
+		count: searchedNoteList.length,
+		estimateSize: () => 0,
+		getScrollElement: () => scrollRef.current,
+		getItemKey: (index) => searchedNoteList[index]?.noteId ?? index,
+		overscan: 3,
+	});
+	const virtualItems = virtualizer.getVirtualItems();
+
 	// last note whose startTime <= current play time.
 	// sortedLastIndexBy finds where { startTime: throttledPlayTime } would be
 	// inserted into sortedNoteList to keep it sorted by startTime, landing after
@@ -105,7 +180,7 @@ const NoteContainer = ({
 	// of the floor element (last note with startTime <= throttledPlayTime).
 	const activeIndex =
 		_.sortedLastIndexBy(
-			sortedNoteList,
+			searchedNoteList,
 			{ startTime: throttledPlayTime },
 			(n: Note) => n.startTime,
 		) - 1;
@@ -144,9 +219,6 @@ const NoteContainer = ({
 			autoscrollEnabled.current = false;
 			setTimeout(() => {
 				autoscrollEnabled.current = true;
-				(
-					document.getElementById("auto-follow-label") as HTMLLabelElement
-				).textContent = "Auto-follow?";
 				toast("Resume auto-scroll", {
 					id: "ms-scroll-info",
 					position: "bottom-center",
@@ -185,9 +257,10 @@ const NoteContainer = ({
 		};
 		virtualDiv?.addEventListener("wheel", handleWheel);
 		return () => virtualDiv?.removeEventListener("wheel", handleWheel);
-	}, [noteCount]);
+		// virtual-container event listener only mounts/unmounts on the empty <-> non-empty
+	}, [noteCount > 0]);
 
-	// component
+	///////////////////////////////// component /////////////////////////////////
 	return (
 		<div
 			ref={scrollRef}
@@ -198,17 +271,29 @@ const NoteContainer = ({
 			{/* current note position + Notes count + Add note collapsible (by daisy UI) */}
 			<div className="sticky top-0 grow-0 w-full min-w-0 bg-accent rounded-t-lg z-10 px-1">
 				<div className="flex flex-col py-2 gap-2">
-					<div className="flex flex-row gap-2 justify-between">
+					<div className="flex flex-row gap-2 justify-evenly">
 						<button
 							title="click to jump to current note"
-							className="btn btn-xs btn-info ml-2 font-bold"
+							className="btn btn-sm btn-info ml-1 font-bold"
 							onClick={_.throttle(autoScrollToCurrIdx, 300)}
 						>
 							{activeIndex + 1}/{noteCount} Notes
 						</button>
-						<div className="flex flex-row gap-2 mr-1">
-							<label id="auto-follow-label" className="badge">
-								Auto-follow?
+						<div
+							className="input input-sm"
+							title="Search Notes, results ranked by relevance..."
+						>
+							<Search className="h-[1em]" />
+							<input
+								id="search-note-q"
+								type="search"
+								placeholder="Search Notes, results ranked by relevance..."
+								onChange={(e) => handleSearchNote.current(e.target.value)}
+							/>
+						</div>
+						<div className="flex flex-row gap-1">
+							<label className="label text-sm text-info-content">
+								Auto-follow
 							</label>
 							<input
 								id="autoscroll-checkbox"
@@ -273,13 +358,13 @@ const NoteContainer = ({
 						id="virtual-container"
 					>
 						{virtualItems.map((vItem) => {
-							const note = sortedNoteList[vItem.index];
+							const note = searchedNoteList[vItem.index];
 							return (
 								<div
-									key={vItem.key}
+									key={note.noteId}
 									data-index={vItem.index}
 									ref={virtualizer.measureElement}
-									className={`${vItem.index === activeIndex && "aura aura-lx aura-holo"}  w-full max-w-full mb-4`}
+									className={`${vItem.index === activeIndex && note.startTime <= throttledPlayTime && note.endTime >= throttledPlayTime && "aura aura-xl aura-holo"}  w-full max-w-full mb-4`}
 								>
 									<div className="bg-base-100">
 										<NoteCard
@@ -316,7 +401,7 @@ const NoteContainer = ({
 				// empty notes placeholder
 				<div className="w-full border border-dashed rounded-b-lg p-4 flex items-center justify-center min-h-50">
 					<span className="card card-xl card-dash text-center items-center text-2xl font-semibold">
-						<p>No notes related to this video</p>
+						<p>No notes related to this video/search query</p>
 						<br />
 						<p>
 							<StickyNoteOff size={80} />
