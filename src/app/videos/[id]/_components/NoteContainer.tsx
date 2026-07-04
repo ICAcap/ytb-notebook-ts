@@ -93,13 +93,18 @@ const NoteContainer = ({
 		[sortedNoteList],
 	);
 	// for search filtering note usage
-	// set up fuse for note search
-	const fuse = new Fuse(sortedNoteStrList, {
-		threshold: 0.3,
-		ignoreLocation: true,
-		useTokenSearch: true,
-		tokenMatch: "all",
-	});
+	// set up fuse for note search; only rebuild the index when the underlying
+	// text actually changes, not on every render
+	const fuse = useMemo(
+		() =>
+			new Fuse(sortedNoteStrList, {
+				threshold: 0.3,
+				ignoreLocation: true,
+				useTokenSearch: true,
+				tokenMatch: "all",
+			}),
+		[sortedNoteStrList],
+	);
 
 	// kept up to date every render so the debounced search callback below
 	// (frozen at first render via useRef) always searches against the
@@ -109,38 +114,47 @@ const NoteContainer = ({
 
 	const [searchedNoteList, setSearchedNoteList] = useState(sortedNoteList);
 	const noteCount = searchedNoteList ? searchedNoteList.length : 0;
+
+	// pure filter: given a query, fuse index, and sorted list, return the
+	// matching notes (or the full list when the query is empty) - shared by
+	// both the debounced "user typing" path and the immediate "data changed" path
+	const filterNotes = (
+		searchQ: string,
+		fuse: Fuse<string>,
+		sortedNoteList: Note[],
+	) => {
+		if (!searchQ.trim()) return sortedNoteList;
+		const searchedIdxList = fuse
+			.search(searchQ)
+			.map((result) => result.refIndex);
+		// map indices back to the sorted list to maintain chronological order.
+		return searchedIdxList.map((idx) => sortedNoteList[idx]);
+	};
+
 	const handleSearchNote = useRef(
 		_.debounce((searchQ: string) => {
 			const { fuse, sortedNoteList } = latestSearchDataRef.current;
-			if (searchQ.trim()) {
-				const searchedIdxList = fuse
-					.search(searchQ)
-					.map((result) => result.refIndex);
+			const filteredNotes = filterNotes(searchQ, fuse, sortedNoteList);
+			setSearchedNoteList(filteredNotes);
 
-				// map indices back to the sorted list to maintain chronological order.
-				const filteredNotes = searchedIdxList.map((idx) => sortedNoteList[idx]);
-				setSearchedNoteList(filteredNotes);
-
-				// show the best ranked by scrolling
-				if (filteredNotes.length > 0)
-					virtualizer.scrollToIndex(0, {
-						align: "start",
-						behavior: "auto",
-					});
-			}
-			// no search Q
-			else setSearchedNoteList(sortedNoteList);
+			// show the best ranked by scrolling, only when the user actually typed a query
+			if (searchQ.trim() && filteredNotes.length > 0)
+				virtualizer.scrollToIndex(0, {
+					align: "start",
+					behavior: "auto",
+				});
 		}, 300), // Delay execution to avoid excessive re-renders during typing.
 	);
 
 	useEffect(() => {
-		// still show searched result after adding/deletion/updating
-		setSearchedNoteList(sortedNoteList);
+		// re-apply the current search query immediately (no debounce, no scroll)
+		// so notes added/edited/deleted while a search is active don't flash the
+		// full unfiltered list before the debounced handler catches up
 		const currentSearchQ =
 			(document.getElementById("search-note-q") as HTMLInputElement).value ??
 			"";
-		handleSearchNote.current(currentSearchQ);
-	}, [sortedNoteList]);
+		setSearchedNoteList(filterNotes(currentSearchQ, fuse, sortedNoteList));
+	}, [sortedNoteList, fuse]);
 
 	// internal auto-scroll flag for temporary pauses (e.g. wheel-scroll timer);
 	// ANDed with the user's auto-follow checkbox, which takes priority -
