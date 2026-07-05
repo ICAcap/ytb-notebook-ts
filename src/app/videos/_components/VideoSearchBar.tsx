@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FunnelX } from "lucide-react";
 import Link from "next/link";
 import { SubmitEvent } from "react";
 import Fuse from "fuse.js";
@@ -33,6 +33,7 @@ const VideoSearchBar = ({ unqVidTitles, q }: Props) => {
 			const cleanedQuery = query.trim().toLowerCase();
 			if (!cleanedQuery) {
 				setVidSuggestion([]);
+				setShowSuggestion(false);
 				return;
 			}
 
@@ -61,15 +62,22 @@ const VideoSearchBar = ({ unqVidTitles, q }: Props) => {
 		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, []);
 
-	// submitting query handlers
-	const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		const formData = new FormData(e.currentTarget);
-		const query = (formData.get("query") as string).trim().toLowerCase() ?? "";
-		const searchParam = new URLSearchParams({ q: query });
-		setShowSuggestion(false);
-		router.push(`/videos?${searchParam}`);
-	};
+	// submitting query handlers (cached)
+	const handleSubmit = useCallback(
+		(e: SubmitEvent<HTMLFormElement>) => {
+			e.preventDefault();
+			const formData = new FormData(e.currentTarget);
+			const query =
+				(formData.get("query") as string).trim().toLowerCase() ?? "";
+			const searchParam = new URLSearchParams({ q: query });
+			setShowSuggestion(false);
+			router.push(`/videos?${searchParam}`);
+			(
+				document.getElementById("vid-search-bar-input") as HTMLInputElement
+			).blur(); //un-focus input field
+		},
+		[router],
+	);
 
 	return (
 		<div
@@ -82,6 +90,7 @@ const VideoSearchBar = ({ unqVidTitles, q }: Props) => {
 				<input
 					id="vid-search-bar-input"
 					name="query"
+					type="search"
 					defaultValue={q}
 					placeholder="Search Video Title..."
 					autoComplete="off"
@@ -108,15 +117,15 @@ const VideoSearchBar = ({ unqVidTitles, q }: Props) => {
 							router.push("/videos");
 						}}
 						className="join-item btn btn-square btn-error btn-ghost"
-						title="Clear search"
+						title="Clear Filter"
 					>
-						<X size={25} strokeWidth={3} />
+						<FunnelX size={25} />
 					</button>
 				)}
 			</form>
 			{/* show suggestions if there are any */}
 			{vidSuggestion.length > 0 && showSuggestion && (
-				<ul className="menu dropdown-content bg-base-100 rounded-box z-999 w-full p-1 shadow-sm">
+				<ul className="menu dropdown-content bg-base-300 rounded-box z-999 w-full p-1 shadow-sm">
 					{vidSuggestion.map((vid, idx) => (
 						<li
 							key={idx}
