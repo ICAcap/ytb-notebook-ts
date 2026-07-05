@@ -208,26 +208,30 @@ const NoteContainer = ({
 		}
 	}, [activeIndex]);
 
-	// handle disabling auto scrolling
-	// and then restore after a period
+	// handle disabling auto scrolling, then restoring after a period of inactivity
 	// kept in a ref so the same debounced instance (and its internal timer
 	// state) survives across re-renders, instead of a fresh one - with its
-	// own reset throttle/debounce clock - being created and attached every render
-	const tempDisableAutoscroll = useRef(
+	// own reset debounce clock - being created and attached every render.
+	// Disabling happens synchronously so it takes effect immediately on the
+	// first wheel tick; only the re-enable is debounced, so each additional
+	// wheel event within the window resets the 5s countdown instead of
+	// scheduling a competing timer.
+	const resumeAutoscroll = useRef(
 		_.debounce(() => {
-			const pauseMs = 5000;
-			autoscrollEnabled.current = false;
-			setTimeout(() => {
-				autoscrollEnabled.current = true;
-				toast("Resume auto-scroll", {
-					id: "ms-scroll-info",
-					position: "bottom-center",
-					toasterId: "note-container",
-				});
-				autoScrollToCurrIdxRef.current();
-			}, pauseMs);
-		}, 300), // Limit execution
+			autoscrollEnabled.current = true;
+			toast("Resume auto-scroll", {
+				id: "ms-scroll-info",
+				position: "bottom-center",
+				toasterId: "note-container",
+			});
+			autoScrollToCurrIdxRef.current();
+		}, 7000),
 	);
+
+	const handleTempDisableAutoscroll = () => {
+		autoscrollEnabled.current = false;
+		resumeAutoscroll.current();
+	};
 
 	const toastWheel = useRef(
 		_.throttle(
@@ -238,25 +242,41 @@ const NoteContainer = ({
 					toasterId: "note-container",
 				});
 			},
-			8000,
+			7500,
 			{ trailing: false },
 		),
 	);
 
+	const handleManualScrolling = () => {
+		const paused = (playerRef.current as HTMLVideoElement).paused;
+		const checked = (
+			document.getElementById("autoscroll-checkbox") as HTMLInputElement
+		).checked;
+		if (checked && !paused) {
+			toastWheel.current();
+			handleTempDisableAutoscroll();
+		}
+	};
+
+	// keydown only fires on the focused element div
+	// plain, non-focusable div and would never receive it)
+	const handleArrowKeyScroll = (event: KeyboardEvent) => {
+		if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+			handleManualScrolling();
+		}
+	};
+
 	useEffect(() => {
 		const virtualDiv = document.getElementById("virtual-container");
-		const handleWheel = () => {
-			const paused = (playerRef.current as HTMLVideoElement).paused;
-			const checked = (
-				document.getElementById("autoscroll-checkbox") as HTMLInputElement
-			).checked;
-			if (checked && !paused) {
-				toastWheel.current();
-				tempDisableAutoscroll.current();
-			}
+
+		virtualDiv?.addEventListener("wheel", handleManualScrolling);
+		virtualDiv?.addEventListener("click", () => virtualDiv.focus());
+		virtualDiv?.addEventListener("keydown", handleArrowKeyScroll);
+		return () => {
+			virtualDiv?.removeEventListener("wheel", handleManualScrolling);
+			virtualDiv?.removeEventListener("click", () => virtualDiv.focus());
+			virtualDiv?.removeEventListener("keydown", handleArrowKeyScroll);
 		};
-		virtualDiv?.addEventListener("wheel", handleWheel);
-		return () => virtualDiv?.removeEventListener("wheel", handleWheel);
 		// virtual-container event listener only mounts/unmounts on the empty <-> non-empty
 	}, [noteCount > 0]);
 
