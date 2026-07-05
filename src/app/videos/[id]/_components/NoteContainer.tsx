@@ -256,7 +256,21 @@ const NoteContainer = ({
 
 	// keydown only fires on the focused element div
 	// plain, non-focusable div and would never receive it)
+	// skip clicks/keys that originate from interactive or editable descendants
+	// (note card buttons/inputs, the Tiptap editor) so this container-level
+	// handling doesn't steal focus or hijack arrow-key cursor movement there
+	const isInteractiveOrEditableTarget = (target: EventTarget | null) => {
+		return (target as HTMLElement)?.closest?.(
+			"input, textarea, button, a, select, [contenteditable='true']",
+		);
+	};
+	const handleFocusContainer = (event: MouseEvent) => {
+		if (isInteractiveOrEditableTarget(event.target)) return;
+		(event.target as HTMLDivElement).focus();
+	};
+
 	const handleArrowKeyScroll = (event: KeyboardEvent) => {
+		if (isInteractiveOrEditableTarget(event.target)) return;
 		if (event.key === "ArrowUp" || event.key === "ArrowDown") {
 			handleManualScrolling();
 		}
@@ -264,7 +278,6 @@ const NoteContainer = ({
 
 	useEffect(() => {
 		const virtualDiv = document.getElementById("virtual-container");
-		const handleFocusContainer = () => virtualDiv?.focus();
 
 		virtualDiv?.addEventListener("wheel", handleManualScrolling);
 		virtualDiv?.addEventListener("click", handleFocusContainer);
