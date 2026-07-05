@@ -55,7 +55,11 @@ export default async function VideoPage({
 					<AddVideoButton userId={userId} />
 				</header>
 				{/* Search bar */}
-				<VideoSearchBar unqVidTitles={unqVidTitles} q={q} />
+				<VideoSearchBar
+					unqVidTitles={unqVidTitles}
+					q={q}
+					currentCollection={collection}
+				/>
 
 				{videoCards.length > 0 && (
 					<div className="label mb-3">

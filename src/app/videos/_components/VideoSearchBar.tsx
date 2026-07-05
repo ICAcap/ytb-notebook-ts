@@ -12,9 +12,10 @@ const _ = require("lodash"); // for debounce purpose
 type Props = {
 	unqVidTitles: string[];
 	q?: string;
+	currentCollection?: string;
 };
 // component
-const VideoSearchBar = ({ unqVidTitles, q }: Props) => {
+const VideoSearchBar = ({ unqVidTitles, q, currentCollection }: Props) => {
 	const [vidSuggestion, setVidSuggestion] = useState<string[]>([]);
 	const [showSuggestion, setShowSuggestion] = useState(false);
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -103,7 +104,7 @@ const VideoSearchBar = ({ unqVidTitles, q }: Props) => {
 				<button type="submit" className="join-item btn btn-primary">
 					Search
 				</button>
-				{q && (
+				{(q || currentCollection) && (
 					<button
 						type="button"
 						onClick={() => {
