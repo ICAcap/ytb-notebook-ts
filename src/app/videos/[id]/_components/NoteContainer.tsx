@@ -11,7 +11,7 @@ import { memo } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import Fuse from "fuse.js";
 import { JSONContent } from "@tiptap/react";
-import { generateText } from "@tiptap/core";
+import { generateText, generateHTML } from "@tiptap/core";
 import { TiptapExtensions } from "@/_components/RichTextEditor/TiptapExtension";
 
 const _ = require("lodash"); // for debounce & throttle purpose
@@ -281,13 +281,13 @@ const NoteContainer = ({
 						</button>
 						<div
 							className="input input-sm"
-							title="Search Notes, results ranked by relevance..."
+							title="Search Notes, results ranked by relevance"
 						>
 							<Search className="h-[1em]" />
 							<input
 								id="search-note-q"
 								type="search"
-								placeholder="Search Notes, results ranked by relevance..."
+								placeholder="Search Notes, results ranked by relevance"
 								onChange={(e) => handleSearchNote.current(e.target.value)}
 							/>
 						</div>
