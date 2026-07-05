@@ -209,12 +209,8 @@ const NoteContainer = ({
 	}, [activeIndex]);
 
 	// handle disabling auto scrolling, then restoring after a period of inactivity
-	// kept in a ref so the same debounced instance (and its internal timer
-	// state) survives across re-renders, instead of a fresh one - with its
-	// own reset debounce clock - being created and attached every render.
-	// Disabling happens synchronously so it takes effect immediately on the
-	// first wheel tick; only the re-enable is debounced, so each additional
-	// wheel event within the window resets the 5s countdown instead of
+	// only the resuming is debounced, so each additional
+	// wheel event within the container resets the countdown instead of
 	// scheduling a competing timer.
 	const resumeAutoscroll = useRef(
 		_.debounce(() => {
@@ -268,13 +264,14 @@ const NoteContainer = ({
 
 	useEffect(() => {
 		const virtualDiv = document.getElementById("virtual-container");
+		const handleFocusContainer = () => virtualDiv?.focus();
 
 		virtualDiv?.addEventListener("wheel", handleManualScrolling);
-		virtualDiv?.addEventListener("click", () => virtualDiv.focus());
+		virtualDiv?.addEventListener("click", handleFocusContainer);
 		virtualDiv?.addEventListener("keydown", handleArrowKeyScroll);
 		return () => {
 			virtualDiv?.removeEventListener("wheel", handleManualScrolling);
-			virtualDiv?.removeEventListener("click", () => virtualDiv.focus());
+			virtualDiv?.removeEventListener("click", handleFocusContainer);
 			virtualDiv?.removeEventListener("keydown", handleArrowKeyScroll);
 		};
 		// virtual-container event listener only mounts/unmounts on the empty <-> non-empty
@@ -376,6 +373,9 @@ const NoteContainer = ({
 							transform: `translateY(${virtualItems[0]?.start ?? 0}px)`,
 						}}
 						id="virtual-container"
+						// make this div focusable, reference:
+						// https://stackoverflow.com/questions/3656467/is-it-possible-to-focus-on-a-div-using-javascript-focus-function
+						tabIndex={0}
 					>
 						{virtualItems.map((vItem) => {
 							const note = searchedNoteList[vItem.index];
