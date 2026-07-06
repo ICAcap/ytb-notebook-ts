@@ -37,7 +37,7 @@ export default function NotePdfExporter({ note }: { note: Note }) {
 
 		const doc = new jsPDF({
 			orientation: "landscape",
-			format: "a4",
+			format: "a3",
 			unit: "px",
 		});
 
@@ -46,7 +46,6 @@ export default function NotePdfExporter({ note }: { note: Note }) {
 		doc.html(pageHtml, {
 			width: pageWidth,
 			windowWidth: pageWidth,
-			html2canvas: { scale: 0.75 },
 			autoPaging: "text",
 			callback(doc) {
 				doc.save(`Note-${note.noteId}-${Date.now()}`);
