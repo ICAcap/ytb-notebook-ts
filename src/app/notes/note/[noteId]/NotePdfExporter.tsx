@@ -6,6 +6,7 @@ import html2canvasPro from "html2canvas-pro";
 import { generateHTML, JSONContent } from "@tiptap/react";
 import { TiptapExtensions } from "@/_components/RichTextEditor/TiptapExtension";
 import { Note } from "../../../../../generated/prisma";
+import { formatTimeStamp } from "../../../../../utils/formatTimeStamp";
 
 declare global {
 	interface Window {
@@ -22,22 +23,31 @@ export default function NotePdfExporter({ note }: { note: Note }) {
 		triggered.current = true; // Prevent duplicate PDFs during React StrictMode double-mount.
 
 		window.html2canvas = html2canvasPro; // Required by jsPDF.html() for canvas rendering.
-		const noteHtmlString = generateHTML(
+		const noteHtml = generateHTML(
 			note.content as JSONContent,
 			TiptapExtensions,
 		);
 
-		const noteHtml = new DOMParser().parseFromString(
-			noteHtmlString,
-			"text/html",
-		).body;
+		const startTime = formatTimeStamp(note.startTime);
+		const endTime =
+			note.startTime === note.endTime ? "" : formatTimeStamp(note.endTime);
+		const timeStampText = endTime ? `${startTime} - ${endTime}` : startTime;
+		const timeStampSpan = `<span style="display: block; text-align: center; font-weight: bold;">${timeStampText}</span><hr>`;
+		const pageHtml = `<div style="padding: 20px; box-sizing: border-box;">${timeStampSpan}${noteHtml}</div>`;
 
 		const doc = new jsPDF({
+			orientation: "landscape",
 			format: "a4",
 			unit: "px",
 		});
 
-		doc.html(noteHtml, {
+		const pageWidth = doc.internal.pageSize.getWidth();
+
+		doc.html(pageHtml, {
+			width: pageWidth,
+			windowWidth: pageWidth,
+			html2canvas: { scale: 0.75 },
+			autoPaging: "text",
 			callback(doc) {
 				doc.save(`Note-${note.noteId}-${Date.now()}`);
 				window.close(); // Close the tab immediately after download to clean up the export window.

@@ -2,6 +2,12 @@ import requireSession from "../../../../../lib/requireSession";
 import { getNoteById } from "../../../../../lib/dbTableAction/noteTableAction";
 import { notFound } from "next/navigation";
 import NotePdfExporter from "./NotePdfExporter";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Export Note",
+	description: "Export Note",
+};
 
 // reference: https://www.nutrient.io/blog/how-to-convert-html-to-pdf-using-react/
 async function NotePdfPage({
