@@ -2,7 +2,7 @@
 
 import { Note } from "../../../../generated/prisma";
 import { memo, useState } from "react";
-import { AlertCircle, PencilLine, Shredder } from "lucide-react";
+import { AlertCircle, PencilLine, Shredder, Download } from "lucide-react";
 import { JSONContent } from "@tiptap/react";
 import { renderToReactElement } from "@tiptap/static-renderer/pm/react";
 import { formatTimeStamp } from "../../../../utils/formatTimeStamp";
@@ -41,7 +41,7 @@ const NoteCard = (props: Props) => {
 	const [isDeleting, setIsDeleting] = useState(false);
 
 	// helper func
-	function handleSeekTo(seconds: number) {
+	function handleTimeBadgeSeekTo(seconds: number) {
 		if (props.playerRef?.current) {
 			props.playerRef.current.currentTime = Math.max(
 				0,
@@ -88,7 +88,17 @@ const NoteCard = (props: Props) => {
 			>
 				<div className="flex gap-2">
 					<button
+						title="export this note"
+						className="btn btn-square btn-ghost btn-md"
+						onClick={() => {
+							window.open(`/notes/note/${props.noteId}`, "_blank");
+						}}
+					>
+						<Download className="w-6 h-6" color="white" />
+					</button>
+					<button
 						disabled={editable}
+						title="edit this note"
 						onClick={() => {
 							setEditable(true);
 							props.onOpenEdit?.();
@@ -98,6 +108,7 @@ const NoteCard = (props: Props) => {
 						<PencilLine className="w-6 h-6" color="white" />
 					</button>
 					<button
+						title="delete this note"
 						className="btn btn-square btn-ghost btn-md"
 						onClick={() => {
 							props.playerRef?.current && props.playerRef.current.pause(); // pause vid
@@ -118,7 +129,7 @@ const NoteCard = (props: Props) => {
 					</span>
 					<div className="flex gap-2 items-center">
 						<button
-							onClick={() => handleSeekTo(props.startTime)}
+							onClick={() => handleTimeBadgeSeekTo(props.startTime)}
 							className="btn btn-xs btn-primary"
 						>
 							{starTimeStamp}
@@ -127,7 +138,7 @@ const NoteCard = (props: Props) => {
 							<>
 								<span className="text-2xl">➨</span>
 								<button
-									onClick={() => handleSeekTo(props.endTime)}
+									onClick={() => handleTimeBadgeSeekTo(props.endTime)}
 									className="btn btn-xs btn-primary"
 								>
 									{endTimeStamp}

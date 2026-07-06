@@ -58,6 +58,36 @@ export const getNotesByVideo = cache(async function (
 	return null;
 });
 
+export const getNoteById = cache(async function (
+	userId: string,
+	noteId: string,
+): Promise<Note | null> {
+	if (userId && noteId) {
+		try {
+			const note = await prisma.note.findUnique({
+				where: {
+					userId: userId,
+					noteId: noteId,
+				},
+			});
+			return note;
+		} catch (error) {
+			console.error(
+				"Get Note By Id processed failed, fallback to null return",
+				error,
+			);
+			return null;
+		}
+	}
+
+	console.error(
+		"Get Note By Id failed, userId or noteId is undefined, fallback to null return",
+	);
+	console.error(userId);
+	console.error(noteId);
+	return null;
+});
+
 export const getNotesByColor = cache(async function (
 	userId: string,
 	videoId: string,

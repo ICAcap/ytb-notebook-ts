@@ -11,7 +11,7 @@ import { memo } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import Fuse from "fuse.js";
 import { JSONContent } from "@tiptap/react";
-import { generateText, generateHTML } from "@tiptap/core";
+import { generateText } from "@tiptap/core";
 import { TiptapExtensions } from "@/_components/RichTextEditor/TiptapExtension";
 
 const _ = require("lodash"); // for debounce & throttle purpose
