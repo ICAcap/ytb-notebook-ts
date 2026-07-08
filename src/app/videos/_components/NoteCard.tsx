@@ -92,7 +92,7 @@ const NoteCard = (props: Props) => {
 						title="export this note"
 						className="btn btn-square btn-ghost btn-md"
 						onClick={() => {
-							window.open(`/notes/note/${props.noteId}`, "_blank");
+							window.open(`/api/notes/${props.noteId}/pdf`, "_blank");
 						}}
 						rel="noopener noreferrer"
 					>
