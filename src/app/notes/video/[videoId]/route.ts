@@ -2,7 +2,6 @@
 import requireSession from "../../../../../lib/requireSession";
 import { getNotesByVideo } from "../../../../../lib/dbTableAction/noteTableAction";
 import { getVideoById } from "../../../../../lib/dbTableAction/videoTableAction";
-import { notFound } from "next/navigation";
 import { printPDF } from "./puppetVideoPDF";
 
 // puppeteer GET api endpoint
@@ -16,10 +15,14 @@ export async function GET(
 	const videoId = (await params).videoId;
 
 	const video = await getVideoById(userId, videoId);
+	if (!video) {
+		return new Response("Video not existing", { status: 404 });
+	}
+
 	const notes = await getNotesByVideo(userId, videoId);
 
-	if (!video || !notes || notes.length === 0) {
-		notFound();
+	if (!notes || notes.length === 0) {
+		return new Response("No Notes Found", { status: 404 });
 	}
 
 	// call puppeteer method
@@ -31,7 +34,7 @@ export async function GET(
 		{
 			headers: {
 				"Content-Type": "application/pdf",
-				"Content-Disposition": `attachment; filename="VideoNotes-${videoId}-${Date.now()}.pdf"`,
+				"Content-Disposition": `inline; filename="VideoNotes-${videoId}-${Date.now()}.pdf"`,
 				"Content-Length": String(pdf.length),
 			},
 		},
