@@ -92,7 +92,7 @@ const NoteCard = (props: Props) => {
 						title="export this note"
 						className="btn btn-square btn-ghost btn-md"
 						onClick={() => {
-							window.open(`/notes/notePuppet/${props.noteId}`, "_blank");
+							window.open(`/notesExport/note/${props.noteId}`, "_blank");
 						}}
 					>
 						<Download className="w-6 h-6" color="white" />
