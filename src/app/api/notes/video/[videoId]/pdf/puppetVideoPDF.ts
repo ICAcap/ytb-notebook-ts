@@ -4,6 +4,7 @@ import { TiptapExtensions } from "@/_components/RichTextEditor/TiptapExtension";
 import puppeteer from "puppeteer";
 import { Note } from "../../../../../../../generated/prisma";
 import { formatTimeStamp } from "../../../../../../../utils/formatTimeStamp";
+import { escapeHtml } from "../../../../../../../utils/escapeHtml";
 
 // reference: https://blog.risingstack.com/pdf-from-html-node-js-puppeteer/
 
@@ -24,12 +25,13 @@ function generateNoteHTMLStr(note: Note): string {
 
 export async function printPDF(notes: Note[], videoTitle: string) {
 	const notesHtmlArr = notes.map((note) => generateNoteHTMLStr(note));
-	const htmlContent = `<div><h1 style="text-align: center;">${videoTitle}</h1>${notesHtmlArr.join("<br/>")}</div>`;
+	const htmlContent = `<div><h1 style="text-align: center;">${escapeHtml(videoTitle)}</h1>${notesHtmlArr.join("<br/>")}</div>`;
 
 	// puppeteer generate pdf on chrome
 	const browser = await puppeteer.launch({ headless: true });
 	try {
 		const page = await browser.newPage();
+		await page.setJavaScriptEnabled(false);
 		await page.setContent(htmlContent, { waitUntil: "load" });
 		const pdf = await page.pdf({
 			printBackground: true,
