@@ -29,6 +29,7 @@ export async function printPDF(notes: Note[]) {
 	const browser = await puppeteer.launch({ headless: true });
 	try {
 		const page = await browser.newPage();
+		await page.setJavaScriptEnabled(false);
 		await page.setContent(notesHtmlArr.join("<br/>"), { waitUntil: "load" });
 		const pdf = await page.pdf({
 			printBackground: true,
