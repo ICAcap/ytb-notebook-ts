@@ -5,6 +5,7 @@ import { formatTimeStamp } from "../../../../../utils/formatTimeStamp";
 import { TiptapExtensions } from "@/_components/RichTextEditor/TiptapExtension";
 import puppeteer from "puppeteer";
 
+// reference: https://blog.risingstack.com/pdf-from-html-node-js-puppeteer/
 export async function printPDF(note: Note) {
 	const noteHtml = renderToHTMLString({
 		content: note.content as JSONContent,
@@ -29,6 +30,6 @@ export async function printPDF(note: Note) {
 		});
 		return pdf; // return the pdf buffer
 	} finally {
-		await browser.close();
+		await browser.close(); // turn off
 	}
 }

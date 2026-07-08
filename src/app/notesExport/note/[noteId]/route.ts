@@ -12,10 +12,6 @@ export async function GET(
 ) {
 	const session = await requireSession();
 	const userId = session.user.id;
-	if (!userId) {
-		notFound();
-	}
-
 	const noteId = (await params).noteId;
 
 	const note = await getNoteById(userId, noteId);
@@ -27,7 +23,7 @@ export async function GET(
 	// call puppeteer method
 	const pdf = await printPDF(note);
 
-	// browser response to download
+	// browser response to trigger download modal
 	return new Response(
 		new Blob([pdf as unknown as BlobPart], { type: "application/pdf" }),
 		{
