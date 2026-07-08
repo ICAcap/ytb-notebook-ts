@@ -2,7 +2,7 @@
 import requireSession from "../../../../../lib/requireSession";
 import { getNoteById } from "../../../../../lib/dbTableAction/noteTableAction";
 import { notFound } from "next/navigation";
-import { printPDF } from "./PuppeteerExport";
+import { printPDF } from "./puppetPDF";
 
 // puppeteer GET api endpoint
 
@@ -21,7 +21,7 @@ export async function GET(
 	}
 
 	// call puppeteer method
-	const pdf = await printPDF(note);
+	const pdf = await printPDF([note]);
 
 	// browser response to trigger download modal
 	return new Response(
