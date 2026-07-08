@@ -69,8 +69,8 @@ const VideoPlayerAndNotesContainer = ({
 					title="Export All Notes"
 					disabled={noteList.length === 0}
 					type="button"
-					className="btn btn-lg btn-info max-w-xl lg:max-w-md mx-auto"
-					onClick={() => window.open(`/notes/video/${video.videoId}`, "_blank")}
+					className="btn btn-lg btn-primary max-w-xl lg:max-w-md mx-auto"
+					onClick={() => window.open(`/api/notes/video/${video.videoId}/pdf`, "_blank")}
 					rel="noopener noreferrer"
 				>
 					Export All Notes

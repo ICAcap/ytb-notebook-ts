@@ -1,7 +1,7 @@
 // reference: https://blog.risingstack.com/pdf-from-html-node-js-puppeteer/
-import requireSession from "../../../../../lib/requireSession";
-import { getNotesByVideo } from "../../../../../lib/dbTableAction/noteTableAction";
-import { getVideoById } from "../../../../../lib/dbTableAction/videoTableAction";
+import requireSession from "../../../../../../../lib/requireSession";
+import { getNotesByVideo } from "../../../../../../../lib/dbTableAction/noteTableAction";
+import { getVideoById } from "../../../../../../../lib/dbTableAction/videoTableAction";
 import { printPDF } from "./puppetVideoPDF";
 
 // puppeteer GET api endpoint
