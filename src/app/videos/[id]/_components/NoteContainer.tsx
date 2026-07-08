@@ -200,10 +200,10 @@ const NoteContainer = ({
 	autoScrollToCurrIdxRef.current = autoScrollToCurrIdx;
 
 	useEffect(() => {
-		const userHardOverrideScrollEnabled = (
+		const userOverrideScrollEnabled = (
 			document.getElementById("autoscroll-checkbox") as HTMLInputElement
 		).checked;
-		if (autoscrollEnabled.current && userHardOverrideScrollEnabled) {
+		if (autoscrollEnabled.current && userOverrideScrollEnabled) {
 			autoScrollToCurrIdx();
 		}
 	}, [activeIndex]);
@@ -215,12 +215,19 @@ const NoteContainer = ({
 	const resumeAutoscroll = useRef(
 		_.debounce(() => {
 			autoscrollEnabled.current = true;
-			toast("Resume auto-scroll", {
-				id: "ms-scroll-info",
-				position: "bottom-center",
-				toasterId: "note-container",
-			});
-			autoScrollToCurrIdxRef.current();
+
+			const userOverrideScrollEnabled = (
+				document.getElementById("autoscroll-checkbox") as HTMLInputElement
+			).checked;
+
+			if (userOverrideScrollEnabled) {
+				toast("Resume auto-scroll", {
+					id: "ms-scroll-info",
+					position: "bottom-center",
+					toasterId: "note-container",
+				});
+				autoScrollToCurrIdxRef.current();
+			}
 		}, 7000),
 	);
 
