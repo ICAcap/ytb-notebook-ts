@@ -1,7 +1,6 @@
 // reference: https://blog.risingstack.com/pdf-from-html-node-js-puppeteer/
 import requireSession from "../../../../../lib/requireSession";
 import { getNoteById } from "../../../../../lib/dbTableAction/noteTableAction";
-import { notFound } from "next/navigation";
 import { printPDF } from "./puppetPDF";
 
 // puppeteer GET api endpoint
@@ -17,7 +16,7 @@ export async function GET(
 	const note = await getNoteById(userId, noteId);
 
 	if (!note) {
-		notFound();
+		return new Response("This note no longer exists", { status: 404 });
 	}
 
 	// call puppeteer method
@@ -29,7 +28,7 @@ export async function GET(
 		{
 			headers: {
 				"Content-Type": "application/pdf",
-				"Content-Disposition": `attachment; filename="Note-${note.noteId}-${Date.now()}.pdf"`,
+				"Content-Disposition": `inline; filename="Note-${note.noteId}-${Date.now()}.pdf"`,
 				"Content-Length": String(pdf.length),
 			},
 		},
