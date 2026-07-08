@@ -22,6 +22,9 @@ const VideoPlayerAndNotesContainer = ({
 	// ref to bridge the player and the notes container to enable timestamp seeking
 	const playerRef = useRef<HTMLVideoElement | null>(null);
 
+	// use state of note array list
+	const [noteList, setNoteList] = useState(notes ?? []);
+
 	// throttled current play time, fed by VideoPlayer's onTimeUpdate prop (which
 	// fires continuously during playback, unlike the player ref's native
 	// "timeupdate" DOM event for the YouTube provider); shared with NoteContainer
@@ -35,7 +38,7 @@ const VideoPlayerAndNotesContainer = ({
 
 	return (
 		<div className="flex flex-row gap-3 mt-2">
-			<div className="flex flex-col w-full max-w-6xl">
+			<div className="flex flex-col w-full max-w-6xl gap-2">
 				<VideoPlayer
 					videoId={video.videoId}
 					userId={userId}
@@ -61,12 +64,24 @@ const VideoPlayerAndNotesContainer = ({
 						)}
 					</div>
 				</div>
+				{/* export all notes button */}
+				<button
+					title="Export All Notes"
+					disabled={noteList.length === 0}
+					type="button"
+					className="btn btn-lg btn-info max-w-xl lg:max-w-md mx-auto"
+					onClick={() => window.open(`/notes/video/${video.videoId}`, "_blank")}
+					rel="noopener noreferrer"
+				>
+					Export All Notes
+				</button>
 			</div>
 
 			<NoteContainer
 				userId={userId}
 				videoId={video.videoId}
-				notes={notes}
+				noteList={noteList}
+				setNoteList={setNoteList}
 				playerRef={playerRef}
 				throttledPlayTime={throttledPlayTime}
 			/>

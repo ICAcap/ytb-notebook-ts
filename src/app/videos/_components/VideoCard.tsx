@@ -4,7 +4,7 @@ import { getThumbnailUrl } from "../../../../utils/youtube";
 import { formatTimeStamp } from "../../../../utils/formatTimeStamp";
 import Image from "next/image";
 import Link from "next/link";
-import { Trash2, Pencil, AlertCircle, FileDown } from "lucide-react";
+import { Trash2, Pencil, AlertCircle } from "lucide-react";
 import {
 	deleteVideo,
 	VideoDetailType,
@@ -123,16 +123,6 @@ export default memo(function VideoCard({
 				>
 					<Pencil className="w-5 h-5 text-info" />
 				</button>
-				<Link
-					title="Export Video Notes"
-					type="button"
-					className="btn btn-ghost btn-sm"
-					href={`/notes/video/${videoId}`}
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<FileDown className="w-5 h-5 text-info" />
-				</Link>
 			</div>
 
 			{/* Modals */}

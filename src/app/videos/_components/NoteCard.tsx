@@ -94,6 +94,7 @@ const NoteCard = (props: Props) => {
 						onClick={() => {
 							window.open(`/notes/note/${props.noteId}`, "_blank");
 						}}
+						rel="noopener noreferrer"
 					>
 						<Download className="w-6 h-6" color="white" />
 					</button>

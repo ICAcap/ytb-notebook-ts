@@ -1,6 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+	Dispatch,
+	SetStateAction,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import NoteCard from "../../_components/NoteCard";
 import { Note } from "../../../../../generated/prisma";
 import { StickyNoteOff, Plus, Minus, AlertCircle, Search } from "lucide-react";
@@ -19,20 +27,19 @@ const _ = require("lodash"); // for debounce & throttle purpose
 const NoteContainer = ({
 	userId,
 	videoId,
-	notes,
+	noteList,
+	setNoteList,
 	playerRef,
 	throttledPlayTime,
 }: {
 	userId: string;
 	videoId: string;
-	notes: Note[] | null;
+	noteList: Note[];
+	setNoteList: Dispatch<SetStateAction<Note[]>>;
 	playerRef: React.RefObject<HTMLVideoElement | null>;
 	throttledPlayTime: number;
 }) => {
-	// hooks //
-	// client state for notes array, to trigger re-rendering after note deletion/modification
-	const [noteList, setNoteList] = useState(notes ?? []);
-
+	// hooks
 	// bool to toggle Note addition collapsible on/off
 	const [openCollapse, setOpenCollapse] = useState(false);
 	// bool to toggle new note cancel modal
