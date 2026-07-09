@@ -1,5 +1,7 @@
 # YTB Notebook — Product & Codebase Assessment (June 2026)
 
+> **Update (2026-07-08):** Re-verified against current `main`/`pdf-export` branch state. Two of the five original blockers are already closed (`/tiptap` deleted, `.env.example` added), and a substantial new feature (authenticated, XSS-hardened PDF export via a cached warm Puppeteer instance) shipped since this doc was written. See "Assessment Update" section below for the current launch verdict.
+
 A from-the-code read of where this project stands, whether it's deployable, what to build next, and what to use for a showcase homepage. Based on direct inspection of the repo (schema, data layer, auth, components, git history) plus current research on what gets developers hired in 2026.
 
 ---
@@ -10,6 +12,7 @@ A from-the-code read of where this project stands, whether it's deployable, what
 - **Not yet deployable to the public** — five concrete, cheap-to-fix blockers below (leftover dev route exposed, no `.env.example`, no rate limiting, dead feature surface, no README worth showing a stranger).
 - **As a portfolio piece**, the gap between "what this is" and "what gets you interviews" is mostly *presentation* (README, live demo, landing page), not more engineering. That's the highest-leverage work available right now.
 - Estimated effort to close every blocker below: **3–4 focused days**, no architecture changes required.
+- **(Superseded — see "Assessment Update" at the bottom.)** As of 2026-07-08, 2 of 5 blockers are closed and a real PDF-export feature has landed. Remaining gap to "launchable as a resume portfolio piece" is now README + rate limiting + deploy, roughly **1.5–2 days**.
 
 ---
 
@@ -124,3 +127,32 @@ The stack already in place — Next.js 16 + Tailwind v4 + DaisyUI — is enough;
 - [Self-Hosted Web Analytics 2026 — Plausible vs Matomo vs Umami vs OpenPanel](https://openpanel.dev/articles/self-hosted-web-analytics)
 - [Umami — Privacy-Focused Web Analytics](https://umami.is/)
 - [Plausible Analytics (GitHub)](https://github.com/plausible/analytics)
+
+---
+
+## Assessment Update (2026-07-08)
+
+Re-verified every claim above against the current repo state (branch `pdf-export`, latest commit `4dbfcf5`). Verdict: **closer to launchable than this doc originally said. Yes, launch it — after ~1.5–2 days, not the original 3–4.**
+
+**Blockers closed since June:**
+- **#1 (`/tiptap` exposed) — fixed.** The route is deleted (`git log`: "remove test tiptap page"). Confirmed no `src/app/tiptap` directory exists.
+- **#2 (no `.env.example`) — fixed.** `.env.example` exists at repo root with all required vars documented, including comments on where to get each credential. Note: it only lists 7 of the 9 vars originally flagged (`TEST_USER_ID`/`TEST_VID_ID` are seed-script-only, so their omission is fine).
+
+**Blockers still open, unchanged:**
+- **#3 README** — still unmodified `create-next-app` boilerplate. Still the highest-leverage item for portfolio presentation.
+- **#4 rate limiting** — still nothing (`grep` for `rateLimit`/`ratelimit` across the repo returns zero hits). Now applies to three unmetered surfaces instead of two: YouTube title fetch, note/video creation, and the new PDF export routes (Puppeteer page renders are far more expensive per-request than a DB write — a loop hitting `/api/notes/video/[videoId]/pdf` is a more effective way to exhaust server resources than the original blocker described).
+- **#5 `screenshotUrl` dead field** — still present in schema, types, `NoteCard`, `EditableNoteForm`, `NoteContainer` — still nothing sets it. Unchanged, still worth cutting or wiring up.
+- **#6 (headers/error boundaries/LICENSE/robots)** — still all absent. Confirmed no `next.config.ts` `headers()`, no `error.tsx`/`global-error.tsx`, no `LICENSE`, no `robots.ts`/`sitemap.ts`.
+
+**New since original assessment — PDF export feature (commits `f730ad3`…`4dbfcf5`):**
+- Two authenticated API routes (`/api/notes/[noteId]/pdf`, `/api/notes/video/[videoId]/pdf`), both correctly call `requireSession()` and scope queries by `userId` — same data-isolation discipline as the rest of the app.
+- `utils/puppeteerBrowser.ts` caches a **warm Puppeteer `Browser` instance on `globalThis`**, keyed by the launch `Promise` (not the resolved value) to avoid a launch race under concurrent requests, with auto-recovery on `disconnected`. This is a legitimately good pattern — most side projects launching Puppeteer per-request would fall over immediately under any concurrent load, and this one thought about it.
+- `escapeHtml()` is applied to the video title before it's interpolated into the HTML string passed to `page.setContent()`, and `setJavaScriptEnabled(false)` is set on the page — closes the obvious stored-XSS/SSRF vector for a feature that renders arbitrary user content to HTML server-side. This is a real security-conscious decision, not an accident.
+- **This is genuinely a good portfolio talking point**: "implemented a shared warm-process pool for an expensive external resource, with promise-based dedup to avoid a launch race, plus XSS hardening on the render path" is a substantive systems-design answer for an interview, more so than most of what's already in section 1.
+- **Caveat**: this feature is also *why* blocker #4 (rate limiting) now matters more, not less — see above.
+
+**Updated verdict on the two questions from Section 3:**
+- **(a) Real product for real users?** Same as before — architecturally yes, mechanically blocked only by #4 now (the exposed-route blocker is gone).
+- **(b) Portfolio piece for a resume, launched today?** Recommend **yes, proceed to launch**, in this order: (1) basic rate limiting on the PDF/note/video-creation routes — a few hours given no infra exists yet, IP or user-ID based token bucket is enough for a portfolio deploy; (2) rewrite `README.md` — still the single biggest presentation gap; (3) deploy to Vercel + Neon per the checklist in Section 6; (4) everything else in Section 4/7 (share links, showcase homepage) is additive polish, not a blocker, and can ship after the live link exists.
+
+**Effort re-estimate:** Original 3–4 days → **~1.5–2 days** to reach the same "launchable" bar, since 2 of 5 blockers are already closed and no new blockers were introduced by the PDF feature (it added scope to an existing blocker, not a new one).

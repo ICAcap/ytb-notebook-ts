@@ -35,7 +35,6 @@ YouTube Notebook: A Next.js 16 application for managing video collections with t
 - `src/app/setting/page.tsx` — User settings (protected)
 - `src/app/(auth)/sign-in/page.tsx` — Sign-in form component
 - `src/app/layout.tsx` — Root layout with Tailwind + Geist font
-- `src/app/tiptap/page.tsx` — Rich text editor demo/test page (dev only)
 
 ### Shared Components (`src/_components/`)
 - `sidebar.tsx` — Navigation sidebar with collapse/expand, theme toggle (light: cmyk, dark: dark via DaisyUI)
@@ -56,7 +55,7 @@ Full Tiptap-based editor suite. Note content is stored as Tiptap JSON, not plain
 - `VideoSearchBar.tsx` — Search input with fuzzy-matched (Fuse.js) title autocomplete dropdown; debounced (250ms) suggestion lookup, closes on outside click/selection/clear, reopens on refocus if suggestions are cached
 - `AddVideoButton.tsx` — Modal trigger + context for multi-stage video add form
 - `AddVideoForm.tsx` — Two-stage form: (1) YouTube URL validation, (2) Title & collections
-- `EditVideoForm.tsx` — Stub for video editing (not yet implemented)
+- `EditVideoForm.tsx` — Video edit form (title/collections), opened from `VideoCard.tsx`
 - `CollectionBadgeList.tsx` — Filterable collection badges; links filter video list by collection
 - `EditableNoteForm.tsx` — Form for creating/editing notes: time range, color picker, rich text (Tiptap)
 - `NoteCard.tsx` — Individual note display: timestamp seeking, rendered rich text, edit/delete actions
@@ -71,6 +70,15 @@ Full Tiptap-based editor suite. Note content is stored as Tiptap JSON, not plain
 - `AddCollectionButton.tsx` — Modal trigger for new collection
 - `CollectionCard.tsx` — Collection card UI
 - `CollectionForm.tsx` — Collection creation/edit form
+
+### PDF Export (Puppeteer)
+- **API routes** (both authenticated via `requireSession()`, scoped by `userId`):
+  - `src/app/api/notes/[noteId]/pdf/route.ts` — Single-note PDF (`GET`)
+  - `src/app/api/notes/video/[videoId]/pdf/route.ts` — All notes for a video, one PDF (`GET`)
+- **`utils/puppeteerBrowser.ts`**:
+  - `getBrowser()` — Returns a shared warm `Browser` instance, cached on `globalThis` (survives dev Fast Refresh); caches the launch `Promise` itself so concurrent callers await one in-flight launch instead of racing separate `puppeteer.launch()` calls; auto-clears the cache on `disconnected` so a crashed browser relaunches on next request
+  - `printNotesToPDF(notes, videoTitle?)` — Renders Tiptap JSON content to HTML (`@tiptap/static-renderer`), disables JS on the page (`setJavaScriptEnabled(false)`), and returns a PDF buffer
+- **`utils/escapeHtml.ts`**: Escapes user-controlled strings (e.g. video title) before interpolating into the raw HTML string passed to `page.setContent()` — prevents stored XSS/SSRF via injected markup in the PDF render path
 
 ### Modal & Context Patterns
 **Modal System**: `ModalSkeleton` wraps `<dialog>` and manages `isOpen`/`onClose` props. Used for add video, add collection.
@@ -124,6 +132,7 @@ See `node_modules/next/dist/docs/` — this version has breaking changes in APIs
   - `updateCollection({collectionId, collectionName})` — Rename collection
   - `deleteCollectionById(collectionId, userId)` — Delete collection
 - **Note queries** (`lib/dbTableAction/noteTableAction.ts`):
+  - `getNoteById(userId, noteId)` — Single note (cached); used by the single-note PDF export route
   - `getNotesByVideo(userId, videoId)` — All notes for a video (cached, sorted by startTime then createdAt)
   - `getNotesByColor(userId, videoId, color)` — Filter notes by color
   - `getNoteCountByVideo(userId, videoId)` — Note count for a video
