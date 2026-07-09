@@ -2,7 +2,7 @@
 import requireSession from "../../../../../../../lib/requireSession";
 import { getNotesByVideo } from "../../../../../../../lib/dbTableAction/noteTableAction";
 import { getVideoById } from "../../../../../../../lib/dbTableAction/videoTableAction";
-import { printPDF } from "./puppetVideoPDF";
+import { printNotesToPDF } from "../../../../../../../utils/puppeteerBrowser";
 
 // puppeteer GET api endpoint
 
@@ -16,7 +16,7 @@ export async function GET(
 
 	const video = await getVideoById(userId, videoId);
 	if (!video) {
-		return new Response("Video not existing", { status: 404 });
+		return new Response("Video Not Existing", { status: 404 });
 	}
 
 	const notes = await getNotesByVideo(userId, videoId);
@@ -26,7 +26,7 @@ export async function GET(
 	}
 
 	// call puppeteer method
-	const pdf = await printPDF(notes, video.title);
+	const pdf = await printNotesToPDF(notes, video.title);
 
 	// browser response to trigger download modal
 	return new Response(

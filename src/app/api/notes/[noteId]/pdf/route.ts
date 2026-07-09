@@ -1,7 +1,7 @@
 // reference: https://blog.risingstack.com/pdf-from-html-node-js-puppeteer/
 import requireSession from "../../../../../../lib/requireSession";
 import { getNoteById } from "../../../../../../lib/dbTableAction/noteTableAction";
-import { printPDF } from "./puppetPDF";
+import { printNotesToPDF } from "../../../../../../utils/puppeteerBrowser";
 
 // puppeteer GET api endpoint
 
@@ -16,11 +16,11 @@ export async function GET(
 	const note = await getNoteById(userId, noteId);
 
 	if (!note) {
-		return new Response("This note no longer exists", { status: 404 });
+		return new Response("This Note No Longer Exists", { status: 404 });
 	}
 
 	// call puppeteer method
-	const pdf = await printPDF([note]);
+	const pdf = await printNotesToPDF([note], "");
 
 	// browser response to trigger download modal
 	return new Response(
