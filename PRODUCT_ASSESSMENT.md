@@ -11,7 +11,7 @@ A from-the-code read of where this project stands, whether it's deployable, what
 - **Architecturally solid.** Auth, data isolation, schema design, and Next.js App Router usage are all done correctly — not "tutorial-quality."
 - **Two of the original blockers are closed**: the exposed `/tiptap` dev route is deleted, and `.env.example` now documents every required credential.
 - **A real feature shipped since the original draft**: authenticated, XSS-hardened PDF export (single note + whole-video) backed by a cached warm Puppeteer instance — a genuinely good systems-design talking point.
-- **Two blockers remain**, both cheap: no rate limiting, and `README.md` is still `create-next-app` boilerplate. A root `global-error.tsx` boundary is now implemented, closing that gap; the dead `screenshotUrl` schema field has been removed; security headers are now set in `next.config.ts`; missing `LICENSE` is a minor remaining polish item.
+- **Two blockers remain**, both cheap: no rate limiting, and `README.md` is still `create-next-app` boilerplate. A root `global-error.tsx` boundary is now implemented, closing that gap; the dead `screenshotUrl` schema field has been removed; security headers are now set in `next.config.ts`; `LICENSE` (MIT) has been added.
 - **Remaining effort to "launchable as a resume portfolio piece": ~1.5–2 focused days**, no architecture changes required.
 
 ---
@@ -39,14 +39,14 @@ A from-the-code read of where this project stands, whether it's deployable, what
 - ~~No `error.tsx`/`global-error.tsx`~~ — `src/app/global-error.tsx` now implements a DaisyUI-themed fallback with a `reset()`-wired retry button, closing the root-level error-boundary gap. A per-segment `error.tsx` (e.g. for `/videos`) is still optional polish, not required.
 - ~~`screenshotUrl` dead field~~ — removed from `prisma/schema.prisma`, `NoteCreation`/`NoteUpdate` types, `NoteCard`, `EditableNoteForm`, and `NoteContainer`, with a migration dropping the column.
 - ~~No security headers~~ — `next.config.ts` now sets `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, and `Referrer-Policy: strict-origin-when-cross-origin` on all routes via `headers()`. `Content-Security-Policy`/`Strict-Transport-Security` intentionally left out — CSP needs tuning against real script/style sources or it breaks the app, and HSTS is a no-op pre-deploy (Vercel adds it automatically).
+- ~~No `LICENSE`~~ — `LICENSE` added at repo root (MIT).
 
 **Still open:**
 3. **No rate limiting anywhere.** Confirmed: zero hits for `rateLimit`/`ratelimit` across the repo. This now covers *three* unmetered surfaces, not the original two:
    - `fetchYouTubeTitle()` (`utils/youtubeFetchTitleServerSide.ts`) — shares one `YOUTUBE_API_KEY` across every user against Google's 10,000-unit/day free quota.
    - Unbounded note/video creation.
    - The PDF export routes — a Puppeteer page render is far more expensive per-request than a DB write, so a loop hitting `/api/notes/video/[videoId]/pdf` is now the most effective way to exhaust server resources. This is why rate limiting is the top priority, not just a nice-to-have.
-4. **`README.md` is still the unmodified `create-next-app` boilerplate.** For a public repo this is the first thing a hiring manager sees. Still the single highest-leverage item for portfolio presentation.
-5. **No `LICENSE`.** Confirmed absent. (`robots.ts`/`sitemap.ts` dropped from this list — the app is fully auth-gated behind Google OAuth, there's no public/indexable content to control crawling on, so it's a no-op until a public route — e.g. the Tier 1 share link — actually exists. See Tier 4 in Section 4.)
+4. **`README.md` is still the unmodified `create-next-app` boilerplate.** For a public repo this is the first thing a hiring manager sees. Still the single highest-leverage item for portfolio presentation. (`robots.ts`/`sitemap.ts` remain a no-op until a public route — e.g. the Tier 1 share link — actually exists. See Tier 4 in Section 4.)
 
 None of these require touching the data model or architecture. This is a polish pass, not a rebuild.
 
@@ -122,7 +122,7 @@ The stack already in place — Next.js 16 + Tailwind v4 + DaisyUI — is enough;
 ## 7. Suggested Order of Operations
 
 1. **Half day**: basic per-user/per-IP rate limiting on note/video creation and the PDF export routes; harden the YouTube title cache. Highest priority — the PDF routes make this an availability risk, not just cost overrun.
-2. **Half day**: rewrite `README.md` with screenshots + a short architecture section; add `LICENSE`.
+2. **Half day**: rewrite `README.md` with screenshots + a short architecture section. (`LICENSE` already added — MIT.)
 3. **Half day**: deploy to Vercel + Neon, smoke-test the golden path end to end on the live URL.
 4. **1 day**: build the showcase homepage from the template/section sources above.
 5. **1 day**: ship the public read-only share link (Tier 1 feature) — the single highest-leverage item on the whole list, because it turns "trust me, it works" into something a hiring manager can click.
