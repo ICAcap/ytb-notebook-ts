@@ -74,7 +74,10 @@ const VideoPlayer = ({
 						// Set the player's current time to the last played time when it's ready,
 						// but only on the initial player mount
 						if (reactPlayerRef.current && !playerAlreadyMounted.current) {
-							reactPlayerRef.current.currentTime = lastPlayedTime;
+							reactPlayerRef.current.currentTime =
+								lastPlayedTime >= reactPlayerRef.current.duration - 1
+									? 0
+									: lastPlayedTime;
 							playerAlreadyMounted.current = true;
 						}
 					}}
