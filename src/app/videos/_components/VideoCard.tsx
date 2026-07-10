@@ -135,7 +135,7 @@ export default memo(function VideoCard({
 						<span className="text-lg font-semibold">Confirm Video Removal</span>
 					</div>
 					<div className="text-xl font-bold text-error break-word">{title}</div>
-					<p className="text-sm text-base-content/70">
+					<p className="text-lg font-semibold">
 						Warning: Deleting this video will also delete all related notes.
 					</p>
 					<div className="flex gap-3 justify-between">

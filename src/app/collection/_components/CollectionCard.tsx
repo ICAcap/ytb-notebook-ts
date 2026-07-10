@@ -53,7 +53,7 @@ export default function CollectionCard({
 	return (
 		<div
 			title={name}
-			className="card card-compact indicator hover:bg-base-200 cursor-pointer transition-colors select-none group"
+			className="card card-compact indicator w-full hover:bg-base-200 cursor-pointer transition-colors select-none group"
 		>
 			{videoCount > 0 && (
 				<span className="indicator-item badge badge-primary badge-sm rounded-full">
@@ -65,8 +65,8 @@ export default function CollectionCard({
 				className="card-body items-center text-center gap-3"
 			>
 				<Folder className="w-28 h-28 text-warning" />
-				<span className="card-title text-sm font-semibold line-clamp-2 justify-center">
-					{name}
+				<span className="card-title text-sm font-semibold justify-center w-full min-w-0">
+					<span className="truncate min-w-0">{name}</span>
 				</span>
 			</div>
 			<div className="flex gap-2 justify-center opacity-0 group-hover:opacity-100 group-hover:bg-accent transition-all">
