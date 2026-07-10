@@ -1,43 +1,50 @@
-# YTB Notebook — Product & Codebase Assessment (June 2026)
+# YTB Notebook — Product & Codebase Assessment (2026-07-09)
 
-> **Update (2026-07-08):** Re-verified against current `main`/`pdf-export` branch state. Two of the five original blockers are already closed (`/tiptap` deleted, `.env.example` added), and a substantial new feature (authenticated, XSS-hardened PDF export via a cached warm Puppeteer instance) shipped since this doc was written. See "Assessment Update" section below for the current launch verdict.
+A from-the-code read of where this project stands, whether it's deployable, what to build next, and what to use for a showcase homepage. Based on direct inspection of the repo (schema, data layer, auth, components, git history) plus research on what gets developers hired in 2026.
 
-A from-the-code read of where this project stands, whether it's deployable, what to build next, and what to use for a showcase homepage. Based on direct inspection of the repo (schema, data layer, auth, components, git history) plus current research on what gets developers hired in 2026.
+> This assessment was originally written in June 2026 and re-verified twice since (2026-07-08, 2026-07-09). Earlier drafts tracked corrections as a bolted-on addendum; this version folds everything into one current read so it doesn't contradict itself mid-document.
 
 ---
 
 ## TL;DR
 
 - **Architecturally solid.** Auth, data isolation, schema design, and Next.js App Router usage are all done correctly — not "tutorial-quality."
-- **Not yet deployable to the public** — five concrete, cheap-to-fix blockers below (leftover dev route exposed, no `.env.example`, no rate limiting, dead feature surface, no README worth showing a stranger).
-- **As a portfolio piece**, the gap between "what this is" and "what gets you interviews" is mostly *presentation* (README, live demo, landing page), not more engineering. That's the highest-leverage work available right now.
-- Estimated effort to close every blocker below: **3–4 focused days**, no architecture changes required.
-- **(Superseded — see "Assessment Update" at the bottom.)** As of 2026-07-08, 2 of 5 blockers are closed and a real PDF-export feature has landed. Remaining gap to "launchable as a resume portfolio piece" is now README + rate limiting + deploy, roughly **1.5–2 days**.
+- **Two of the original blockers are closed**: the exposed `/tiptap` dev route is deleted, and `.env.example` now documents every required credential.
+- **A real feature shipped since the original draft**: authenticated, XSS-hardened PDF export (single note + whole-video) backed by a cached warm Puppeteer instance — a genuinely good systems-design talking point.
+- **Four blockers remain**, all cheap: no rate limiting, `README.md` is still `create-next-app` boilerplate, `screenshotUrl` is a dead schema field, and there's no `error.tsx`/security headers/`LICENSE`/`robots.txt`.
+- **Remaining effort to "launchable as a resume portfolio piece": ~1.5–2 focused days**, no architecture changes required.
 
 ---
 
 ## 1. What's Already Strong (worth saying out loud in an interview)
 
-- **Every query is scoped by `userId`.** `lib/dbTableAction/noteTableAction.ts`, `videoTableAction.ts`, and `collectionTableActions.ts` all filter/update/delete by `userId` + record id together — this is the actual fix for IDOR bugs, not an afterthought. Worth calling out explicitly; most side projects get this wrong.
+- **Every query is scoped by `userId`.** `lib/dbTableAction/noteTableAction.ts`, `videoTableAction.ts`, and `collectionTableActions.ts` all filter/update/delete by `userId` + record id together — this is the actual fix for IDOR bugs, not an afterthought. Most side projects get this wrong.
 - **Real Next.js App Router patterns**: server components fetch data directly (`src/app/videos/page.tsx`), search/pagination work via a plain `GET` form (works without JS, bookmarkable, no client-side fetch waterfall), `Suspense` boundaries are in the right places.
 - **Auth done properly**: better-auth + Google OAuth + Prisma adapter, session cookie caching configured, `requireSession()` wrapped in React's `cache()` so it's not re-fetched per component.
 - **Schema reflects actual query patterns**: composite uniqueness (`[userId, youtubeVidID]`, `[userId, collectionName]`), indexes on `userId` and `userId+createdAt` specifically because those are the lookup paths used — this isn't `@@index` cargo-culting.
-- **Note content stored as structured Tiptap JSON, not raw HTML** — this avoids stored-XSS by construction, and rendering uses `@tiptap/static-renderer`'s `renderToReactElement` rather than `dangerouslySetInnerHTML`. Good instinct, whether or not it was deliberate.
-- **Playback UX is genuinely thought through**: throttled (750ms) + debounced position saves, resume-from-`lastPlayedTime`, and a just-shipped auto-scroll-pause-while-editing feature (per recent commits) — small details that separate "I followed a tutorial" from "I used this myself and fixed what annoyed me."
-- **19 migrations across ~5 weeks** of steady, incremental schema evolution (renames, index additions, cascade-rule fixes) — shows real iteration, not a single big-bang commit.
+- **Note content stored as structured Tiptap JSON, not raw HTML** — avoids stored-XSS by construction; rendering uses `@tiptap/static-renderer`'s `renderToReactElement`/`renderToHTMLString` rather than `dangerouslySetInnerHTML`.
+- **Playback UX is genuinely thought through**: throttled (750ms) + debounced position saves, resume-from-`lastPlayedTime`, auto-scroll-pause-while-editing — small details that separate "I followed a tutorial" from "I used this myself and fixed what annoyed me."
+- **PDF export (new since June draft, commits `f730ad3`…`4dbfcf5`)**: two authenticated routes (`src/app/api/notes/[noteId]/pdf`, `src/app/api/notes/video/[videoId]/pdf`), both call `requireSession()` and scope by `userId`. `utils/puppeteerBrowser.ts` caches a **warm Puppeteer `Browser` on `globalThis`, keyed by the launch Promise** (not the resolved value), so concurrent requests await one in-flight launch instead of racing separate `puppeteer.launch()` calls, with auto-recovery on `disconnected`. `escapeHtml()` sanitizes the video title before it's interpolated into the HTML passed to `page.setContent()`, and `setJavaScriptEnabled(false)` closes the obvious stored-XSS/SSRF vector. This is a substantive, interview-ready systems-design answer: "shared warm-process pool for an expensive external resource, promise-based dedup to avoid a launch race, XSS hardening on the render path."
+- **19+ migrations across ~5 weeks** of steady, incremental schema evolution (renames, index additions, cascade-rule fixes) — real iteration, not a single big-bang commit.
 
 ---
 
 ## 2. Blockers Before Calling This "MVP Deployable"
 
-1. **`/tiptap` is a live, unauthenticated route in production.** [src/app/tiptap/page.tsx](src/app/tiptap/page.tsx) is a dev scratch page (renders a hardcoded sample note) with no `requireSession()` call — it's reachable by anyone who finds the URL. Delete it or gate it.
-2. **No `.env.example`.** The app needs 9 env vars (`DATABASE_URL`, `DIRECT_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `YOUTUBE_API_KEY`, `TEST_USER_ID`, `TEST_VID_ID`) and none are documented anywhere. Anyone cloning this repo — including a recruiter trying to run it, or you on a new machine — is stuck. Five-minute fix.
-3. **README.md is still the unmodified `create-next-app` boilerplate.** For a public repo this is the first thing a hiring manager sees, and right now it says nothing about what the product does.
-4. **No rate limiting anywhere.** `fetchYouTubeTitle()` ([utils/youtubeFetchTitleServerSide.ts](utils/youtubeFetchTitleServerSide.ts)) shares one `YOUTUBE_API_KEY` across every user of the deployed app, against Google's free 10,000-unit/day quota. A handful of enthusiastic users (or one bot hitting "Add Video" in a loop) exhausts it for everyone, with no backoff beyond `cache: "force-cache"`. Same exposure on unbounded note/video creation. This is a cost/availability risk specifically *because* the app is meant to go public — fix before opening sign-ups.
-5. **`screenshotUrl` is a dead field.** It's in the Prisma schema, the `NoteCreation`/`NoteUpdate` types, `NoteCard`, and `EditableNoteForm` — but nothing in the codebase ever sets it (no upload route, no capture UI). Either wire up real screenshot capture or remove the field; a half-finished feature surface reads worse in review than no feature at all.
-6. No `error.tsx`/`global-error.tsx`, no security headers (`next.config.ts` has no `headers()`), no `LICENSE`, no `robots.txt`/sitemap.
+**Closed:**
+1. ~~`/tiptap` exposed, unauthenticated dev route~~ — deleted (`git log`: "remove test tiptap page"). No `src/app/tiptap` directory exists.
+2. ~~No `.env.example`~~ — exists at repo root, documents all required vars with comments on where to get each credential (`TEST_USER_ID`/`TEST_VID_ID` are seed-script-only, correctly omitted).
 
-None of these require touching the data model or the architecture. This is a polish pass, not a rebuild.
+**Still open:**
+3. **No rate limiting anywhere.** Confirmed: zero hits for `rateLimit`/`ratelimit` across the repo. This now covers *three* unmetered surfaces, not the original two:
+   - `fetchYouTubeTitle()` (`utils/youtubeFetchTitleServerSide.ts`) — shares one `YOUTUBE_API_KEY` across every user against Google's 10,000-unit/day free quota.
+   - Unbounded note/video creation.
+   - The PDF export routes — a Puppeteer page render is far more expensive per-request than a DB write, so a loop hitting `/api/notes/video/[videoId]/pdf` is now the most effective way to exhaust server resources. This is why rate limiting is the top priority, not just a nice-to-have.
+4. **`README.md` is still the unmodified `create-next-app` boilerplate.** For a public repo this is the first thing a hiring manager sees. Still the single highest-leverage item for portfolio presentation.
+5. **`screenshotUrl` is a dead field.** Present in `prisma/schema.prisma`, `NoteCreation`/`NoteUpdate` types, `NoteCard`, `EditableNoteForm`, `NoteContainer` — nothing sets it (no upload route, no capture UI). Cut it or wire it up.
+6. **No `error.tsx`/`global-error.tsx`, no security headers** (`next.config.ts` has no `headers()`), **no `LICENSE`, no `robots.ts`/`sitemap.ts`.** All confirmed absent.
+
+None of these require touching the data model or architecture. This is a polish pass, not a rebuild.
 
 ---
 
@@ -45,29 +52,32 @@ None of these require touching the data model or the architecture. This is a pol
 
 Two different questions hide in that one:
 
-**(a) Deployable as a real product, for real users?** Architecturally yes — auth and data isolation are correct. Mechanically, not until #1 and #4 above are closed (an exposed dev route and an unmetered shared API key are the kind of thing that turns into an incident, not just tech debt).
+**(a) Deployable as a real product, for real users?** Architecturally yes — auth and data isolation are correct. Mechanically, blocked only by #3 (rate limiting) now — the exposed dev-route blocker from the original draft is gone.
 
 **(b) Deployable as a portfolio piece to land a job right now?** Per current hiring-manager research ([sources below](#sources)): the bar in 2026 is a small number (2–3) of *polished, deployed* projects with a strong README and visible architecture — not a pile of unfinished repos, and explicitly *not* another tutorial clone (to-do apps, weather apps, Netflix clones are specifically called out as not moving the needle). 84% of employers reportedly want to see a working, live app, not just source.
 
-This project already clears the hardest bar — it's not a tutorial clone, and the architecture is real. What it's currently failing on is the cheap part: *deployed, documented, demoable without your Google login.* That's a few days of work, and it's worth more right now than any new feature.
+This project already clears the hardest bar — it's not a tutorial clone, and the architecture is real. What's still failing is the cheap part: *deployed, documented, demoable without your Google login.* Recommend proceeding to launch, in this order:
+1. Basic rate limiting on the PDF/note/video-creation routes — a few hours given no infra exists yet; IP- or user-ID-based token bucket is enough for a portfolio deploy.
+2. Rewrite `README.md`.
+3. Deploy to Vercel + Neon per the checklist in Section 6.
+4. Everything in Section 4 (share links, showcase homepage) is additive polish, not a blocker — ship after the live link exists.
 
 ---
 
 ## 4. Feature Additions Worth Considering
 
 **Tier 1 — cheap, finishes the product, directly serves the "demoable" gap above:**
-- **Public, read-only share link** for a single Video+Notes or a whole Collection. Right now the only way to show this to anyone is to hand them your Google account. This single feature does more for "is this deployable as a demo" than anything else on this list.
+- **Public, read-only share link** for a single Video+Notes or a whole Collection. Right now the only way to show this to anyone is to hand them your Google account — confirmed no such feature exists yet. This single feature does more for "is this deployable as a demo" than anything else on this list.
 - **Search across note *content***, not just video titles — Tiptap JSON can be flattened to plain text and matched; currently only titles are searchable.
-- **Export notes** (Markdown or PDF) per video/collection.
-- Confirm `EditVideoForm` is fully wired — it *is* (used from `VideoCard.tsx`), even though `CLAUDE.md` currently describes it as "a stub, not yet implemented." Worth a one-line update there; the docs have fallen behind the code.
+- **Export notes** — already shipped as PDF; Markdown export would be a cheap addition on top of the existing Tiptap-JSON-to-plain-text path if the content search feature above gets built.
 
 **Tier 2 — medium effort, meaningfully different surface area:**
 - A **collection-level notebook view** — notes aggregated across every video in a collection, not just per-video.
 - A **tagging system** orthogonal to collections (many-to-many), with filtering by tag/color (color already exists on notes — filtering by it doesn't yet).
-- A **bookmarklet or tiny browser extension**: "send this YouTube tab to YTB Notebook." This is exactly the kind of "solves a real, specific, personal problem" project the 2026 research flags as standing out — more than the core app does on its own, because it's a clear before/after story.
+- A **bookmarklet or tiny browser extension**: "send this YouTube tab to YTB Notebook." Exactly the kind of "solves a real, specific, personal problem" project 2026 hiring research flags as standing out — more than the core app does on its own, because it's a clear before/after story.
 
 **Tier 3 — optional, for the "AI fluency" signal current hiring research calls out:**
-- Auto-summarize a video's notes into a short recap (LLM call over the Tiptap content you already store) — a scoped, product-native AI feature, not a bolted-on chatbot.
+- Auto-summarize a video's notes into a short recap (LLM call over the Tiptap content already stored) — a scoped, product-native AI feature, not a bolted-on chatbot.
 - Caption-based note-start suggestions (pull YouTube transcripts, suggest timestamps).
 - Treat both as genuinely optional — don't add AI just to check a box; add it if it's the actual next thing that makes the product better.
 
@@ -107,12 +117,12 @@ The stack already in place — Next.js 16 + Tailwind v4 + DaisyUI — is enough;
 
 ## 7. Suggested Order of Operations
 
-1. **Half day**: delete/gate `/tiptap`, add `.env.example`, rewrite `README.md` with screenshots + a short architecture section.
-2. **Half day**: basic per-user rate limiting on note/video creation; harden the YouTube title cache.
+1. **Half day**: basic per-user/per-IP rate limiting on note/video creation and the PDF export routes; harden the YouTube title cache. Highest priority — the PDF routes make this an availability risk, not just cost overrun.
+2. **Half day**: rewrite `README.md` with screenshots + a short architecture section; add `LICENSE`.
 3. **Half day**: deploy to Vercel + Neon, smoke-test the golden path end to end on the live URL.
 4. **1 day**: build the showcase homepage from the template/section sources above.
-5. **1 day**: ship the public read-only share link (Tier 1 feature) — this is the single highest-leverage item on the whole list, because it's what turns "trust me, it works" into something a hiring manager can click.
-6. After that: pick one Tier 2/3 feature that's genuinely interesting to build, not the one that looks best on paper — the research below is consistent that genuine depth reads better than checklist completeness.
+5. **1 day**: ship the public read-only share link (Tier 1 feature) — the single highest-leverage item on the whole list, because it turns "trust me, it works" into something a hiring manager can click.
+6. After that: pick one Tier 2/3 feature that's genuinely interesting to build, not the one that looks best on paper — genuine depth reads better than checklist completeness.
 
 ---
 
@@ -127,32 +137,3 @@ The stack already in place — Next.js 16 + Tailwind v4 + DaisyUI — is enough;
 - [Self-Hosted Web Analytics 2026 — Plausible vs Matomo vs Umami vs OpenPanel](https://openpanel.dev/articles/self-hosted-web-analytics)
 - [Umami — Privacy-Focused Web Analytics](https://umami.is/)
 - [Plausible Analytics (GitHub)](https://github.com/plausible/analytics)
-
----
-
-## Assessment Update (2026-07-08)
-
-Re-verified every claim above against the current repo state (branch `pdf-export`, latest commit `4dbfcf5`). Verdict: **closer to launchable than this doc originally said. Yes, launch it — after ~1.5–2 days, not the original 3–4.**
-
-**Blockers closed since June:**
-- **#1 (`/tiptap` exposed) — fixed.** The route is deleted (`git log`: "remove test tiptap page"). Confirmed no `src/app/tiptap` directory exists.
-- **#2 (no `.env.example`) — fixed.** `.env.example` exists at repo root with all required vars documented, including comments on where to get each credential. Note: it only lists 7 of the 9 vars originally flagged (`TEST_USER_ID`/`TEST_VID_ID` are seed-script-only, so their omission is fine).
-
-**Blockers still open, unchanged:**
-- **#3 README** — still unmodified `create-next-app` boilerplate. Still the highest-leverage item for portfolio presentation.
-- **#4 rate limiting** — still nothing (`grep` for `rateLimit`/`ratelimit` across the repo returns zero hits). Now applies to three unmetered surfaces instead of two: YouTube title fetch, note/video creation, and the new PDF export routes (Puppeteer page renders are far more expensive per-request than a DB write — a loop hitting `/api/notes/video/[videoId]/pdf` is a more effective way to exhaust server resources than the original blocker described).
-- **#5 `screenshotUrl` dead field** — still present in schema, types, `NoteCard`, `EditableNoteForm`, `NoteContainer` — still nothing sets it. Unchanged, still worth cutting or wiring up.
-- **#6 (headers/error boundaries/LICENSE/robots)** — still all absent. Confirmed no `next.config.ts` `headers()`, no `error.tsx`/`global-error.tsx`, no `LICENSE`, no `robots.ts`/`sitemap.ts`.
-
-**New since original assessment — PDF export feature (commits `f730ad3`…`4dbfcf5`):**
-- Two authenticated API routes (`/api/notes/[noteId]/pdf`, `/api/notes/video/[videoId]/pdf`), both correctly call `requireSession()` and scope queries by `userId` — same data-isolation discipline as the rest of the app.
-- `utils/puppeteerBrowser.ts` caches a **warm Puppeteer `Browser` instance on `globalThis`**, keyed by the launch `Promise` (not the resolved value) to avoid a launch race under concurrent requests, with auto-recovery on `disconnected`. This is a legitimately good pattern — most side projects launching Puppeteer per-request would fall over immediately under any concurrent load, and this one thought about it.
-- `escapeHtml()` is applied to the video title before it's interpolated into the HTML string passed to `page.setContent()`, and `setJavaScriptEnabled(false)` is set on the page — closes the obvious stored-XSS/SSRF vector for a feature that renders arbitrary user content to HTML server-side. This is a real security-conscious decision, not an accident.
-- **This is genuinely a good portfolio talking point**: "implemented a shared warm-process pool for an expensive external resource, with promise-based dedup to avoid a launch race, plus XSS hardening on the render path" is a substantive systems-design answer for an interview, more so than most of what's already in section 1.
-- **Caveat**: this feature is also *why* blocker #4 (rate limiting) now matters more, not less — see above.
-
-**Updated verdict on the two questions from Section 3:**
-- **(a) Real product for real users?** Same as before — architecturally yes, mechanically blocked only by #4 now (the exposed-route blocker is gone).
-- **(b) Portfolio piece for a resume, launched today?** Recommend **yes, proceed to launch**, in this order: (1) basic rate limiting on the PDF/note/video-creation routes — a few hours given no infra exists yet, IP or user-ID based token bucket is enough for a portfolio deploy; (2) rewrite `README.md` — still the single biggest presentation gap; (3) deploy to Vercel + Neon per the checklist in Section 6; (4) everything else in Section 4/7 (share links, showcase homepage) is additive polish, not a blocker, and can ship after the live link exists.
-
-**Effort re-estimate:** Original 3–4 days → **~1.5–2 days** to reach the same "launchable" bar, since 2 of 5 blockers are already closed and no new blockers were introduced by the PDF feature (it added scope to an existing blocker, not a new one).
