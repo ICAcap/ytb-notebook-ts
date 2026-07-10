@@ -11,7 +11,7 @@ A from-the-code read of where this project stands, whether it's deployable, what
 - **Architecturally solid.** Auth, data isolation, schema design, and Next.js App Router usage are all done correctly — not "tutorial-quality."
 - **Two of the original blockers are closed**: the exposed `/tiptap` dev route is deleted, and `.env.example` now documents every required credential.
 - **A real feature shipped since the original draft**: authenticated, XSS-hardened PDF export (single note + whole-video) backed by a cached warm Puppeteer instance — a genuinely good systems-design talking point.
-- **Four blockers remain**, all cheap: no rate limiting, `README.md` is still `create-next-app` boilerplate, `screenshotUrl` is a dead schema field, and there's no `error.tsx`/security headers/`LICENSE`/`robots.txt`.
+- **Four blockers remain**, all cheap: no rate limiting, `README.md` is still `create-next-app` boilerplate, `screenshotUrl` is a dead schema field, and there's no `error.tsx`/security headers/`LICENSE`.
 - **Remaining effort to "launchable as a resume portfolio piece": ~1.5–2 focused days**, no architecture changes required.
 
 ---
@@ -42,7 +42,7 @@ A from-the-code read of where this project stands, whether it's deployable, what
    - The PDF export routes — a Puppeteer page render is far more expensive per-request than a DB write, so a loop hitting `/api/notes/video/[videoId]/pdf` is now the most effective way to exhaust server resources. This is why rate limiting is the top priority, not just a nice-to-have.
 4. **`README.md` is still the unmodified `create-next-app` boilerplate.** For a public repo this is the first thing a hiring manager sees. Still the single highest-leverage item for portfolio presentation.
 5. **`screenshotUrl` is a dead field.** Present in `prisma/schema.prisma`, `NoteCreation`/`NoteUpdate` types, `NoteCard`, `EditableNoteForm`, `NoteContainer` — nothing sets it (no upload route, no capture UI). Cut it or wire it up.
-6. **No `error.tsx`/`global-error.tsx`, no security headers** (`next.config.ts` has no `headers()`), **no `LICENSE`, no `robots.ts`/`sitemap.ts`.** All confirmed absent.
+6. **No `error.tsx`/`global-error.tsx`, no security headers** (`next.config.ts` has no `headers()`), **no `LICENSE`.** All confirmed absent. (`robots.ts`/`sitemap.ts` dropped from this list — the app is fully auth-gated behind Google OAuth, there's no public/indexable content to control crawling on, so it's a no-op until a public route — e.g. the Tier 1 share link — actually exists. See Tier 4 in Section 4.)
 
 None of these require touching the data model or architecture. This is a polish pass, not a rebuild.
 
@@ -82,7 +82,7 @@ This project already clears the hardest bar — it's not a tutorial clone, and t
 - Treat both as genuinely optional — don't add AI just to check a box; add it if it's the actual next thing that makes the product better.
 
 **Tier 4 — operational, not user-facing:**
-- `robots.txt`/sitemap + OG images once a public share feature exists.
+- `robots.txt`/sitemap + OG images — pointless today (no public route exists to crawl), worth adding once the Tier 1 share link ships.
 - Self-hosted analytics (see below) to know if the live demo is actually being looked at.
 - Error tracking so a recruiter's edge-case click doesn't just silently white-screen.
 
