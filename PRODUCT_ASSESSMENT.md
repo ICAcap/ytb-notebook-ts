@@ -11,7 +11,7 @@ A from-the-code read of where this project stands, whether it's deployable, what
 - **Architecturally solid.** Auth, data isolation, schema design, and Next.js App Router usage are all done correctly — not "tutorial-quality."
 - **Two of the original blockers are closed**: the exposed `/tiptap` dev route is deleted, and `.env.example` now documents every required credential.
 - **A real feature shipped since the original draft**: authenticated, XSS-hardened PDF export (single note + whole-video) backed by a cached warm Puppeteer instance — a genuinely good systems-design talking point.
-- **Two blockers remain**, both cheap: no rate limiting, and `README.md` is still `create-next-app` boilerplate. A root `global-error.tsx` boundary is now implemented, closing that gap; the dead `screenshotUrl` schema field has been removed; missing security headers and `LICENSE` are minor remaining polish items.
+- **Two blockers remain**, both cheap: no rate limiting, and `README.md` is still `create-next-app` boilerplate. A root `global-error.tsx` boundary is now implemented, closing that gap; the dead `screenshotUrl` schema field has been removed; security headers are now set in `next.config.ts`; missing `LICENSE` is a minor remaining polish item.
 - **Remaining effort to "launchable as a resume portfolio piece": ~1.5–2 focused days**, no architecture changes required.
 
 ---
@@ -38,6 +38,7 @@ A from-the-code read of where this project stands, whether it's deployable, what
 **Closed since last pass:**
 - ~~No `error.tsx`/`global-error.tsx`~~ — `src/app/global-error.tsx` now implements a DaisyUI-themed fallback with a `reset()`-wired retry button, closing the root-level error-boundary gap. A per-segment `error.tsx` (e.g. for `/videos`) is still optional polish, not required.
 - ~~`screenshotUrl` dead field~~ — removed from `prisma/schema.prisma`, `NoteCreation`/`NoteUpdate` types, `NoteCard`, `EditableNoteForm`, and `NoteContainer`, with a migration dropping the column.
+- ~~No security headers~~ — `next.config.ts` now sets `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, and `Referrer-Policy: strict-origin-when-cross-origin` on all routes via `headers()`. `Content-Security-Policy`/`Strict-Transport-Security` intentionally left out — CSP needs tuning against real script/style sources or it breaks the app, and HSTS is a no-op pre-deploy (Vercel adds it automatically).
 
 **Still open:**
 3. **No rate limiting anywhere.** Confirmed: zero hits for `rateLimit`/`ratelimit` across the repo. This now covers *three* unmetered surfaces, not the original two:
@@ -45,7 +46,7 @@ A from-the-code read of where this project stands, whether it's deployable, what
    - Unbounded note/video creation.
    - The PDF export routes — a Puppeteer page render is far more expensive per-request than a DB write, so a loop hitting `/api/notes/video/[videoId]/pdf` is now the most effective way to exhaust server resources. This is why rate limiting is the top priority, not just a nice-to-have.
 4. **`README.md` is still the unmodified `create-next-app` boilerplate.** For a public repo this is the first thing a hiring manager sees. Still the single highest-leverage item for portfolio presentation.
-5. **No security headers** (`next.config.ts` has no `headers()`), **no `LICENSE`.** Confirmed absent. (`robots.ts`/`sitemap.ts` dropped from this list — the app is fully auth-gated behind Google OAuth, there's no public/indexable content to control crawling on, so it's a no-op until a public route — e.g. the Tier 1 share link — actually exists. See Tier 4 in Section 4.)
+5. **No `LICENSE`.** Confirmed absent. (`robots.ts`/`sitemap.ts` dropped from this list — the app is fully auth-gated behind Google OAuth, there's no public/indexable content to control crawling on, so it's a no-op until a public route — e.g. the Tier 1 share link — actually exists. See Tier 4 in Section 4.)
 
 None of these require touching the data model or architecture. This is a polish pass, not a rebuild.
 
