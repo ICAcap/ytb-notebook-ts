@@ -161,7 +161,6 @@ const NoteCard = (props: Props) => {
 						endTime={props.endTime}
 						content={props.content}
 						color={props.color}
-						screenshotUrl={props.screenshotUrl}
 						playerRef={props.playerRef}
 						setEditable={setEditable}
 						onUpdated={props.onUpdated}

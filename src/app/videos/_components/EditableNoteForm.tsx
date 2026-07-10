@@ -104,7 +104,6 @@ const EditableNoteForm = (props: Props) => {
 				endTime: endTotalSeconds,
 				content: contentJson,
 				color: colorTag,
-				screenshotUrl: props.screenshotUrl ?? undefined,
 			});
 		}
 

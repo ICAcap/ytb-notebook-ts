@@ -11,7 +11,7 @@ A from-the-code read of where this project stands, whether it's deployable, what
 - **Architecturally solid.** Auth, data isolation, schema design, and Next.js App Router usage are all done correctly — not "tutorial-quality."
 - **Two of the original blockers are closed**: the exposed `/tiptap` dev route is deleted, and `.env.example` now documents every required credential.
 - **A real feature shipped since the original draft**: authenticated, XSS-hardened PDF export (single note + whole-video) backed by a cached warm Puppeteer instance — a genuinely good systems-design talking point.
-- **Four blockers remain**, all cheap: no rate limiting, `README.md` is still `create-next-app` boilerplate, `screenshotUrl` is a dead schema field, and there's no `error.tsx`/security headers/`LICENSE`.
+- **Two blockers remain**, both cheap: no rate limiting, and `README.md` is still `create-next-app` boilerplate. A root `global-error.tsx` boundary is now implemented, closing that gap; the dead `screenshotUrl` schema field has been removed; missing security headers and `LICENSE` are minor remaining polish items.
 - **Remaining effort to "launchable as a resume portfolio piece": ~1.5–2 focused days**, no architecture changes required.
 
 ---
@@ -35,14 +35,17 @@ A from-the-code read of where this project stands, whether it's deployable, what
 1. ~~`/tiptap` exposed, unauthenticated dev route~~ — deleted (`git log`: "remove test tiptap page"). No `src/app/tiptap` directory exists.
 2. ~~No `.env.example`~~ — exists at repo root, documents all required vars with comments on where to get each credential (`TEST_USER_ID`/`TEST_VID_ID` are seed-script-only, correctly omitted).
 
+**Closed since last pass:**
+- ~~No `error.tsx`/`global-error.tsx`~~ — `src/app/global-error.tsx` now implements a DaisyUI-themed fallback with a `reset()`-wired retry button, closing the root-level error-boundary gap. A per-segment `error.tsx` (e.g. for `/videos`) is still optional polish, not required.
+- ~~`screenshotUrl` dead field~~ — removed from `prisma/schema.prisma`, `NoteCreation`/`NoteUpdate` types, `NoteCard`, `EditableNoteForm`, and `NoteContainer`, with a migration dropping the column.
+
 **Still open:**
 3. **No rate limiting anywhere.** Confirmed: zero hits for `rateLimit`/`ratelimit` across the repo. This now covers *three* unmetered surfaces, not the original two:
    - `fetchYouTubeTitle()` (`utils/youtubeFetchTitleServerSide.ts`) — shares one `YOUTUBE_API_KEY` across every user against Google's 10,000-unit/day free quota.
    - Unbounded note/video creation.
    - The PDF export routes — a Puppeteer page render is far more expensive per-request than a DB write, so a loop hitting `/api/notes/video/[videoId]/pdf` is now the most effective way to exhaust server resources. This is why rate limiting is the top priority, not just a nice-to-have.
 4. **`README.md` is still the unmodified `create-next-app` boilerplate.** For a public repo this is the first thing a hiring manager sees. Still the single highest-leverage item for portfolio presentation.
-5. **`screenshotUrl` is a dead field.** Present in `prisma/schema.prisma`, `NoteCreation`/`NoteUpdate` types, `NoteCard`, `EditableNoteForm`, `NoteContainer` — nothing sets it (no upload route, no capture UI). Cut it or wire it up.
-6. **No security headers** (`next.config.ts` has no `headers()`), **no `LICENSE`.** Confirmed absent. `global-error.tsx` is now implemented (DaisyUI-themed fallback with a `reset()`-wired retry button) — closes the root-level error-boundary gap; a per-segment `error.tsx` (e.g. for `/videos`) is still optional polish, not required. (`robots.ts`/`sitemap.ts` dropped from this list — the app is fully auth-gated behind Google OAuth, there's no public/indexable content to control crawling on, so it's a no-op until a public route — e.g. the Tier 1 share link — actually exists. See Tier 4 in Section 4.)
+5. **No security headers** (`next.config.ts` has no `headers()`), **no `LICENSE`.** Confirmed absent. (`robots.ts`/`sitemap.ts` dropped from this list — the app is fully auth-gated behind Google OAuth, there's no public/indexable content to control crawling on, so it's a no-op until a public route — e.g. the Tier 1 share link — actually exists. See Tier 4 in Section 4.)
 
 None of these require touching the data model or architecture. This is a polish pass, not a rebuild.
 
@@ -109,7 +112,7 @@ The stack already in place — Next.js 16 + Tailwind v4 + DaisyUI — is enough;
 | Hosting | Vercel free tier | Native Next.js support, zero-config |
 | Database | Neon free tier (already implied by `prisma.config.ts`/seed setup) | Serverless Postgres, generous free tier |
 | Analytics | [Umami](https://umami.is/) (MIT, self-host free) or Plausible Community Edition (AGPL) | Privacy-first, no cookie-banner obligation, unlike GA |
-| Error tracking | Sentry free tier (5k events/mo) | Wire into the currently-missing `error.tsx`/`global-error.tsx` |
+| Error tracking | Sentry free tier (5k events/mo) | Wire into the existing `global-error.tsx` (and any future per-segment `error.tsx`) |
 | CI | GitHub Actions (free for public repos) | Lint + build (+ tests later) on every push |
 | Uptime | UptimeRobot or Better Stack free tier | So the demo link isn't dead the one time someone checks it |
 
