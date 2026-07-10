@@ -4,9 +4,9 @@ import { Browser } from "puppeteer";
 import { JSONContent } from "@tiptap/react";
 import { renderToHTMLString } from "@tiptap/static-renderer";
 import { TiptapExtensions } from "@/_components/RichTextEditor/TiptapExtension";
-import { formatTimeStamp } from "./formatTimeStamp";
+import { formatTimeStamp } from "../utils/formatTimeStamp";
 import { Note } from "../generated/prisma";
-import { escapeHtml } from "./escapeHtml";
+import { escapeHtml } from "../utils/escapeHtml";
 
 declare global {
 	var __puppeteerBrowserPromise: Promise<Browser> | undefined;
