@@ -33,12 +33,12 @@ const VideoPlayerAndNotesContainer = ({
 		video.lastPlayedTime ?? 0,
 	);
 	const throttledSetPlayTime = useRef(
-		_.throttle(setThrottledPlayTime, 750),
+		_.throttle(setThrottledPlayTime, 600),
 	).current;
 
 	return (
 		<div className="flex flex-row gap-3 mt-2">
-			<div className="flex flex-col w-full max-w-6xl gap-2">
+			<div className="flex flex-col w-full max-w-6xl gap-1">
 				<VideoPlayer
 					videoId={video.videoId}
 					userId={userId}
@@ -70,7 +70,9 @@ const VideoPlayerAndNotesContainer = ({
 					disabled={noteList.length === 0}
 					type="button"
 					className="btn btn-lg btn-primary max-w-xl lg:max-w-md mx-auto"
-					onClick={() => window.open(`/api/notes/video/${video.videoId}/pdf`, "_blank")}
+					onClick={() =>
+						window.open(`/api/notes/video/${video.videoId}/pdf`, "_blank")
+					}
 					rel="noopener noreferrer"
 				>
 					Export All Notes
