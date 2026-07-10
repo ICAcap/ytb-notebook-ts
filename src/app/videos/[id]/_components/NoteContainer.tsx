@@ -377,7 +377,6 @@ const NoteContainer = ({
 								endTime={playerRef.current?.currentTime || 0}
 								content={null}
 								color={""}
-								screenshotUrl={null}
 								playerRef={playerRef}
 								onUpdated={(note) => {
 									handleNoteUpserted(note);
@@ -422,7 +421,6 @@ const NoteContainer = ({
 											endTime={note.endTime}
 											content={note.content}
 											color={note.color}
-											screenshotUrl={note.screenshotUrl}
 											createdAt={note.createdAt}
 											updatedAt={note.updatedAt}
 											playerRef={playerRef}
