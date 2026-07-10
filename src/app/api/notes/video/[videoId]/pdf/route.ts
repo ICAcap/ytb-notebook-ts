@@ -2,7 +2,7 @@
 import requireSession from "../../../../../../../lib/requireSession";
 import { getNotesByVideo } from "../../../../../../../lib/dbTableAction/noteTableAction";
 import { getVideoById } from "../../../../../../../lib/dbTableAction/videoTableAction";
-import { printNotesToPDF } from "../../../../../../../utils/puppeteerBrowser";
+import { printNotesToPDF } from "../../../../../../../lib/puppeteerBrowser";
 
 // puppeteer GET api endpoint
 

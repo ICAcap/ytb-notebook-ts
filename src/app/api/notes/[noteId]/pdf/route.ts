@@ -1,7 +1,7 @@
 // reference: https://blog.risingstack.com/pdf-from-html-node-js-puppeteer/
 import requireSession from "../../../../../../lib/requireSession";
 import { getNoteById } from "../../../../../../lib/dbTableAction/noteTableAction";
-import { printNotesToPDF } from "../../../../../../utils/puppeteerBrowser";
+import { printNotesToPDF } from "../../../../../../lib/puppeteerBrowser";
 
 // puppeteer GET api endpoint
 
