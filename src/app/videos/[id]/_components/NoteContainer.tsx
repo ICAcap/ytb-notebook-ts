@@ -1,6 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+	Dispatch,
+	SetStateAction,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import NoteCard from "../../_components/NoteCard";
 import { Note } from "../../../../../generated/prisma";
 import { StickyNoteOff, Plus, Minus, AlertCircle, Search } from "lucide-react";
@@ -11,7 +19,7 @@ import { memo } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import Fuse from "fuse.js";
 import { JSONContent } from "@tiptap/react";
-import { generateText, generateHTML } from "@tiptap/core";
+import { generateText } from "@tiptap/core";
 import { TiptapExtensions } from "@/_components/RichTextEditor/TiptapExtension";
 
 const _ = require("lodash"); // for debounce & throttle purpose
@@ -19,20 +27,19 @@ const _ = require("lodash"); // for debounce & throttle purpose
 const NoteContainer = ({
 	userId,
 	videoId,
-	notes,
+	noteList,
+	setNoteList,
 	playerRef,
 	throttledPlayTime,
 }: {
 	userId: string;
 	videoId: string;
-	notes: Note[] | null;
+	noteList: Note[];
+	setNoteList: Dispatch<SetStateAction<Note[]>>;
 	playerRef: React.RefObject<HTMLVideoElement | null>;
 	throttledPlayTime: number;
 }) => {
-	// hooks //
-	// client state for notes array, to trigger re-rendering after note deletion/modification
-	const [noteList, setNoteList] = useState(notes ?? []);
-
+	// hooks
 	// bool to toggle Note addition collapsible on/off
 	const [openCollapse, setOpenCollapse] = useState(false);
 	// bool to toggle new note cancel modal
@@ -200,10 +207,10 @@ const NoteContainer = ({
 	autoScrollToCurrIdxRef.current = autoScrollToCurrIdx;
 
 	useEffect(() => {
-		const userHardOverrideScrollEnabled = (
+		const userOverrideScrollEnabled = (
 			document.getElementById("autoscroll-checkbox") as HTMLInputElement
 		).checked;
-		if (autoscrollEnabled.current && userHardOverrideScrollEnabled) {
+		if (autoscrollEnabled.current && userOverrideScrollEnabled) {
 			autoScrollToCurrIdx();
 		}
 	}, [activeIndex]);
@@ -215,12 +222,19 @@ const NoteContainer = ({
 	const resumeAutoscroll = useRef(
 		_.debounce(() => {
 			autoscrollEnabled.current = true;
-			toast("Resume auto-scroll", {
-				id: "ms-scroll-info",
-				position: "bottom-center",
-				toasterId: "note-container",
-			});
-			autoScrollToCurrIdxRef.current();
+
+			const userOverrideScrollEnabled = (
+				document.getElementById("autoscroll-checkbox") as HTMLInputElement
+			).checked;
+
+			if (userOverrideScrollEnabled) {
+				toast("Resume auto-scroll", {
+					id: "ms-scroll-info",
+					position: "bottom-center",
+					toasterId: "note-container",
+				});
+				autoScrollToCurrIdxRef.current();
+			}
 		}, 7000),
 	);
 
@@ -363,7 +377,6 @@ const NoteContainer = ({
 								endTime={playerRef.current?.currentTime || 0}
 								content={null}
 								color={""}
-								screenshotUrl={null}
 								playerRef={playerRef}
 								onUpdated={(note) => {
 									handleNoteUpserted(note);
@@ -408,7 +421,6 @@ const NoteContainer = ({
 											endTime={note.endTime}
 											content={note.content}
 											color={note.color}
-											screenshotUrl={note.screenshotUrl}
 											createdAt={note.createdAt}
 											updatedAt={note.updatedAt}
 											playerRef={playerRef}

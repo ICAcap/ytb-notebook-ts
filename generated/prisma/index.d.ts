@@ -5091,7 +5091,6 @@ export namespace Prisma {
     startTime: number | null
     endTime: number | null
     color: string | null
-    screenshotUrl: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5103,7 +5102,6 @@ export namespace Prisma {
     startTime: number | null
     endTime: number | null
     color: string | null
-    screenshotUrl: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5116,7 +5114,6 @@ export namespace Prisma {
     endTime: number
     content: number
     color: number
-    screenshotUrl: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -5140,7 +5137,6 @@ export namespace Prisma {
     startTime?: true
     endTime?: true
     color?: true
-    screenshotUrl?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5152,7 +5148,6 @@ export namespace Prisma {
     startTime?: true
     endTime?: true
     color?: true
-    screenshotUrl?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5165,7 +5160,6 @@ export namespace Prisma {
     endTime?: true
     content?: true
     color?: true
-    screenshotUrl?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -5265,7 +5259,6 @@ export namespace Prisma {
     endTime: number
     content: JsonValue
     color: string
-    screenshotUrl: string | null
     createdAt: Date
     updatedAt: Date
     _count: NoteCountAggregateOutputType | null
@@ -5297,7 +5290,6 @@ export namespace Prisma {
     endTime?: boolean
     content?: boolean
     color?: boolean
-    screenshotUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -5312,7 +5304,6 @@ export namespace Prisma {
     endTime?: boolean
     content?: boolean
     color?: boolean
-    screenshotUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -5327,7 +5318,6 @@ export namespace Prisma {
     endTime?: boolean
     content?: boolean
     color?: boolean
-    screenshotUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -5342,12 +5332,11 @@ export namespace Prisma {
     endTime?: boolean
     content?: boolean
     color?: boolean
-    screenshotUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type NoteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"noteId" | "userId" | "videoId" | "startTime" | "endTime" | "content" | "color" | "screenshotUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["note"]>
+  export type NoteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"noteId" | "userId" | "videoId" | "startTime" | "endTime" | "content" | "color" | "createdAt" | "updatedAt", ExtArgs["result"]["note"]>
   export type NoteInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     video?: boolean | VideoDefaultArgs<ExtArgs>
@@ -5375,7 +5364,6 @@ export namespace Prisma {
       endTime: number
       content: Prisma.JsonValue
       color: string
-      screenshotUrl: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["note"]>
@@ -5810,7 +5798,6 @@ export namespace Prisma {
     readonly endTime: FieldRef<"Note", 'Int'>
     readonly content: FieldRef<"Note", 'Json'>
     readonly color: FieldRef<"Note", 'String'>
-    readonly screenshotUrl: FieldRef<"Note", 'String'>
     readonly createdAt: FieldRef<"Note", 'DateTime'>
     readonly updatedAt: FieldRef<"Note", 'DateTime'>
   }
@@ -9575,7 +9562,6 @@ export namespace Prisma {
     endTime: 'endTime',
     content: 'content',
     color: 'color',
-    screenshotUrl: 'screenshotUrl',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -9984,7 +9970,6 @@ export namespace Prisma {
     endTime?: IntFilter<"Note"> | number
     content?: JsonFilter<"Note">
     color?: StringFilter<"Note"> | string
-    screenshotUrl?: StringNullableFilter<"Note"> | string | null
     createdAt?: DateTimeFilter<"Note"> | Date | string
     updatedAt?: DateTimeFilter<"Note"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -9999,7 +9984,6 @@ export namespace Prisma {
     endTime?: SortOrder
     content?: SortOrder
     color?: SortOrder
-    screenshotUrl?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
@@ -10017,7 +10001,6 @@ export namespace Prisma {
     endTime?: IntFilter<"Note"> | number
     content?: JsonFilter<"Note">
     color?: StringFilter<"Note"> | string
-    screenshotUrl?: StringNullableFilter<"Note"> | string | null
     createdAt?: DateTimeFilter<"Note"> | Date | string
     updatedAt?: DateTimeFilter<"Note"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -10032,7 +10015,6 @@ export namespace Prisma {
     endTime?: SortOrder
     content?: SortOrder
     color?: SortOrder
-    screenshotUrl?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: NoteCountOrderByAggregateInput
@@ -10053,7 +10035,6 @@ export namespace Prisma {
     endTime?: IntWithAggregatesFilter<"Note"> | number
     content?: JsonWithAggregatesFilter<"Note">
     color?: StringWithAggregatesFilter<"Note"> | string
-    screenshotUrl?: StringNullableWithAggregatesFilter<"Note"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Note"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Note"> | Date | string
   }
@@ -10526,7 +10507,6 @@ export namespace Prisma {
     endTime: number
     content: JsonNullValueInput | InputJsonValue
     color?: string
-    screenshotUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutNotesInput
@@ -10541,7 +10521,6 @@ export namespace Prisma {
     endTime: number
     content: JsonNullValueInput | InputJsonValue
     color?: string
-    screenshotUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -10552,7 +10531,6 @@ export namespace Prisma {
     endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
     color?: StringFieldUpdateOperationsInput | string
-    screenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutNotesNestedInput
@@ -10567,7 +10545,6 @@ export namespace Prisma {
     endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
     color?: StringFieldUpdateOperationsInput | string
-    screenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -10580,7 +10557,6 @@ export namespace Prisma {
     endTime: number
     content: JsonNullValueInput | InputJsonValue
     color?: string
-    screenshotUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -10591,7 +10567,6 @@ export namespace Prisma {
     endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
     color?: StringFieldUpdateOperationsInput | string
-    screenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -10604,7 +10579,6 @@ export namespace Prisma {
     endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
     color?: StringFieldUpdateOperationsInput | string
-    screenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -11194,7 +11168,6 @@ export namespace Prisma {
     endTime?: SortOrder
     content?: SortOrder
     color?: SortOrder
-    screenshotUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -11211,7 +11184,6 @@ export namespace Prisma {
     startTime?: SortOrder
     endTime?: SortOrder
     color?: SortOrder
-    screenshotUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -11223,7 +11195,6 @@ export namespace Prisma {
     startTime?: SortOrder
     endTime?: SortOrder
     color?: SortOrder
-    screenshotUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -12067,7 +12038,6 @@ export namespace Prisma {
     endTime: number
     content: JsonNullValueInput | InputJsonValue
     color?: string
-    screenshotUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     video: VideoCreateNestedOneWithoutNotesInput
@@ -12080,7 +12050,6 @@ export namespace Prisma {
     endTime: number
     content: JsonNullValueInput | InputJsonValue
     color?: string
-    screenshotUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -12247,7 +12216,6 @@ export namespace Prisma {
     endTime?: IntFilter<"Note"> | number
     content?: JsonFilter<"Note">
     color?: StringFilter<"Note"> | string
-    screenshotUrl?: StringNullableFilter<"Note"> | string | null
     createdAt?: DateTimeFilter<"Note"> | Date | string
     updatedAt?: DateTimeFilter<"Note"> | Date | string
   }
@@ -12387,7 +12355,6 @@ export namespace Prisma {
     endTime: number
     content: JsonNullValueInput | InputJsonValue
     color?: string
-    screenshotUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutNotesInput
@@ -12400,7 +12367,6 @@ export namespace Prisma {
     endTime: number
     content: JsonNullValueInput | InputJsonValue
     color?: string
-    screenshotUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -12950,7 +12916,6 @@ export namespace Prisma {
     endTime: number
     content: JsonNullValueInput | InputJsonValue
     color?: string
-    screenshotUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -13024,7 +12989,6 @@ export namespace Prisma {
     endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
     color?: StringFieldUpdateOperationsInput | string
-    screenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     video?: VideoUpdateOneRequiredWithoutNotesNestedInput
@@ -13037,7 +13001,6 @@ export namespace Prisma {
     endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
     color?: StringFieldUpdateOperationsInput | string
-    screenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13049,7 +13012,6 @@ export namespace Prisma {
     endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
     color?: StringFieldUpdateOperationsInput | string
-    screenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13159,7 +13121,6 @@ export namespace Prisma {
     endTime: number
     content: JsonNullValueInput | InputJsonValue
     color?: string
-    screenshotUrl?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -13170,7 +13131,6 @@ export namespace Prisma {
     endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
     color?: StringFieldUpdateOperationsInput | string
-    screenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutNotesNestedInput
@@ -13183,7 +13143,6 @@ export namespace Prisma {
     endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
     color?: StringFieldUpdateOperationsInput | string
-    screenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13195,7 +13154,6 @@ export namespace Prisma {
     endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
     color?: StringFieldUpdateOperationsInput | string
-    screenshotUrl?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

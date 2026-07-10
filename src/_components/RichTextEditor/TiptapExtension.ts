@@ -5,7 +5,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import { Color, TextStyle } from "@tiptap/extension-text-style";
 import StarterKit from "@tiptap/starter-kit";
 import { createLowlight, all } from "lowlight";
-import { CharacterCount } from "@tiptap/extensions";
+import { CharacterCount, Placeholder } from "@tiptap/extensions";
 
 /**
  * Tiptap extensions config here
@@ -32,4 +32,7 @@ export const TiptapExtensions = [
 	TextStyle,
 	Color,
 	CharacterCount.configure({ limit }),
+	Placeholder.configure({
+		placeholder: "Please avoid inputting sensitive information …",
+	}),
 ];

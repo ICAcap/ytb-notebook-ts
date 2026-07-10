@@ -15,7 +15,6 @@ export type NoteCreation = {
 	endTime: number;
 	content: InputJsonValue;
 	color: string;
-	screenshotUrl?: string;
 };
 
 export type NoteUpdate = {
@@ -25,7 +24,6 @@ export type NoteUpdate = {
 	endTime: number;
 	content: InputJsonValue;
 	color: string;
-	screenshotUrl?: string;
 };
 
 // GET /////////////////////////////
@@ -55,6 +53,36 @@ export const getNotesByVideo = cache(async function (
 	console.error(
 		"Get Notes By Video failed, userId or videoId is undefined, fallback to null return",
 	);
+	return null;
+});
+
+export const getNoteById = cache(async function (
+	userId: string,
+	noteId: string,
+): Promise<Note | null> {
+	if (userId && noteId) {
+		try {
+			const note = await prisma.note.findUnique({
+				where: {
+					userId: userId,
+					noteId: noteId,
+				},
+			});
+			return note;
+		} catch (error) {
+			console.error(
+				"Get Note By Id processed failed, fallback to null return",
+				error,
+			);
+			return null;
+		}
+	}
+
+	console.error(
+		"Get Note By Id failed, userId or noteId is undefined, fallback to null return",
+	);
+	console.error(userId);
+	console.error(noteId);
 	return null;
 });
 
@@ -185,7 +213,6 @@ export async function createNote({
 	endTime,
 	content,
 	color,
-	screenshotUrl,
 }: NoteCreation): Promise<Note | null> {
 	if (userId && videoId) {
 		if (endTime < startTime) {
@@ -204,7 +231,6 @@ export async function createNote({
 					endTime: endTime,
 					content: content,
 					color: color,
-					screenshotUrl: screenshotUrl,
 				},
 			});
 			return creation;
@@ -229,7 +255,6 @@ export async function updateNote({
 	endTime,
 	content,
 	color,
-	screenshotUrl,
 }: NoteUpdate): Promise<Note | null> {
 	if (userId && noteId) {
 		if (startTime > endTime) {
@@ -250,7 +275,6 @@ export async function updateNote({
 					endTime: endTime,
 					content: content,
 					color: color,
-					screenshotUrl: screenshotUrl,
 				},
 			});
 			return updated;
