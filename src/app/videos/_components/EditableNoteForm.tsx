@@ -137,7 +137,7 @@ const EditableNoteForm = (props: Props) => {
 		<div className="w-full max-w-full">
 			<header>
 				<h1 className="text-lg font-semibold text-center">
-					{props.noteId ? "--Updating Note--" : "--Adding Note--"}
+					{props.noteId ? "Updating Note" : "Adding Note"}
 				</h1>
 			</header>
 			{/* Note color picker - radio dial (https://daisyui.com/components/radio/) */}
