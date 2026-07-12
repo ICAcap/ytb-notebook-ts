@@ -5090,6 +5090,7 @@ export namespace Prisma {
     videoId: string | null
     startTime: number | null
     endTime: number | null
+    contentText: string | null
     color: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -5101,6 +5102,7 @@ export namespace Prisma {
     videoId: string | null
     startTime: number | null
     endTime: number | null
+    contentText: string | null
     color: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -5113,6 +5115,7 @@ export namespace Prisma {
     startTime: number
     endTime: number
     content: number
+    contentText: number
     color: number
     createdAt: number
     updatedAt: number
@@ -5136,6 +5139,7 @@ export namespace Prisma {
     videoId?: true
     startTime?: true
     endTime?: true
+    contentText?: true
     color?: true
     createdAt?: true
     updatedAt?: true
@@ -5147,6 +5151,7 @@ export namespace Prisma {
     videoId?: true
     startTime?: true
     endTime?: true
+    contentText?: true
     color?: true
     createdAt?: true
     updatedAt?: true
@@ -5159,6 +5164,7 @@ export namespace Prisma {
     startTime?: true
     endTime?: true
     content?: true
+    contentText?: true
     color?: true
     createdAt?: true
     updatedAt?: true
@@ -5258,6 +5264,7 @@ export namespace Prisma {
     startTime: number
     endTime: number
     content: JsonValue
+    contentText: string
     color: string
     createdAt: Date
     updatedAt: Date
@@ -5289,6 +5296,7 @@ export namespace Prisma {
     startTime?: boolean
     endTime?: boolean
     content?: boolean
+    contentText?: boolean
     color?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -5303,6 +5311,7 @@ export namespace Prisma {
     startTime?: boolean
     endTime?: boolean
     content?: boolean
+    contentText?: boolean
     color?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -5317,6 +5326,7 @@ export namespace Prisma {
     startTime?: boolean
     endTime?: boolean
     content?: boolean
+    contentText?: boolean
     color?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -5331,12 +5341,13 @@ export namespace Prisma {
     startTime?: boolean
     endTime?: boolean
     content?: boolean
+    contentText?: boolean
     color?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type NoteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"noteId" | "userId" | "videoId" | "startTime" | "endTime" | "content" | "color" | "createdAt" | "updatedAt", ExtArgs["result"]["note"]>
+  export type NoteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"noteId" | "userId" | "videoId" | "startTime" | "endTime" | "content" | "contentText" | "color" | "createdAt" | "updatedAt", ExtArgs["result"]["note"]>
   export type NoteInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     video?: boolean | VideoDefaultArgs<ExtArgs>
@@ -5363,6 +5374,7 @@ export namespace Prisma {
       startTime: number
       endTime: number
       content: Prisma.JsonValue
+      contentText: string
       color: string
       createdAt: Date
       updatedAt: Date
@@ -5797,6 +5809,7 @@ export namespace Prisma {
     readonly startTime: FieldRef<"Note", 'Int'>
     readonly endTime: FieldRef<"Note", 'Int'>
     readonly content: FieldRef<"Note", 'Json'>
+    readonly contentText: FieldRef<"Note", 'String'>
     readonly color: FieldRef<"Note", 'String'>
     readonly createdAt: FieldRef<"Note", 'DateTime'>
     readonly updatedAt: FieldRef<"Note", 'DateTime'>
@@ -9561,6 +9574,7 @@ export namespace Prisma {
     startTime: 'startTime',
     endTime: 'endTime',
     content: 'content',
+    contentText: 'contentText',
     color: 'color',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -9969,6 +9983,7 @@ export namespace Prisma {
     startTime?: IntFilter<"Note"> | number
     endTime?: IntFilter<"Note"> | number
     content?: JsonFilter<"Note">
+    contentText?: StringFilter<"Note"> | string
     color?: StringFilter<"Note"> | string
     createdAt?: DateTimeFilter<"Note"> | Date | string
     updatedAt?: DateTimeFilter<"Note"> | Date | string
@@ -9983,6 +9998,7 @@ export namespace Prisma {
     startTime?: SortOrder
     endTime?: SortOrder
     content?: SortOrder
+    contentText?: SortOrder
     color?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -10000,6 +10016,7 @@ export namespace Prisma {
     startTime?: IntFilter<"Note"> | number
     endTime?: IntFilter<"Note"> | number
     content?: JsonFilter<"Note">
+    contentText?: StringFilter<"Note"> | string
     color?: StringFilter<"Note"> | string
     createdAt?: DateTimeFilter<"Note"> | Date | string
     updatedAt?: DateTimeFilter<"Note"> | Date | string
@@ -10014,6 +10031,7 @@ export namespace Prisma {
     startTime?: SortOrder
     endTime?: SortOrder
     content?: SortOrder
+    contentText?: SortOrder
     color?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -10034,6 +10052,7 @@ export namespace Prisma {
     startTime?: IntWithAggregatesFilter<"Note"> | number
     endTime?: IntWithAggregatesFilter<"Note"> | number
     content?: JsonWithAggregatesFilter<"Note">
+    contentText?: StringWithAggregatesFilter<"Note"> | string
     color?: StringWithAggregatesFilter<"Note"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Note"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Note"> | Date | string
@@ -10506,6 +10525,7 @@ export namespace Prisma {
     startTime: number
     endTime: number
     content: JsonNullValueInput | InputJsonValue
+    contentText?: string
     color?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10520,6 +10540,7 @@ export namespace Prisma {
     startTime: number
     endTime: number
     content: JsonNullValueInput | InputJsonValue
+    contentText?: string
     color?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10530,6 +10551,7 @@ export namespace Prisma {
     startTime?: IntFieldUpdateOperationsInput | number
     endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
+    contentText?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10544,6 +10566,7 @@ export namespace Prisma {
     startTime?: IntFieldUpdateOperationsInput | number
     endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
+    contentText?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10556,6 +10579,7 @@ export namespace Prisma {
     startTime: number
     endTime: number
     content: JsonNullValueInput | InputJsonValue
+    contentText?: string
     color?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10566,6 +10590,7 @@ export namespace Prisma {
     startTime?: IntFieldUpdateOperationsInput | number
     endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
+    contentText?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10578,6 +10603,7 @@ export namespace Prisma {
     startTime?: IntFieldUpdateOperationsInput | number
     endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
+    contentText?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11167,6 +11193,7 @@ export namespace Prisma {
     startTime?: SortOrder
     endTime?: SortOrder
     content?: SortOrder
+    contentText?: SortOrder
     color?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -11183,6 +11210,7 @@ export namespace Prisma {
     videoId?: SortOrder
     startTime?: SortOrder
     endTime?: SortOrder
+    contentText?: SortOrder
     color?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -11194,6 +11222,7 @@ export namespace Prisma {
     videoId?: SortOrder
     startTime?: SortOrder
     endTime?: SortOrder
+    contentText?: SortOrder
     color?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -12037,6 +12066,7 @@ export namespace Prisma {
     startTime: number
     endTime: number
     content: JsonNullValueInput | InputJsonValue
+    contentText?: string
     color?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12049,6 +12079,7 @@ export namespace Prisma {
     startTime: number
     endTime: number
     content: JsonNullValueInput | InputJsonValue
+    contentText?: string
     color?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12215,6 +12246,7 @@ export namespace Prisma {
     startTime?: IntFilter<"Note"> | number
     endTime?: IntFilter<"Note"> | number
     content?: JsonFilter<"Note">
+    contentText?: StringFilter<"Note"> | string
     color?: StringFilter<"Note"> | string
     createdAt?: DateTimeFilter<"Note"> | Date | string
     updatedAt?: DateTimeFilter<"Note"> | Date | string
@@ -12354,6 +12386,7 @@ export namespace Prisma {
     startTime: number
     endTime: number
     content: JsonNullValueInput | InputJsonValue
+    contentText?: string
     color?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12366,6 +12399,7 @@ export namespace Prisma {
     startTime: number
     endTime: number
     content: JsonNullValueInput | InputJsonValue
+    contentText?: string
     color?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12915,6 +12949,7 @@ export namespace Prisma {
     startTime: number
     endTime: number
     content: JsonNullValueInput | InputJsonValue
+    contentText?: string
     color?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12988,6 +13023,7 @@ export namespace Prisma {
     startTime?: IntFieldUpdateOperationsInput | number
     endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
+    contentText?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13000,6 +13036,7 @@ export namespace Prisma {
     startTime?: IntFieldUpdateOperationsInput | number
     endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
+    contentText?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13011,6 +13048,7 @@ export namespace Prisma {
     startTime?: IntFieldUpdateOperationsInput | number
     endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
+    contentText?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13120,6 +13158,7 @@ export namespace Prisma {
     startTime: number
     endTime: number
     content: JsonNullValueInput | InputJsonValue
+    contentText?: string
     color?: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13130,6 +13169,7 @@ export namespace Prisma {
     startTime?: IntFieldUpdateOperationsInput | number
     endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
+    contentText?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13142,6 +13182,7 @@ export namespace Prisma {
     startTime?: IntFieldUpdateOperationsInput | number
     endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
+    contentText?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13153,6 +13194,7 @@ export namespace Prisma {
     startTime?: IntFieldUpdateOperationsInput | number
     endTime?: IntFieldUpdateOperationsInput | number
     content?: JsonNullValueInput | InputJsonValue
+    contentText?: StringFieldUpdateOperationsInput | string
     color?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

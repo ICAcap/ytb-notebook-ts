@@ -92,14 +92,16 @@ model Note {
   startTime Int // Start of the insight (in seconds)
   endTime   Int // End of the insight (in seconds)
 
-  content Json // Tiptap JSON
-  color   String @default("#808080")
+  content     Json // Tiptap JSON
+  contentText String @default("") @db.Text // flattened plain text, for search only
+  color       String @default("#808080")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([videoId])
   @@index([userId])
+  @@index([userId, contentText])
 }
 
 // BetterAuth needed
