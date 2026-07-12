@@ -61,7 +61,7 @@ Full Tiptap-based editor suite. Note content is stored as Tiptap JSON, not plain
 - `NoteCard.tsx` — Individual note display: timestamp seeking, rendered rich text, edit/delete actions
 
 ### Video Detail Components (`src/app/videos/[id]/_components/`)
-- `VideoPlayerAndNotesContainer.tsx` — Top-level orchestrator; wires VideoPlayer + NoteContainer + CollectionBadgeList; owns throttled playback time sync (750ms)
+- `VideoDetailView.tsx` — Top-level orchestrator; wires VideoPlayer + NoteContainer + CollectionBadgeList; owns throttled playback time sync (750ms)
 - `VideoPlayer.tsx` — ReactPlayer wrapper; saves playback position via `updateVideoPlayedTime`; throttle (30s heartbeat) + debounce (3s on pause/seek/end); resumes from `lastPlayedTime` on mount; uses lodash
 - `NoteContainer.tsx` — Manages notes display; sticky header with collapsible add form; sorts by `startTime` then `createdAt`; handles CRUD via child callbacks; receives `playerRef` to capture current time
 

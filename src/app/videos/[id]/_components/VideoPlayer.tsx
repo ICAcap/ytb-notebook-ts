@@ -61,7 +61,7 @@ const VideoPlayer = ({
 	);
 
 	return (
-		<div className="w-full max-w-7xl">
+		<div className="w-full">
 			<div className="aspect-video">
 				<ReactPlayer
 					ref={reactPlayerRef}

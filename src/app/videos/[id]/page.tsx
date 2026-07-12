@@ -4,7 +4,7 @@ import { getNotesByVideo } from "../../../../lib/dbTableAction/noteTableAction";
 import requireSession from "../../../../lib/requireSession";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import VideoPlayerAndNotesContainer from "./_components/VideoPlayerAndNotesContainer";
+import VideoDetailView from "./_components/VideoDetailView";
 import { Toaster } from "react-hot-toast";
 
 // helper function to fetch video details by id for the authenticated user
@@ -54,7 +54,7 @@ export default async function VidViewPage({
 				<main className="flex-1 p-1">
 					<Toaster />
 
-					<VideoPlayerAndNotesContainer
+					<VideoDetailView
 						userId={userId}
 						video={video}
 						notes={vidNotes}
