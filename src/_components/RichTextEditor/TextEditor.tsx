@@ -64,7 +64,7 @@ const TextEditor = ({
 				{/* editor */}
 				<EditorContent
 					editor={editor}
-					className={`tiptap border m-2 p-2 min-h-10 w-full max-w-full grow-0 ${currentStyle === "light" ? themeStyles.light : themeStyles.dark}`}
+					className={`tiptap border m-0.5 p-2 min-h-12 w-full max-w-full grow-0 ${currentStyle === "light" ? themeStyles.light : themeStyles.dark}`}
 					suppressHydrationWarning
 				/>
 				{/* word count */}
@@ -73,7 +73,6 @@ const TextEditor = ({
 				>
 					{charactersCount} / {limit} ({wordsCount} words)
 				</div>
-				<br />
 			</div>
 		</>
 	);
