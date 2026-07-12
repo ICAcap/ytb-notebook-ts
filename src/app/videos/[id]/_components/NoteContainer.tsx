@@ -308,14 +308,14 @@ const NoteContainer = ({
 	return (
 		<div
 			ref={scrollRef}
-			className="flex flex-col border-l-2 items-center flex-1 min-w-0 lg:min-w-xl h-dvh overflow-auto"
+			className="flex flex-col border-l-2 items-center flex-1 min-w-0 lg:min-w-xl overflow-auto"
 			style={{ height: "98dvh" }}
 		>
 			<Toaster toasterId="note-container" />
 			{/* current note position + Notes count + Add note collapsible (by daisy UI) */}
 			<div className="sticky top-0 grow-0 w-full min-w-0 bg-accent rounded-t-lg z-10 px-1">
 				<div className="flex flex-col py-2 gap-2">
-					<div className="flex flex-row gap-2 justify-evenly">
+					<div className="flex flex-row gap-2 justify-between">
 						<button
 							title="click to jump to current note"
 							className="btn btn-sm btn-info ml-1 font-bold"
@@ -324,7 +324,7 @@ const NoteContainer = ({
 							{activeIndex + 1}/{noteCount} Notes
 						</button>
 						<div
-							className="input input-sm"
+							className="input input-sm w-full"
 							title="Search Notes, results ranked by relevance"
 						>
 							<Search className="h-[1em]" />
