@@ -3,9 +3,10 @@
 import { prisma } from "../prisma";
 import { InputJsonValue } from "../../generated/prisma/runtime/client";
 import { Note } from "../../generated/prisma";
+import { JSONContent } from "@tiptap/react";
+import { tiptapToText } from "../../utils/tiptapToText";
 
 import { cache } from "react";
-import { revalidatePath } from "next/cache";
 
 // Type
 export type NoteCreation = {
@@ -231,6 +232,7 @@ export async function createNote({
 					endTime: endTime,
 					content: content,
 					color: color,
+					contentText: tiptapToText(content as JSONContent),
 				},
 			});
 			return creation;
@@ -275,6 +277,7 @@ export async function updateNote({
 					endTime: endTime,
 					content: content,
 					color: color,
+					contentText: tiptapToText(content as JSONContent),
 				},
 			});
 			return updated;

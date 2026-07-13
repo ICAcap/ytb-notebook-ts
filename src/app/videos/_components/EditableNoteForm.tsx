@@ -14,7 +14,7 @@ import {
 	updateNote,
 } from "../../../../lib/dbTableAction/noteTableAction";
 
-type Props = (Omit<Note, "createdAt" | "updatedAt"> | null) & {
+type Props = (Omit<Note, "createdAt" | "updatedAt" | "contentText"> | null) & {
 	playerRef?: React.RefObject<HTMLVideoElement | null>;
 	setEditable?: Dispatch<SetStateAction<boolean>>;
 	onUpdated?: (note: Note) => void;
