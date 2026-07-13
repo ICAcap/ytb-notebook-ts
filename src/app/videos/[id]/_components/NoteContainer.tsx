@@ -308,7 +308,7 @@ const NoteContainer = ({
 	return (
 		<div
 			ref={scrollRef}
-			className="flex flex-col border-l-2 items-center flex-1 min-w-0 lg:min-w-xl overflow-auto"
+			className="flex flex-col items-center flex-1 min-w-0 lg:min-w-xl overflow-auto"
 			style={{ height: "98dvh" }}
 		>
 			<Toaster toasterId="note-container" />

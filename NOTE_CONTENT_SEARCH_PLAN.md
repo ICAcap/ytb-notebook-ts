@@ -20,7 +20,7 @@ building the result-card link behavior.
 
 ---
 
-## 1. Schema change
+## 1. Schema change (done)
 
 `prisma/schema.prisma` — add a plain-text mirror field to `Note`:
 
@@ -44,7 +44,7 @@ model Note {
   notes are searchable — new/edited notes populate it automatically going
   forward.
 
-## 2. Flatten Tiptap JSON → plain text
+## 2. Flatten Tiptap JSON → plain text (done)
 
 New util: `utils/tiptapToText.ts`
 
@@ -66,7 +66,7 @@ Simple recursive walk over Tiptap's node tree — no need for
 `@tiptap/static-renderer` (that renders HTML/React, not plain text; using it
 here would mean stripping markup back out, more work for the same result).
 
-## 3. Populate `contentText` on write
+## 3. Populate `contentText` on write (done)
 
 `lib/dbTableAction/noteTableAction.ts`:
 
