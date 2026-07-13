@@ -40,7 +40,12 @@ const VideoDetailView = ({
 	return (
 		<div>
 			<Group className="flex flex-row gap-2 mt-1">
-				<Panel defaultSize="70%" maxSize="80%" minSize="20%">
+				<Panel
+					defaultSize="70%"
+					maxSize="80%"
+					minSize="20%"
+					className="border rounded-lg"
+				>
 					<div className="flex flex-col w-full gap-1">
 						<VideoPlayer
 							videoId={video.videoId}
