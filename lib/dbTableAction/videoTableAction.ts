@@ -115,7 +115,7 @@ export const getVideoCardsWithSearchParam = cache(async function (
 			})),
 		})) as VideoDetailType[];
 	} catch (error) {
-		console.error("Error fetching video card data with searchParam:", error);
+		console.error("Error fetching video card data with searchParam");
 		return [] as VideoDetailType[];
 	}
 });

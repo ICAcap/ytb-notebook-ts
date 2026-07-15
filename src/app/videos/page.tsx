@@ -27,11 +27,12 @@ export default async function VideoPage({
 	const session = await requireSession();
 	const userId = session.user.id;
 
+	const pageSize = 20;
+
 	const params = await searchParams;
 	const q = (params.q ?? "").trim();
 	const page = Math.max(1, Number(params.page ?? 1)); // Prevent negative or zero page indices.
 	const collection = (params.collection ?? "").trim();
-	const pageSize = 20;
 
 	// fetch data from db video table
 	const [unqVidTitles, totalCount, videoCards] = await Promise.all([
@@ -49,7 +50,7 @@ export default async function VideoPage({
 
 			<main className="flex-1 p-3">
 				<header className="flex items-center justify-between mb-8">
-					<h1 className="text-3xl font-bold">
+					<h1 className="text-5xl font-semibold">
 						My Videos {collection ? ` - ${collection}` : ""}
 					</h1>
 					<AddVideoButton userId={userId} />

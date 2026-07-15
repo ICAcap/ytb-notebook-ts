@@ -27,6 +27,10 @@ export type NoteUpdate = {
 	color: string;
 };
 
+export type NoteWithVideo = Note & {
+	video: { title: string; videoId: string };
+};
+
 // GET /////////////////////////////
 export const getNotesByVideo = cache(async function (
 	userId: string,
@@ -204,6 +208,86 @@ export const getNoteCountByUser = cache(async function (
 		"Get Note Count By User failed, userId is undefined, fallback to 0 return",
 	);
 	return 0;
+});
+
+export const getNotesWithSearchParam = cache(async function (
+	userId: string,
+	page: number,
+	pageSize: number,
+	q: string,
+	collection: string,
+	color: string,
+): Promise<NoteWithVideo[]> {
+	if (!userId) {
+		console.error("Error fetching notes, user ID is undefined");
+		return [];
+	}
+
+	// Calculate how many items to skip
+	const skipItemNum = (page - 1) * pageSize;
+
+	// build where clause
+	// 1. Query q
+	// 2. collection (via parent video, Note has no direct collection relation)
+	// 3. color hex
+	const where = {
+		userId,
+		...(q
+			? { contentText: { contains: q, mode: "insensitive" as const } }
+			: {}),
+		...(collection
+			? { video: { collections: { some: { collectionName: collection } } } }
+			: {}),
+		...(color ? { color } : {}),
+	};
+
+	try {
+		const notes = await prisma.note.findMany({
+			where: where,
+			take: pageSize,
+			skip: skipItemNum,
+			include: {
+				video: { select: { title: true, videoId: true } },
+			},
+			orderBy: [{ startTime: "asc" }, { createdAt: "asc" }],
+		});
+
+		return notes;
+	} catch (error) {
+		console.error("Error fetching notes data with searchParam", error);
+		return [];
+	}
+});
+
+export const getNoteSearchCount = cache(async function (
+	userId: string,
+	q: string,
+	collection: string,
+	color: string,
+): Promise<number> {
+	if (!userId) {
+		console.error("Error fetching note search count, user ID is undefined");
+		return 0;
+	}
+
+	const where = {
+		userId,
+		...(q
+			? { contentText: { contains: q, mode: "insensitive" as const } }
+			: {}),
+		...(collection
+			? { video: { collections: { some: { collectionName: collection } } } }
+			: {}),
+		...(color ? { color } : {}),
+	};
+
+	try {
+		const count = await prisma.note.count({ where });
+		return count;
+	} catch (error) {
+		console.error("Error fetching note search count", error);
+		return 0;
+	}
 });
 
 // CREATE /////////////////////////////
