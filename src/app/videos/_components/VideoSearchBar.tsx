@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { FunnelX } from "lucide-react";
+import { BrushCleaning, Search } from "lucide-react";
 import Link from "next/link";
 import { SubmitEvent } from "react";
 import Fuse from "fuse.js";
@@ -11,11 +11,11 @@ const _ = require("lodash"); // for debounce purpose
 
 type Props = {
 	unqVidTitles: string[];
-	q?: string;
+	query?: string;
 	currentCollection?: string;
 };
 // component
-const VideoSearchBar = ({ unqVidTitles, q, currentCollection }: Props) => {
+const VideoSearchBar = ({ unqVidTitles, query, currentCollection }: Props) => {
 	const [vidSuggestion, setVidSuggestion] = useState<string[]>([]);
 	const [showSuggestion, setShowSuggestion] = useState(false);
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -30,8 +30,8 @@ const VideoSearchBar = ({ unqVidTitles, q, currentCollection }: Props) => {
 
 	// debounce on keystrokes
 	const handleSearchVidSuggest = useRef(
-		_.debounce((query: string) => {
-			const cleanedQuery = query.trim().toLowerCase();
+		_.debounce((typedQuery: string) => {
+			const cleanedQuery = typedQuery.trim().toLowerCase();
 			if (!cleanedQuery) {
 				setVidSuggestion([]);
 				setShowSuggestion(false);
@@ -70,7 +70,7 @@ const VideoSearchBar = ({ unqVidTitles, q, currentCollection }: Props) => {
 			const formData = new FormData(e.currentTarget);
 			const query =
 				(formData.get("query") as string).trim().toLowerCase() ?? "";
-			const searchParam = new URLSearchParams({ q: query });
+			const searchParam = new URLSearchParams({ query });
 			setShowSuggestion(false);
 			router.push(`/videos?${searchParam}`);
 			(
@@ -87,42 +87,48 @@ const VideoSearchBar = ({ unqVidTitles, q, currentCollection }: Props) => {
 			title="Search Video Title"
 		>
 			{/* Search bar */}
-			<form className="join w-full" onSubmit={handleSubmit}>
-				<input
-					id="vid-search-bar-input"
-					name="query"
-					type="search"
-					defaultValue={q}
-					placeholder="Search Video Title..."
-					autoComplete="off"
-					onChange={(e) => handleSearchVidSuggest.current(e.target.value)}
-					onFocus={() => {
-						if (vidSuggestion.length > 0) setShowSuggestion(true);
-					}}
-					className="join-item input input-bordered flex-1 focus:outline-none"
-				/>
-				<button type="submit" className="join-item btn btn-primary">
-					Search
-				</button>
-				{(q || currentCollection) && (
-					<button
-						type="button"
-						onClick={() => {
-							(
-								document.getElementById(
-									"vid-search-bar-input",
-								) as HTMLInputElement
-							).value = "";
-							setVidSuggestion([]);
-							setShowSuggestion(false);
-							router.push("/videos");
+			<form
+				className="flex w-full items-center gap-2"
+				onSubmit={handleSubmit}
+			>
+				<Search className="h-5 w-5 shrink-0 text-base-content/70" />
+				<div className="join flex-1">
+					<input
+						id="vid-search-bar-input"
+						name="query"
+						type="search"
+						defaultValue={query}
+						placeholder="Search Video Title..."
+						autoComplete="off"
+						onChange={(e) => handleSearchVidSuggest.current(e.target.value)}
+						onFocus={() => {
+							if (vidSuggestion.length > 0) setShowSuggestion(true);
 						}}
-						className="join-item btn btn-square btn-error btn-ghost"
-						title="Clear Filter"
-					>
-						<FunnelX size={25} />
+						className="join-item input input-bordered flex-1 focus:outline-none"
+					/>
+					<button type="submit" className="join-item btn btn-primary">
+						Search
 					</button>
-				)}
+					{(query || currentCollection) && (
+						<button
+							type="button"
+							onClick={() => {
+								(
+									document.getElementById(
+										"vid-search-bar-input",
+									) as HTMLInputElement
+								).value = "";
+								setVidSuggestion([]);
+								setShowSuggestion(false);
+								router.push("/videos");
+							}}
+							className="join-item btn btn-square btn-error btn-ghost"
+							title="Clear Filter"
+						>
+							<BrushCleaning size={25} />
+						</button>
+					)}
+				</div>
 			</form>
 			{/* show suggestions if there are any */}
 			{vidSuggestion.length > 0 && showSuggestion && (
@@ -139,7 +145,7 @@ const VideoSearchBar = ({ unqVidTitles, q, currentCollection }: Props) => {
 								).value = vid;
 							}}
 						>
-							<Link href={`/videos?${new URLSearchParams({ q: vid })}`}>
+							<Link href={`/videos?${new URLSearchParams({ query: vid })}`}>
 								{vid}
 							</Link>
 						</li>

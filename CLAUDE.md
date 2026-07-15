@@ -118,8 +118,8 @@ See `node_modules/next/dist/docs/` — this version has breaking changes in APIs
 - **Database utility**: `lib/prisma.ts` exports singleton PrismaClient
 - **Video queries** (`lib/dbTableAction/videoTableAction.ts`):
   - `getVideoById(userId, videoId)` — Single video with collections (cached); returns `VideoDetailPageProp`
-  - `getVideoCardsWithSearchParam(userId, page, pageSize, q, collection)` — Paginated search with title matching and collection filter
-  - `getVideoNumWithSearchParam(userId, q, collection)` — Total count for pagination
+  - `getVideoCardsWithSearchParam(userId, page, pageSize, query, collection)` — Paginated search with title matching and collection filter
+  - `getVideoNumWithSearchParam(userId, query, collection)` — Total count for pagination
   - `getAllUniqueVideoTitles(userId)` — All distinct video titles for a user (cached); used to build the search bar's autocomplete index
   - `getExistingVideo(userId, youtubeVidID)` — Check if video already added
   - `upsertYouTubeVideo(userId, youtubeVidID, title, collectionIds)` — Add/update video with collection associations

@@ -87,19 +87,19 @@ the util call (same pattern `NoteCard.tsx` already uses at
 ```ts
 export const getNotesByContentSearch = cache(async function (
   userId: string,
-  q: string,
+  query: string,
   page: number,
   pageSize: number,
 ): Promise<Note[]> { ... });
 
 export const getNoteContentSearchCount = cache(async function (
   userId: string,
-  q: string,
+  query: string,
 ): Promise<number> { ... });
 ```
 
-- `where: { userId, contentText: { contains: q, mode: "insensitive" } }`
-- Empty `q` → return `[]` / `0` early (mirrors the guard style already used
+- `where: { userId, contentText: { contains: query, mode: "insensitive" } }`
+- Empty `query` → return `[]` / `0` early (mirrors the guard style already used
   throughout this file), since an empty-query note dump isn't the point of
   this feature — the paginated "all my notes" browse already exists via
   `getNotesByUser`.
@@ -114,10 +114,10 @@ export const getNoteContentSearchCount = cache(async function (
 `src/app/videos/page.tsx:22-115`:
 
 - `requireSession()` → `userId`.
-- Read `searchParams` for `q`, `page`.
+- Read `searchParams` for `query`, `page`.
 - `Promise.all([getNotesByContentSearch(...), getNoteContentSearchCount(...)])`.
 - Reuse `Sidebar`, `Pagination` components as-is.
-- Empty-`q` state: show a prompt ("type to search your notes") rather than
+- Empty-`query` state: show a prompt ("type to search your notes") rather than
   an empty/error state, since there's no default listing for this page.
 
 New component: `src/app/notes/_components/NoteSearchBar.tsx` — much

@@ -214,7 +214,7 @@ export const getNotesWithSearchParam = cache(async function (
 	userId: string,
 	page: number,
 	pageSize: number,
-	q: string,
+	query: string,
 	collection: string,
 	color: string,
 ): Promise<NoteWithVideo[]> {
@@ -227,7 +227,7 @@ export const getNotesWithSearchParam = cache(async function (
 	const skipItemNum = (page - 1) * pageSize;
 
 	// build where clause
-	// 1. Query q
+	// 1. Query query
 	// 2. collection (via parent video, Note has no direct collection relation); comma-separated collectionIds, OR'd
 	// 3. color hex; comma-separated, OR'd
 	const collectionIds = collection ? collection.split(",").filter(Boolean) : [];
@@ -235,8 +235,8 @@ export const getNotesWithSearchParam = cache(async function (
 
 	const where = {
 		userId,
-		...(q
-			? { contentText: { contains: q, mode: "insensitive" as const } }
+		...(query
+			? { contentText: { contains: query, mode: "insensitive" as const } }
 			: {}),
 		...(collectionIds.length
 			? {
@@ -268,7 +268,7 @@ export const getNotesWithSearchParam = cache(async function (
 
 export const getNoteCountWithSearchParams = cache(async function (
 	userId: string,
-	q: string,
+	query: string,
 	collection: string,
 	color: string,
 ): Promise<number> {
@@ -281,8 +281,8 @@ export const getNoteCountWithSearchParams = cache(async function (
 
 	const where = {
 		userId,
-		...(q
-			? { contentText: { contains: q, mode: "insensitive" as const } }
+		...(query
+			? { contentText: { contains: query, mode: "insensitive" as const } }
 			: {}),
 		...(collectionIds.length
 			? {
