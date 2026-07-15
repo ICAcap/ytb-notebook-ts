@@ -228,17 +228,24 @@ export const getNotesWithSearchParam = cache(async function (
 
 	// build where clause
 	// 1. Query q
-	// 2. collection (via parent video, Note has no direct collection relation)
-	// 3. color hex
+	// 2. collection (via parent video, Note has no direct collection relation); comma-separated collectionIds, OR'd
+	// 3. color hex; comma-separated, OR'd
+	const collectionIds = collection ? collection.split(",").filter(Boolean) : [];
+	const colors = color ? color.split(",").filter(Boolean) : [];
+
 	const where = {
 		userId,
 		...(q
 			? { contentText: { contains: q, mode: "insensitive" as const } }
 			: {}),
-		...(collection
-			? { video: { collections: { some: { collectionName: collection } } } }
+		...(collectionIds.length
+			? {
+					video: {
+						collections: { some: { collectionId: { in: collectionIds } } },
+					},
+				}
 			: {}),
-		...(color ? { color } : {}),
+		...(colors.length ? { color: { in: colors } } : {}),
 	};
 
 	try {
@@ -259,7 +266,7 @@ export const getNotesWithSearchParam = cache(async function (
 	}
 });
 
-export const getNoteSearchCount = cache(async function (
+export const getNoteCountWithSearchParams = cache(async function (
 	userId: string,
 	q: string,
 	collection: string,
@@ -269,16 +276,22 @@ export const getNoteSearchCount = cache(async function (
 		console.error("Error fetching note search count, user ID is undefined");
 		return 0;
 	}
+	const collectionIds = collection ? collection.split(",").filter(Boolean) : [];
+	const colors = color ? color.split(",").filter(Boolean) : [];
 
 	const where = {
 		userId,
 		...(q
 			? { contentText: { contains: q, mode: "insensitive" as const } }
 			: {}),
-		...(collection
-			? { video: { collections: { some: { collectionName: collection } } } }
+		...(collectionIds.length
+			? {
+					video: {
+						collections: { some: { collectionId: { in: collectionIds } } },
+					},
+				}
 			: {}),
-		...(color ? { color } : {}),
+		...(colors.length ? { color: { in: colors } } : {}),
 	};
 
 	try {
