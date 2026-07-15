@@ -12,6 +12,7 @@ import { Metadata } from "next";
 import { Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import { formatTimeStamp } from "../../../utils/formatTimeStamp";
+import { StickyNoteOff } from "lucide-react";
 
 export const metadata: Metadata = {
 	title: "Find Notes",
@@ -22,7 +23,7 @@ export default async function NoteSearchPage({
 	searchParams,
 }: {
 	searchParams: Promise<{
-		q?: string;
+		query?: string;
 		page?: string;
 		collection?: string;
 		color?: string;
@@ -34,15 +35,15 @@ export default async function NoteSearchPage({
 	const pageSize = 50;
 
 	const params = await searchParams;
-	const q = (params.q ?? "").trim();
+	const query = (params.query ?? "").trim();
 	const page = Math.max(1, Number(params.page ?? 1));
 	const collection = (params.collection ?? "").trim();
 	const color = (params.color ?? "").trim();
 
 	const [collections, searchedNotes, searchedNotesCnt] = await Promise.all([
 		(await getUserCollectionNameIDs(userId)).filter((c) => c.videoNum > 0),
-		getNotesWithSearchParam(userId, page, pageSize, q, collection, color),
-		getNoteCountWithSearchParams(userId, q, collection, color),
+		getNotesWithSearchParam(userId, page, pageSize, query, collection, color),
+		getNoteCountWithSearchParams(userId, query, collection, color),
 	]);
 
 	const totalPagesNum = Math.max(1, Math.ceil(searchedNotesCnt / pageSize));
@@ -72,21 +73,33 @@ export default async function NoteSearchPage({
 						<span className="loading loading-spinner loading-xl"></span>
 					}
 				>
-					<div className="flex flex-col gap-2 mb-4">
-						{searchedNotes.map((note) => (
-							<div
-								key={note.noteId}
-								className="flex flex-col gap-1 p-2 border-b border-base-300"
-							>
-								<span className="font-semibold">{note.video.title}</span>
-								<span className="text-sm text-base-content/70">
-									{formatTimeStamp(note.startTime)} -{" "}
-									{formatTimeStamp(note.endTime)}
-								</span>
-								<span style={{ color: note.color }}>{note.contentText}</span>
-							</div>
-						))}
-					</div>
+					{searchedNotesCnt === 0 ? (
+						<div className="w-full p-4 flex items-center justify-center min-h-50">
+							<span className="card card-xl text-center items-center text-2xl font-semibold">
+								<p>No Notes Found</p>
+								<br />
+								<p>
+									<StickyNoteOff size={80} />
+								</p>
+							</span>
+						</div>
+					) : (
+						<div className="flex flex-col gap-2 mb-4">
+							{searchedNotes.map((note) => (
+								<div
+									key={note.noteId}
+									className="flex flex-col gap-1 p-2 border-b border-base-300"
+								>
+									<span className="font-semibold">{note.video.title}</span>
+									<span className="text-sm text-base-content/70">
+										{formatTimeStamp(note.startTime)} -{" "}
+										{formatTimeStamp(note.endTime)}
+									</span>
+									<span style={{ color: note.color }}>{note.contentText}</span>
+								</div>
+							))}
+						</div>
+					)}
 				</Suspense>
 
 				{/* Pagination bar */}
@@ -97,7 +110,7 @@ export default async function NoteSearchPage({
 							totalPages={totalPagesNum}
 							baseUrl="/notes"
 							searchParams={{
-								q,
+								query,
 								collection: collection,
 								color: color,
 							}}

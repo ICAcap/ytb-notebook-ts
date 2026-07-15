@@ -62,14 +62,14 @@ export const getVideoById = cache(async function (
  * @param userId - The unique identifier of the user.
  * @param page - The page number to retrieve (1-indexed).
  * @param pageSize - The maximum number of videos to return per page.
- * @param q - The search string used to filter video titles.
+ * @param query - The search string used to filter video titles.
  * @returns A promise resolving to an array of video data matching the VideoDetailType.
  */
 export const getVideoCardsWithSearchParam = cache(async function (
 	userId: string,
 	page: number,
 	pageSize: number,
-	q: string,
+	query: string,
 	collection: string,
 ): Promise<VideoDetailType[]> {
 	if (!userId) {
@@ -84,7 +84,9 @@ export const getVideoCardsWithSearchParam = cache(async function (
 	// Build the where clause for the query, including the search filter if provided.
 	const where = {
 		userId,
-		...(q ? { title: { contains: q, mode: "insensitive" as const } } : {}),
+		...(query
+			? { title: { contains: query, mode: "insensitive" as const } }
+			: {}),
 		...(collection
 			? { collections: { some: { collectionName: collection } } }
 			: {}),
@@ -125,12 +127,12 @@ export const getVideoCardsWithSearchParam = cache(async function (
  * The count can be filtered by a case-insensitive search query on the video title.
  *
  * @param userId - The unique identifier of the user.
- * @param q - The search string used to filter video titles.
+ * @param query - The search string used to filter video titles.
  * @returns A promise resolving to the total number of matching video records.
  */
 export const getVideoNumWithSearchParam = cache(async function (
 	userId: string,
-	q: string,
+	query: string,
 	collection: string,
 ): Promise<number> {
 	if (!userId) {
@@ -139,7 +141,9 @@ export const getVideoNumWithSearchParam = cache(async function (
 	}
 	const where = {
 		userId,
-		...(q ? { title: { contains: q, mode: "insensitive" as const } } : {}),
+		...(query
+			? { title: { contains: query, mode: "insensitive" as const } }
+			: {}),
 		...(collection
 			? { collections: { some: { collectionName: collection } } }
 			: {}),

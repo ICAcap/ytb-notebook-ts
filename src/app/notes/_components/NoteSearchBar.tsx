@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Select, { StylesConfig } from "react-select";
-import { FolderBookmark, Palette } from "lucide-react";
+import { FolderBookmark, Palette, Search } from "lucide-react";
 import { SubmitEvent } from "react";
 import { NOTE_COLORS } from "../../../../utils/noteColors";
 
@@ -49,7 +49,7 @@ const NoteSearchBar = ({
 	collections: collectionFilterOption[];
 }) => {
 	//hooks
-	const [inputQ, setInputQ] = useState<string>("");
+	const [inputQuery, setInputQuery] = useState<string>("");
 	const [collectionFilterApplied, setCollectionFilterApplied] = useState<
 		collectionFilterOption[]
 	>([]);
@@ -61,9 +61,9 @@ const NoteSearchBar = ({
 	// form submit handler
 	function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
 		e.preventDefault();
-		const query = inputQ.trim().toLowerCase();
+		const query = inputQuery.trim().toLowerCase();
 		const searchParam = new URLSearchParams({
-			q: query,
+			query,
 			collection: collectionFilterApplied.map((c) => c.value).join(","), // pass collection filters by collection id, joined by ","
 			color: colorFilterApplied.map((c) => c.value).join(","), // by hex, joined by ","
 		});
@@ -76,16 +76,20 @@ const NoteSearchBar = ({
 	return (
 		<div className="flex flex-col gap-2">
 			{/* input bar */}
-			<form onSubmit={handleSubmit} className="flex flex-row gap-1">
+			<form
+				onSubmit={handleSubmit}
+				className="flex flex-row items-center gap-2"
+			>
+				<Search className="h-5 w-5 shrink-0 text-base-content/70" />
 				<input
 					id="note-search-bar-input"
 					name="query"
 					type="search"
-					onChange={(e) => setInputQ(e.target.value)}
+					onChange={(e) => setInputQuery(e.target.value)}
 					placeholder="Type Note Content to Search..."
-					className="input w-full"
+					className="input input-xl input-bordered flex-1 focus:outline-none"
 				/>
-				<button type="submit" className="btn btn-info">
+				<button type="submit" className="btn btn-info btn-lg">
 					Search
 				</button>
 			</form>
@@ -98,7 +102,7 @@ const NoteSearchBar = ({
 					isMulti
 					isSearchable
 					onChange={(e) => setCollectionFilterApplied(e.flat())}
-					placeholder="Filter by Collection(s) with Videos Present..."
+					placeholder="Filter by Non-Empty Collections"
 					classNamePrefix="react-select"
 					className="w-full text-black"
 				/>
@@ -114,7 +118,7 @@ const NoteSearchBar = ({
 					isMulti
 					isSearchable
 					onChange={(e) => setColorFilterApplied(e.flat())}
-					placeholder="Filter by Note Color Tag(s)..."
+					placeholder="Filter by Note Color Tags"
 					classNamePrefix="react-select"
 					className="w-full text-black"
 				/>
