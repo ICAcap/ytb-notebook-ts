@@ -1,14 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useState } from "react";
 import Select, { StylesConfig } from "react-select";
 import { FolderBookmark, Palette } from "lucide-react";
-import { Collection } from "../../../../generated/prisma";
-import {
-	getNoteSearchCount,
-	getNotesWithSearchParam,
-} from "../../../../lib/dbTableAction/noteTableAction";
+import { SubmitEvent } from "react";
 import { NOTE_COLORS } from "../../../../utils/noteColors";
 
 type collectionFilterOption = {
@@ -60,22 +56,39 @@ const NoteSearchBar = ({
 	const [colorFilterApplied, setColorFilterApplied] = useState<
 		{ label: string; value: string }[]
 	>([]);
+	const router = useRouter();
+
+	// form submit handler
+	function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
+		e.preventDefault();
+		const query = inputQ.trim().toLowerCase();
+		const searchParam = new URLSearchParams({
+			q: query,
+			collection: collectionFilterApplied.map((c) => c.value).join(","), // pass collection filters by collection id, joined by ","
+			color: colorFilterApplied.map((c) => c.value).join(","), // by hex, joined by ","
+		});
+		router.push(`/notes?${searchParam}`);
+		(
+			document.getElementById("note-search-bar-input") as HTMLInputElement
+		).blur(); //un-focus input field
+	}
 
 	return (
 		<div className="flex flex-col gap-2">
 			{/* input bar */}
-			<div className="flex flex-row gap-1">
+			<form onSubmit={handleSubmit} className="flex flex-row gap-1">
 				<input
-					name="search-bar-input"
+					id="note-search-bar-input"
+					name="query"
 					type="search"
 					onChange={(e) => setInputQ(e.target.value)}
 					placeholder="Type Note Content to Search..."
 					className="input w-full"
 				/>
-				<button type="submit" disabled={!inputQ} className="btn btn-info">
+				<button type="submit" className="btn btn-info">
 					Search
 				</button>
-			</div>
+			</form>
 			{/* collection filters */}
 			<div className="flex flex-row items-center gap-2">
 				<FolderBookmark className="h-5 w-5 shrink-0 text-base-content/70" />
@@ -106,15 +119,7 @@ const NoteSearchBar = ({
 					className="w-full text-black"
 				/>
 			</div>
-
 			<br />
-			<span>
-				Collection filter applied{" "}
-				{`${collectionFilterApplied.map((c) => c.label)}`}
-			</span>
-			<span>
-				Color filter applied {`${colorFilterApplied.map((c) => c.label)}`}
-			</span>
 		</div>
 	);
 };
