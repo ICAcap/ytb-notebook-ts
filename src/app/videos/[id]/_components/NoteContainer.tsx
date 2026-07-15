@@ -421,7 +421,6 @@ const NoteContainer = ({
 											endTime={note.endTime}
 											content={note.content}
 											color={note.color}
-											createdAt={note.createdAt}
 											updatedAt={note.updatedAt}
 											playerRef={playerRef}
 											onDeleted={handleNoteDeleted}
