@@ -38,7 +38,9 @@ export default async function NoteSearchPage({
 	const collection = (params.collection ?? "").trim();
 	const color = (params.color ?? "").trim();
 
-	const collections = await getUserCollectionNameIDs(userId);
+	const collections = (await getUserCollectionNameIDs(userId)).filter(
+		(c) => c.videoNum > 0,
+	);
 
 	return (
 		<div className="flex min-h-screen">
