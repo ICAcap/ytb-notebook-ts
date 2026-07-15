@@ -147,7 +147,7 @@ const EditableNoteForm = (props: Props) => {
 				</label>
 				<div className="flex gap-4">
 					{NOTE_COLORS.map((c) => (
-						<label key={c.name} className="cursor-pointer" title={c.name}>
+						<label key={c.label} className="cursor-pointer" title={c.label}>
 							<input
 								type="radio"
 								value={c.value}
