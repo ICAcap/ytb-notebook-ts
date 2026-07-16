@@ -256,7 +256,11 @@ export const getNotesWithSearchParam = cache(async function (
 			include: {
 				video: { select: { title: true, videoId: true } },
 			},
-			orderBy: [{ startTime: "asc" }, { createdAt: "asc" }],
+			orderBy: [
+				{ video: { title: "asc" } },
+				{ startTime: "asc" },
+				{ createdAt: "asc" },
+			],
 		});
 
 		return notes;
