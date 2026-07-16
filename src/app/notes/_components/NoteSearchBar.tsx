@@ -1,8 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import Select, { StylesConfig } from "react-select";
+import Select from "react-select";
 import { FolderBookmark, Palette, Search } from "lucide-react";
 import { SubmitEvent } from "react";
 import { NOTE_COLORS } from "../../../../utils/noteColors";
@@ -24,23 +24,6 @@ const formatColorOptionLabel = ({ label, value }: ColorOption) => (
 	</div>
 );
 
-// Layout-only overrides so the dot isn't clipped by react-select's default
-// multiValue container (overflow: hidden, no flex alignment)
-const colorSelectStyles: StylesConfig<ColorOption, true> = {
-	multiValue: (styles) => ({
-		...styles,
-		display: "flex",
-		alignItems: "center",
-		overflow: "visible",
-	}),
-	multiValueLabel: (styles) => ({
-		...styles,
-		display: "flex",
-		alignItems: "center",
-		overflow: "visible",
-	}),
-};
-
 //////// React Component ///////
 
 const NoteSearchBar = ({
@@ -48,14 +31,32 @@ const NoteSearchBar = ({
 }: {
 	collections: collectionFilterOption[];
 }) => {
+	// get existing search params data
+	const searchParams = useSearchParams();
+	const existingQuery = searchParams.get("query");
+	const existingCollectionFilters = searchParams.get("collection");
+	const existingColorFilters = searchParams.get("color");
+
 	//hooks
-	const [inputQuery, setInputQuery] = useState<string>("");
+	const [inputQuery, setInputQuery] = useState<string>(existingQuery ?? "");
 	const [collectionFilterApplied, setCollectionFilterApplied] = useState<
 		collectionFilterOption[]
-	>([]);
+	>(() => {
+		return existingCollectionFilters
+			? collections.filter((c) =>
+					existingCollectionFilters.split(",").includes(c.value),
+				)
+			: [];
+	});
 	const [colorFilterApplied, setColorFilterApplied] = useState<
 		{ label: string; value: string }[]
-	>([]);
+	>(() => {
+		return existingColorFilters
+			? NOTE_COLORS.filter((nc) =>
+					existingColorFilters.split(",").includes(nc.value),
+				)
+			: [];
+	});
 	const router = useRouter();
 
 	// form submit handler
@@ -87,6 +88,7 @@ const NoteSearchBar = ({
 					type="search"
 					onChange={(e) => setInputQuery(e.target.value)}
 					placeholder="Type Note Content to Search..."
+					defaultValue={inputQuery}
 					className="input input-xl input-bordered flex-1 focus:outline-none"
 				/>
 				<button type="submit" className="btn btn-info btn-lg">
@@ -103,6 +105,7 @@ const NoteSearchBar = ({
 					isSearchable
 					onChange={(e) => setCollectionFilterApplied(e.flat())}
 					placeholder="Filter by Non-Empty Collections"
+					defaultValue={collectionFilterApplied}
 					classNamePrefix="react-select"
 					className="w-full text-black"
 				/>
@@ -114,11 +117,11 @@ const NoteSearchBar = ({
 					instanceId="color-filter-select"
 					options={NOTE_COLORS}
 					formatOptionLabel={formatColorOptionLabel}
-					styles={colorSelectStyles}
 					isMulti
 					isSearchable
 					onChange={(e) => setColorFilterApplied(e.flat())}
 					placeholder="Filter by Note Color Tags"
+					defaultValue={colorFilterApplied}
 					classNamePrefix="react-select"
 					className="w-full text-black"
 				/>
