@@ -12,7 +12,6 @@ import NoteListItem from "./_components/NoteListItem";
 import { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";
-import { Toaster } from "react-hot-toast";
 import { StickyNoteOff } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -55,7 +54,6 @@ export default async function NoteSearchPage({
 
 	return (
 		<div className="flex min-h-screen">
-			<Toaster />
 			<Sidebar currentPath="/notes" />
 			<main className="flex-1 p-3">
 				<header className="flex items-center justify-center mb-8">
@@ -94,7 +92,7 @@ export default async function NoteSearchPage({
 								([videoId, notes]) => (
 									<details
 										key={videoId}
-										className="collapse collapse-arrow join-item border border-base-300 bg-base-100"
+										className="collapse collapse-arrow rounded-2xl join-item border border-base-300 bg-base-100"
 										open
 									>
 										{/* video title */}
@@ -107,7 +105,7 @@ export default async function NoteSearchPage({
 											</Link>
 										</summary>
 										{/* note list for that video, accordion grouped */}
-										<div className="collapse-content flex flex-col gap-1">
+										<div className="collapse-content flex flex-col gap-2">
 											{notes.map((note) => (
 												<NoteListItem key={note.noteId} note={note} />
 											))}
