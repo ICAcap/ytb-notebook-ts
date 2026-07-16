@@ -54,7 +54,7 @@ export default async function NoteSearchPage({
 			<Sidebar currentPath="/notes" />
 			<main className="flex-1 p-3">
 				<header className="flex items-center justify-center mb-8">
-					<h1 className="text-5xl font-semibold">Search My Notes</h1>
+					<h1 className="text-5xl font-semibold">My Notes</h1>
 				</header>
 
 				{/* searchbar with filtering */}
@@ -85,11 +85,14 @@ export default async function NoteSearchPage({
 						</div>
 					) : (
 						<div className="flex flex-col gap-2 mb-4">
-							{searchedNotes.map((note) => (
+							{searchedNotes.map((note, idx) => (
 								<div
 									key={note.noteId}
 									className="flex flex-col gap-1 p-2 border-b border-base-300"
 								>
+									<label className="label">
+										{idx + 1 + (page - 1) * pageSize}
+									</label>
 									<span className="font-semibold">{note.video.title}</span>
 									<span className="text-sm text-base-content/70">
 										{formatTimeStamp(note.startTime)} -{" "}
