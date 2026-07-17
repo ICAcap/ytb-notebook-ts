@@ -38,8 +38,8 @@ export default function Sidebar({
 	const navigation = [
 		{ name: "Dashboard", href: "/dashboard", icon: LayoutPanelLeft },
 		{ name: "Videos", href: "/videos", icon: Tv },
-		{ name: "Notes", href: "/notes", icon: BookSearch },
 		{ name: "Collection", href: "/collection", icon: FolderBookmark },
+		{ name: "Notes", href: "/notes", icon: BookSearch },
 		{ name: "Setting", href: "/setting", icon: Settings },
 	];
 
