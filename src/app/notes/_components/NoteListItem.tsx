@@ -1,8 +1,10 @@
+"use client";
 import { renderToReactElement } from "@tiptap/static-renderer";
 import { NoteWithVideo } from "../../../../lib/dbTableAction/noteTableAction";
 import { formatTimeStamp } from "../../../../utils/formatTimeStamp";
 import { TiptapExtensions } from "@/_components/RichTextEditor/TiptapExtension";
 import { JSONContent } from "@tiptap/react";
+import { useRouter } from "next/navigation";
 
 export default function NoteListItem({ note }: { note: NoteWithVideo }) {
 	const updatedAtLabel = note.updatedAt.toLocaleString("en-US", {
@@ -13,6 +15,12 @@ export default function NoteListItem({ note }: { note: NoteWithVideo }) {
 		minute: "2-digit",
 		second: "2-digit",
 	});
+
+	const router = useRouter();
+
+	const handleClick = (vidId: string, time: number) => {
+		router.push(`/videos/${vidId}?startAt=${time}`);
+	};
 
 	return (
 		<div
@@ -25,20 +33,26 @@ export default function NoteListItem({ note }: { note: NoteWithVideo }) {
 			>
 				<div className="flex flex-row w-full justify-between gap-1 p-2 border-b border-base-300">
 					<span
-						className="text-xs text-base-content/60 truncate justify-center"
+						className="text-sm  truncate justify-center"
 						title={updatedAtLabel}
 					>
 						updated {updatedAtLabel}
 					</span>
 					<div className="flex flex-row gap-2 items-center">
-						<button className="btn btn-xs btn-primary">
+						<button
+							className="btn btn-xs btn-primary"
+							onClick={() => handleClick(note.videoId, note.startTime)}
+						>
 							{formatTimeStamp(note.startTime)}
 						</button>
 
 						{note.startTime !== note.endTime && (
 							<>
 								<span className="text-2xl">➨</span>
-								<button className="btn btn-xs btn-primary">
+								<button
+									className="btn btn-xs btn-primary"
+									onClick={() => handleClick(note.videoId, note.endTime)}
+								>
 									{formatTimeStamp(note.endTime)}
 								</button>
 							</>

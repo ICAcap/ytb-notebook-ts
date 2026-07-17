@@ -4,6 +4,7 @@ import ReactPlayer from "react-player";
 import { RefObject, useRef } from "react";
 import { updateVideoPlayedTime } from "../../../../../lib/dbTableAction/videoTableAction";
 import { memo } from "react";
+import { useSearchParams } from "next/navigation";
 
 interface VideoPlayerProps {
 	videoId: string;
@@ -29,6 +30,11 @@ const VideoPlayer = ({
 	const internalRef = useRef<HTMLVideoElement | null>(null);
 	// fall back to internal hook if need to use the component by itself
 	const reactPlayerRef = playerRef ?? internalRef;
+
+	// startAt search param
+	const searchParams = useSearchParams();
+	const startAtParam = searchParams.get("startAt");
+	const startAt = startAtParam ? Number(startAtParam) : undefined;
 
 	const playerAlreadyMounted = useRef(false);
 
@@ -69,15 +75,16 @@ const VideoPlayer = ({
 					controls={true}
 					width="100%"
 					height="100%"
-					playing={false}
+					playing={true}
 					onReady={() => {
 						// Set the player's current time to the last played time when it's ready,
+						// (?startAt=<seconds> takes precedence over the persisted lastPlayedTime),
+						// e.g. when navigating here from a note's timestamp badge
 						// but only on the initial player mount
 						if (reactPlayerRef.current && !playerAlreadyMounted.current) {
+							const seekTo = startAt ?? lastPlayedTime;
 							reactPlayerRef.current.currentTime =
-								lastPlayedTime >= reactPlayerRef.current.duration - 1
-									? 0
-									: lastPlayedTime;
+								seekTo >= reactPlayerRef.current.duration - 1 ? 0 : seekTo;
 							playerAlreadyMounted.current = true;
 						}
 					}}
