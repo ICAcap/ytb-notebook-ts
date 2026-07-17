@@ -2,7 +2,7 @@
 
 import { prisma } from "../prisma";
 import { InputJsonValue } from "../../generated/prisma/runtime/client";
-import { Note } from "../../generated/prisma";
+import { Note, Prisma } from "../../generated/prisma";
 import { JSONContent } from "@tiptap/react";
 import { tiptapToText } from "../../utils/tiptapToText";
 
@@ -210,6 +210,42 @@ export const getNoteCountByUser = cache(async function (
 	return 0;
 });
 
+// Minimum trigram similarity for a note's contentText to count as a fuzzy match.
+const TRGM_SIMILARITY_THRESHOLD = 0.15;
+
+// Shared WHERE fragment (without the leading "WHERE") for the search/count queries below.
+// Combines: userId scoping, fuzzy+substring match on contentText, collection filter
+// (via the implicit "_CollectionToVideo" join table), and color filter.
+function buildSearchWhereFragment(
+	userId: string,
+	query: string,
+	collectionIds: string[],
+	colors: string[],
+): Prisma.Sql {
+	const conditions: Prisma.Sql[] = [Prisma.sql`n."userId" = ${userId}`];
+
+	if (query) {
+		conditions.push(
+			Prisma.sql`(n."contentText" ILIKE ${"%" + query + "%"} OR similarity(n."contentText", ${query}) > ${TRGM_SIMILARITY_THRESHOLD})`,
+		);
+	}
+
+	if (collectionIds.length) {
+		conditions.push(
+			Prisma.sql`EXISTS (
+				SELECT 1 FROM "_CollectionToVideo" ctv
+				WHERE ctv."B" = n."videoId" AND ctv."A" IN (${Prisma.join(collectionIds)})
+			)`,
+		);
+	}
+
+	if (colors.length) {
+		conditions.push(Prisma.sql`n."color" IN (${Prisma.join(colors)})`);
+	}
+
+	return Prisma.join(conditions, " AND ");
+}
+
 export const getNotesWithSearchParam = cache(async function (
 	userId: string,
 	page: number,
@@ -227,41 +263,30 @@ export const getNotesWithSearchParam = cache(async function (
 	const skipItemNum = (page - 1) * pageSize;
 
 	// build where clause
-	// 1. Query query
+	// 1. Query query: fuzzy trigram similarity + substring match on contentText
 	// 2. collection (via parent video, Note has no direct collection relation); comma-separated collectionIds, OR'd
 	// 3. color hex; comma-separated, OR'd
 	const collectionIds = collection ? collection.split(",").filter(Boolean) : [];
 	const colors = color ? color.split(",").filter(Boolean) : [];
 
-	const where = {
-		userId,
-		...(query
-			? { contentText: { contains: query, mode: "insensitive" as const } }
-			: {}),
-		...(collectionIds.length
-			? {
-					video: {
-						collections: { some: { collectionId: { in: collectionIds } } },
-					},
-				}
-			: {}),
-		...(colors.length ? { color: { in: colors } } : {}),
-	};
+	const whereFragment = buildSearchWhereFragment(userId, query, collectionIds, colors);
+
+	// When there's a query, rank best fuzzy matches first; otherwise fall back to
+	// the original video-title/startTime/createdAt ordering.
+	const orderByFragment = query
+		? Prisma.sql`ORDER BY similarity(n."contentText", ${query}) DESC, n."startTime" ASC, n."createdAt" ASC`
+		: Prisma.sql`ORDER BY v."title" ASC, n."startTime" ASC, n."createdAt" ASC`;
 
 	try {
-		const notes = await prisma.note.findMany({
-			where: where,
-			take: pageSize,
-			skip: skipItemNum,
-			include: {
-				video: { select: { title: true, videoId: true } },
-			},
-			orderBy: [
-				{ video: { title: "asc" } },
-				{ startTime: "asc" },
-				{ createdAt: "asc" },
-			],
-		});
+		const notes = await prisma.$queryRaw<NoteWithVideo[]>`
+			SELECT n.*, jsonb_build_object('title', v."title", 'videoId', v."videoId") AS video
+			FROM "Note" n
+			JOIN "Video" v ON v."videoId" = n."videoId"
+			WHERE ${whereFragment}
+			${orderByFragment}
+			LIMIT ${pageSize}
+			OFFSET ${skipItemNum}
+		`;
 
 		return notes;
 	} catch (error) {
@@ -283,24 +308,16 @@ export const getNoteCountWithSearchParams = cache(async function (
 	const collectionIds = collection ? collection.split(",").filter(Boolean) : [];
 	const colors = color ? color.split(",").filter(Boolean) : [];
 
-	const where = {
-		userId,
-		...(query
-			? { contentText: { contains: query, mode: "insensitive" as const } }
-			: {}),
-		...(collectionIds.length
-			? {
-					video: {
-						collections: { some: { collectionId: { in: collectionIds } } },
-					},
-				}
-			: {}),
-		...(colors.length ? { color: { in: colors } } : {}),
-	};
+	const whereFragment = buildSearchWhereFragment(userId, query, collectionIds, colors);
 
 	try {
-		const count = await prisma.note.count({ where });
-		return count;
+		const result = await prisma.$queryRaw<{ count: bigint }[]>`
+			SELECT COUNT(*) AS count
+			FROM "Note" n
+			JOIN "Video" v ON v."videoId" = n."videoId"
+			WHERE ${whereFragment}
+		`;
+		return Number(result[0]?.count ?? 0);
 	} catch (error) {
 		console.error("Error fetching note search count", error);
 		return 0;

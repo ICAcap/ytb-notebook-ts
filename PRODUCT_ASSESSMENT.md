@@ -1,8 +1,8 @@
-# YTB Notebook — Product & Codebase Assessment (2026-07-09)
+# YTB Notebook — Product & Codebase Assessment (2026-07-09, revised 2026-07-17)
 
 A from-the-code read of where this project stands, whether it's deployable, what to build next, and what to use for a showcase homepage. Based on direct inspection of the repo (schema, data layer, auth, components, git history) plus research on what gets developers hired in 2026.
 
-> This assessment was originally written in June 2026 and re-verified twice since (2026-07-08, 2026-07-09). Earlier drafts tracked corrections as a bolted-on addendum; this version folds everything into one current read so it doesn't contradict itself mid-document.
+> This assessment was originally written in June 2026 and re-verified three times since (2026-07-08, 2026-07-09, 2026-07-17). Earlier drafts tracked corrections as a bolted-on addendum; this version folds everything into one current read so it doesn't contradict itself mid-document.
 
 ---
 
@@ -10,9 +10,9 @@ A from-the-code read of where this project stands, whether it's deployable, what
 
 - **Architecturally solid.** Auth, data isolation, schema design, and Next.js App Router usage are all done correctly — not "tutorial-quality."
 - **Two of the original blockers are closed**: the exposed `/tiptap` dev route is deleted, and `.env.example` now documents every required credential.
-- **A real feature shipped since the original draft**: authenticated, XSS-hardened PDF export (single note + whole-video) backed by a cached warm Puppeteer instance — a genuinely good systems-design talking point.
-- **Two blockers remain**, both cheap: no rate limiting, and `README.md` is still `create-next-app` boilerplate. A root `global-error.tsx` boundary is now implemented, closing that gap; the dead `screenshotUrl` schema field has been removed; security headers are now set in `next.config.ts`; `LICENSE` (MIT) has been added.
-- **Remaining effort to "launchable as a resume portfolio piece": ~1.5–2 focused days**, no architecture changes required.
+- **Two real features shipped since the original draft**: authenticated, XSS-hardened PDF export (single note + whole-video) backed by a cached warm Puppeteer instance, and — new as of 2026-07-17 — **full-text search across note content**, not just video titles (see §1 and §4). Both are genuinely good systems-design talking points.
+- **One blocker remains, and it's now the last one**: no rate limiting anywhere. `README.md` is still `create-next-app` boilerplate — cheap but no longer purely a "blocker" framing, see below. A root `global-error.tsx` boundary is implemented; the dead `screenshotUrl` schema field has been removed; security headers are set in `next.config.ts`; `LICENSE` (MIT) has been added.
+- **Remaining effort to "launchable as a resume portfolio piece": ~1–1.5 focused days**, no architecture changes required.
 
 ---
 
@@ -24,7 +24,8 @@ A from-the-code read of where this project stands, whether it's deployable, what
 - **Schema reflects actual query patterns**: composite uniqueness (`[userId, youtubeVidID]`, `[userId, collectionName]`), indexes on `userId` and `userId+createdAt` specifically because those are the lookup paths used — this isn't `@@index` cargo-culting.
 - **Note content stored as structured Tiptap JSON, not raw HTML** — avoids stored-XSS by construction; rendering uses `@tiptap/static-renderer`'s `renderToReactElement`/`renderToHTMLString` rather than `dangerouslySetInnerHTML`.
 - **Playback UX is genuinely thought through**: throttled (750ms) + debounced position saves, resume-from-`lastPlayedTime`, auto-scroll-pause-while-editing — small details that separate "I followed a tutorial" from "I used this myself and fixed what annoyed me."
-- **PDF export (new since June draft, commits `f730ad3`…`4dbfcf5`)**: two authenticated routes (`src/app/api/notes/[noteId]/pdf`, `src/app/api/notes/video/[videoId]/pdf`), both call `requireSession()` and scope by `userId`. `utils/puppeteerBrowser.ts` caches a **warm Puppeteer `Browser` on `globalThis`, keyed by the launch Promise** (not the resolved value), so concurrent requests await one in-flight launch instead of racing separate `puppeteer.launch()` calls, with auto-recovery on `disconnected`. `escapeHtml()` sanitizes the video title before it's interpolated into the HTML passed to `page.setContent()`, and `setJavaScriptEnabled(false)` closes the obvious stored-XSS/SSRF vector. This is a substantive, interview-ready systems-design answer: "shared warm-process pool for an expensive external resource, promise-based dedup to avoid a launch race, XSS hardening on the render path."
+- **PDF export (new since June draft, commits `f730ad3`…`4dbfcf5`)**: two authenticated routes (`src/app/api/notes/[noteId]/pdf`, `src/app/api/notes/video/[videoId]/pdf`), both call `requireSession()` and scope by `userId`. `lib/puppeteerBrowser.ts` caches a **warm Puppeteer `Browser` on `globalThis`, keyed by the launch Promise** (not the resolved value), so concurrent requests await one in-flight launch instead of racing separate `puppeteer.launch()` calls, with auto-recovery on `disconnected`. `escapeHtml()` sanitizes the video title before it's interpolated into the HTML passed to `page.setContent()`, and `setJavaScriptEnabled(false)` closes the obvious stored-XSS/SSRF vector. This is a substantive, interview-ready systems-design answer: "shared warm-process pool for an expensive external resource, promise-based dedup to avoid a launch race, XSS hardening on the render path."
+- **Full-text note content search (new since 2026-07-09 draft, ~8 commits, 2026-07-12 → 2026-07-17)**: this was the top item in the "Feature Additions Worth Considering" list in the prior draft, and it's now built and working — not a stub. `prisma/schema.prisma` adds `Note.contentText String @default("") @db.Text` (Tiptap JSON flattened to plain text via `utils/tiptapToText.ts`) plus `@@index([userId, contentText])`; `createNote()`/`updateNote()` in `lib/dbTableAction/noteTableAction.ts` keep it in sync on every write. `getNotesWithSearchParam(userId, page, pageSize, query, collection, color)` filters on `contentText: { contains: query, mode: "insensitive" }` with optional collection/color filters — a real content match, not a title-only search dressed up. The UI lives at `src/app/notes/page.tsx` (`NoteSearchPage`), driven by `src/app/notes/_components/NoteSearchBar.tsx` via URL search params, with results grouped by video into an alphabetical accordion (`NoteListItem` per note) and a `startAt` param that jumps `VideoPlayer` straight to the matched timestamp. That last part — search result → exact playback position — is a nice end-to-end UX detail worth mentioning in an interview, not just "we added a search box."
 - **19+ migrations across ~5 weeks** of steady, incremental schema evolution (renames, index additions, cascade-rule fixes) — real iteration, not a single big-bang commit.
 
 ---
@@ -71,9 +72,9 @@ This project already clears the hardest bar — it's not a tutorial clone, and t
 ## 4. Feature Additions Worth Considering
 
 **Tier 1 — cheap, finishes the product, directly serves the "demoable" gap above:**
-- **Public, read-only share link** for a single Video+Notes or a whole Collection. Right now the only way to show this to anyone is to hand them your Google account — confirmed no such feature exists yet. This single feature does more for "is this deployable as a demo" than anything else on this list.
-- **Search across note *content***, not just video titles — Tiptap JSON can be flattened to plain text and matched; currently only titles are searchable.
-- **Export notes** — already shipped as PDF; Markdown export would be a cheap addition on top of the existing Tiptap-JSON-to-plain-text path if the content search feature above gets built.
+- ~~**Search across note *content***, not just video titles~~ — **shipped 2026-07-17.** `src/app/notes/page.tsx` + `getNotesWithSearchParam()` (`lib/dbTableAction/noteTableAction.ts`) do real `contentText` matching (Prisma `contains`, case-insensitive) against a flattened-Tiptap field kept in sync on every note write, with collection/color filters and jump-to-timestamp playback. See §1.
+- **Public, read-only share link** for a single Video+Notes or a whole Collection. Right now the only way to show this to anyone is to hand them your Google account — confirmed no such feature exists yet. With content search now done, this is the single highest-leverage item left on the whole list for "is this deployable as a demo."
+- **Export notes** — already shipped as PDF; Markdown export would be a cheap addition on top of the existing Tiptap-JSON-to-plain-text path — and that path (`utils/tiptapToText.ts`) now already exists as a side effect of building content search, so this is cheaper than it was in the last draft.
 
 **Tier 2 — medium effort, meaningfully different surface area:**
 - A **collection-level notebook view** — notes aggregated across every video in a collection, not just per-video.
@@ -121,11 +122,11 @@ The stack already in place — Next.js 16 + Tailwind v4 + DaisyUI — is enough;
 
 ## 7. Suggested Order of Operations
 
-1. **Half day**: basic per-user/per-IP rate limiting on note/video creation and the PDF export routes; harden the YouTube title cache. Highest priority — the PDF routes make this an availability risk, not just cost overrun.
-2. **Half day**: rewrite `README.md` with screenshots + a short architecture section. (`LICENSE` already added — MIT.)
+1. **Half day**: basic per-user/per-IP rate limiting on note/video creation and the PDF export routes; harden the YouTube title cache. Highest priority — the PDF routes make this an availability risk, not just cost overrun. (Content search added a fourth write path — note create/update now also writes `contentText` — but it's the same DB write, no new rate-limit surface.)
+2. **Half day**: rewrite `README.md` with screenshots + a short architecture section, including the note-content-search feature and its search→timestamp-jump UX — it's now one of the more differentiated things in the app and should be shown, not just PDF export. (`LICENSE` already added — MIT.)
 3. **Half day**: deploy to Vercel + Neon, smoke-test the golden path end to end on the live URL.
 4. **1 day**: build the showcase homepage from the template/section sources above.
-5. **1 day**: ship the public read-only share link (Tier 1 feature) — the single highest-leverage item on the whole list, because it turns "trust me, it works" into something a hiring manager can click.
+5. **1 day**: ship the public read-only share link (Tier 1 feature) — now the single highest-leverage item on the whole list, because it turns "trust me, it works" into something a hiring manager can click. Content search being done removes the only other Tier 1 competitor for this slot.
 6. After that: pick one Tier 2/3 feature that's genuinely interesting to build, not the one that looks best on paper — genuine depth reads better than checklist completeness.
 
 ---
