@@ -22,8 +22,8 @@ YouTube Notebook: A Next.js 16 application for managing video collections with t
   - User → many Videos, Collections, Notes (soft relationships)
   - Video → many Notes (hard delete cascade)
   - Collection ↔ Video (many-to-many implicit in schema)
-  - Note: tied to User and Video; has `startTime`, `endTime`, `color`, and JSON `content` (Tiptap)
-- **Indexes**: Optimized for user_id and user_id+createdAt lookups on Video/Collection/Note
+  - Note: tied to User and Video; has `startTime`, `endTime`, `color`, JSON `content` (Tiptap), and flattened `contentText` (plain text mirror of `content`, search-only)
+- **Indexes**: Optimized for user_id and user_id+createdAt lookups on Video/Collection/Note; `Note.contentText` has a `pg_trgm` GIN index (`Note_contentText_trgm_idx`) for fuzzy search — requires the `pg_trgm` Postgres extension (see migration `20260717204814_add_pgextension`)
 - **Prisma Client**: Output to `generated/prisma` (generated location)
 
 ### Frontend Pages
@@ -31,6 +31,7 @@ YouTube Notebook: A Next.js 16 application for managing video collections with t
 - `src/app/dashboard/page.tsx` — Main dashboard (protected)
 - `src/app/videos/page.tsx` — Video list with search and pagination (protected)
 - `src/app/videos/[id]/page.tsx` — Video player and notes view (protected)
+- `src/app/notes/page.tsx` — Cross-video note search page: query + collection/color filters, results grouped by video into accordions (protected)
 - `src/app/collection/page.tsx` — Collections management with grid layout (protected)
 - `src/app/setting/page.tsx` — User settings (protected)
 - `src/app/(auth)/sign-in/page.tsx` — Sign-in form component
@@ -62,8 +63,12 @@ Full Tiptap-based editor suite. Note content is stored as Tiptap JSON, not plain
 
 ### Video Detail Components (`src/app/videos/[id]/_components/`)
 - `VideoDetailView.tsx` — Top-level orchestrator; wires VideoPlayer + NoteContainer + CollectionBadgeList; owns throttled playback time sync (750ms)
-- `VideoPlayer.tsx` — ReactPlayer wrapper; saves playback position via `updateVideoPlayedTime`; throttle (30s heartbeat) + debounce (3s on pause/seek/end); resumes from `lastPlayedTime` on mount; uses lodash
+- `VideoPlayer.tsx` — ReactPlayer wrapper; saves playback position via `updateVideoPlayedTime`; throttle (30s heartbeat) + debounce (3s on pause/seek/end); resumes from `lastPlayedTime` on mount, or from the `?startAt=<seconds>` URL search param if present (takes precedence, e.g. when navigating in from a note's timestamp badge); uses lodash
 - `NoteContainer.tsx` — Manages notes display; sticky header with collapsible add form; sorts by `startTime` then `createdAt`; handles CRUD via child callbacks; receives `playerRef` to capture current time
+
+### Note Search Components (`src/app/notes/_components/`)
+- `NoteSearchBar.tsx` — Query input + collection/color multi-select filters (react-select); reads/writes `query`/`collection`/`color` URL search params, pushes new URL on submit
+- `NoteListItem.tsx` — Read-only note card for search results: rendered rich text, timestamp badges that navigate to `/videos/[id]?startAt=<seconds>`
 
 ### Collection Components (`src/app/collection/_components/`)
 - `CollectionContextProvider.tsx` — Context provider for collection userId
@@ -138,8 +143,10 @@ See `node_modules/next/dist/docs/` — this version has breaking changes in APIs
   - `getNoteCountByVideo(userId, videoId)` — Note count for a video
   - `getNotesByUser(userId, page, pageSize)` — Paginated notes for user
   - `getNoteCountByUser(userId)` — Total note count for user
-  - `createNote(NoteCreation)` — Create new note
-  - `updateNote(NoteUpdate)` — Update existing note
+  - `getNotesWithSearchParam(userId, page, pageSize, query, collection, color)` — Cross-video note search; raw SQL (`Prisma.sql`) combining `ILIKE` substring + `pg_trgm` `similarity()` fuzzy match on `contentText`, collection filter (via `_CollectionToVideo` join table), and color filter; ranks by similarity when `query` is set, else by video title/startTime
+  - `getNoteCountWithSearchParams(userId, query, collection, color)` — Total count for the above, same WHERE fragment (`buildSearchWhereFragment`)
+  - `createNote(NoteCreation)` — Create new note; derives `contentText` from `content` via `tiptapToText`
+  - `updateNote(NoteUpdate)` — Update existing note; re-derives `contentText`
   - `deleteNote(userId, noteId)` — Delete note
 - **Session access**:
   - Server-side: `lib/requireSession.ts` validates session and throws redirect if missing
@@ -169,6 +176,9 @@ See `node_modules/next/dist/docs/` — this version has breaking changes in APIs
   - `getH()`, `getM()`, `getS()` — Extract hours/minutes/seconds from a duration
 - **Note colors** (`utils/noteColors.ts`):
   - `NOTE_COLORS` — Predefined color palette for notes (gray, blue, green, gold, red)
+- **Note content flattening** (`utils/tiptapToText.ts`):
+  - `tiptapToText(doc)` — Flattens Tiptap JSON to plain text (whitespace-joined, collapsed) for storage in `Note.contentText`, which powers note search
+- **Backfill script** (`prisma/backfillNoteContentText.ts`): One-off script to populate `contentText` for existing notes after the field was added; run with `npx tsx prisma/backfillNoteContentText.ts`
 - **React Hook Form**: Used for form management (register, Controller, watch, handleSubmit)
 - **React Select**: Multi-select dropdown (collection selection in AddVideoForm)
 - **Lodash**: throttle/debounce for video playback, scroll, and search input
