@@ -26,6 +26,7 @@
         "overscan",
         "timeupdate",
         "Tiptap",
+        "trgm",
         "Upserted",
         "upserting"
     ]

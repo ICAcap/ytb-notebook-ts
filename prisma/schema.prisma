@@ -6,6 +6,7 @@
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
+  previewFeatures = ["fullTextSearchPostgres"]
 }
 
 datasource db {
@@ -102,6 +103,7 @@ model Note {
   @@index([videoId])
   @@index([userId])
   @@index([userId, contentText])
+  @@index([contentText(ops: raw("gin_trgm_ops"))], map: "Note_contentText_trgm_idx", type: Gin)
 }
 
 // BetterAuth needed
