@@ -53,7 +53,7 @@ Full Tiptap-based editor suite. Note content is stored as Tiptap JSON, not plain
 
 ### Video Components (`src/app/videos/_components/`)
 - `VideoCard.tsx` — Video list item display
-- `VideoSearchBar.tsx` — Search input with fuzzy-matched (Fuse.js) title autocomplete dropdown; debounced (250ms) suggestion lookup, closes on outside click/selection/clear, reopens on refocus if suggestions are cached
+- `VideoSearchBar.tsx` — Title search/autocomplete built on `react-select/creatable`; select an existing title or type a new query via the "Search for..." create option, pushes `/videos?query=...` on selection
 - `AddVideoButton.tsx` — Modal trigger + context for multi-stage video add form
 - `AddVideoForm.tsx` — Two-stage form: (1) YouTube URL validation, (2) Title & collections
 - `EditVideoForm.tsx` — Video edit form (title/collections), opened from `VideoCard.tsx`
@@ -182,6 +182,6 @@ See `node_modules/next/dist/docs/` — this version has breaking changes in APIs
 - **React Hook Form**: Used for form management (register, Controller, watch, handleSubmit)
 - **React Select**: Multi-select dropdown (collection selection in AddVideoForm)
 - **Lodash**: throttle/debounce for video playback, scroll, and search input
-- **Fuse.js**: Fuzzy search against video titles for `VideoSearchBar` autocomplete
+- **Fuse.js**: Fuzzy search against note text for `NoteContainer`'s in-page note filter
 - **react-hot-toast**: Toast notifications
 - **@tanstack/react-virtual**: Virtualized list rendering
