@@ -218,64 +218,10 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 
-exports.Prisma.UserOrderByRelevanceFieldEnum = {
-  id: 'id',
-  email: 'email',
-  name: 'name',
-  image: 'image'
-};
-
-exports.Prisma.VideoOrderByRelevanceFieldEnum = {
-  videoId: 'videoId',
-  userId: 'userId',
-  youtubeVidID: 'youtubeVidID',
-  title: 'title'
-};
-
-exports.Prisma.CollectionOrderByRelevanceFieldEnum = {
-  collectionId: 'collectionId',
-  collectionName: 'collectionName',
-  userId: 'userId'
-};
-
 exports.Prisma.JsonNullValueFilter = {
   DbNull: Prisma.DbNull,
   JsonNull: Prisma.JsonNull,
   AnyNull: Prisma.AnyNull
-};
-
-exports.Prisma.NoteOrderByRelevanceFieldEnum = {
-  noteId: 'noteId',
-  userId: 'userId',
-  videoId: 'videoId',
-  contentText: 'contentText',
-  color: 'color'
-};
-
-exports.Prisma.SessionOrderByRelevanceFieldEnum = {
-  id: 'id',
-  token: 'token',
-  ipAddress: 'ipAddress',
-  userAgent: 'userAgent',
-  userId: 'userId'
-};
-
-exports.Prisma.AccountOrderByRelevanceFieldEnum = {
-  id: 'id',
-  accountId: 'accountId',
-  providerId: 'providerId',
-  userId: 'userId',
-  accessToken: 'accessToken',
-  refreshToken: 'refreshToken',
-  idToken: 'idToken',
-  scope: 'scope',
-  password: 'password'
-};
-
-exports.Prisma.VerificationOrderByRelevanceFieldEnum = {
-  id: 'id',
-  identifier: 'identifier',
-  value: 'value'
 };
 
 
