@@ -2,7 +2,7 @@
 
 import { prisma } from "../prisma";
 import { InputJsonValue } from "../../generated/prisma/runtime/client";
-import { Note, Prisma } from "../../generated/prisma";
+import { Note } from "../../generated/prisma";
 import { JSONContent } from "@tiptap/react";
 import { tiptapToText } from "../../utils/tiptapToText";
 
@@ -213,37 +213,57 @@ export const getNoteCountByUser = cache(async function (
 // Minimum trigram similarity for a note's contentText to count as a fuzzy match.
 const TRGM_SIMILARITY_THRESHOLD = 0.15;
 
-// Shared WHERE fragment (without the leading "WHERE") for the search/count queries below.
+// Shared WHERE clause (without the leading "WHERE") for the search/count queries below.
 // Combines: userId scoping, fuzzy+substring match on contentText, collection filter
 // (via the implicit "_CollectionToVideo" join table), and color filter.
-function buildSearchWhereFragment(
+//
+// Built as plain SQL text + a positional params array (for $queryRawUnsafe) instead of
+// composed Prisma.sql/Prisma.join fragments: Prisma 7.8.0 has a regression where a
+// Prisma.Sql fragment interpolated into another $queryRaw/Prisma.sql template gets
+// serialized as JSON instead of composed, corrupting parameter numbering
+// (https://github.com/prisma/prisma/issues/28963). All user-controlled values below are
+// still passed through `params` and referenced positionally as $N, never string-interpolated.
+function buildSearchWhereClause(
 	userId: string,
 	query: string,
 	collectionIds: string[],
 	colors: string[],
-): Prisma.Sql {
-	const conditions: Prisma.Sql[] = [Prisma.sql`n."userId" = ${userId}`];
+): { text: string; params: unknown[] } {
+	const params: unknown[] = [userId];
+	const conditions: string[] = [`n."userId" = $1`];
 
 	if (query) {
+		params.push("%" + query + "%", query, TRGM_SIMILARITY_THRESHOLD);
+		const likeParam = params.length - 2;
+		const simParam = params.length - 1;
+		const thresholdParam = params.length;
 		conditions.push(
-			Prisma.sql`(n."contentText" ILIKE ${"%" + query + "%"} OR similarity(n."contentText", ${query}) > ${TRGM_SIMILARITY_THRESHOLD})`,
+			`(n."contentText" ILIKE $${likeParam} OR similarity(n."contentText", $${simParam}) > $${thresholdParam})`,
 		);
 	}
 
 	if (collectionIds.length) {
+		const placeholders = collectionIds.map((id) => {
+			params.push(id);
+			return `$${params.length}`;
+		});
 		conditions.push(
-			Prisma.sql`EXISTS (
+			`EXISTS (
 				SELECT 1 FROM "_CollectionToVideo" ctv
-				WHERE ctv."B" = n."videoId" AND ctv."A" IN (${Prisma.join(collectionIds)})
+				WHERE ctv."B" = n."videoId" AND ctv."A" IN (${placeholders.join(", ")})
 			)`,
 		);
 	}
 
 	if (colors.length) {
-		conditions.push(Prisma.sql`n."color" IN (${Prisma.join(colors)})`);
+		const placeholders = colors.map((c) => {
+			params.push(c);
+			return `$${params.length}`;
+		});
+		conditions.push(`n."color" IN (${placeholders.join(", ")})`);
 	}
 
-	return Prisma.join(conditions, " AND ");
+	return { text: conditions.join(" AND "), params };
 }
 
 export const getNotesWithSearchParam = cache(async function (
@@ -269,24 +289,43 @@ export const getNotesWithSearchParam = cache(async function (
 	const collectionIds = collection ? collection.split(",").filter(Boolean) : [];
 	const colors = color ? color.split(",").filter(Boolean) : [];
 
-	const whereFragment = buildSearchWhereFragment(userId, query, collectionIds, colors);
+	const { text: whereText, params } = buildSearchWhereClause(
+		userId,
+		query,
+		collectionIds,
+		colors,
+	);
 
 	// When there's a query, rank best fuzzy matches first; otherwise fall back to
 	// the original video-title/startTime/createdAt ordering.
-	const orderByFragment = query
-		? Prisma.sql`ORDER BY similarity(n."contentText", ${query}) DESC, n."startTime" ASC, n."createdAt" ASC`
-		: Prisma.sql`ORDER BY v."title" ASC, n."startTime" ASC, n."createdAt" ASC`;
+	let orderByText: string;
+	if (query) {
+		params.push(query);
+		orderByText = `ORDER BY similarity(n."contentText", $${params.length}) DESC, n."startTime" ASC, n."createdAt" ASC`;
+	} else {
+		orderByText = `ORDER BY v."title" ASC, n."startTime" ASC, n."createdAt" ASC`;
+	}
+
+	params.push(pageSize);
+	const limitParam = params.length;
+	params.push(skipItemNum);
+	const offsetParam = params.length;
+
+	const sqlText = `
+		SELECT n.*, jsonb_build_object('title', v."title", 'videoId', v."videoId") AS video
+		FROM "Note" n
+		JOIN "Video" v ON v."videoId" = n."videoId"
+		WHERE ${whereText}
+		${orderByText}
+		LIMIT $${limitParam}
+		OFFSET $${offsetParam}
+	`;
 
 	try {
-		const notes = await prisma.$queryRaw<NoteWithVideo[]>`
-			SELECT n.*, jsonb_build_object('title', v."title", 'videoId', v."videoId") AS video
-			FROM "Note" n
-			JOIN "Video" v ON v."videoId" = n."videoId"
-			WHERE ${whereFragment}
-			${orderByFragment}
-			LIMIT ${pageSize}
-			OFFSET ${skipItemNum}
-		`;
+		const notes = await prisma.$queryRawUnsafe<NoteWithVideo[]>(
+			sqlText,
+			...params,
+		);
 
 		return notes;
 	} catch (error) {
@@ -308,15 +347,25 @@ export const getNoteCountWithSearchParams = cache(async function (
 	const collectionIds = collection ? collection.split(",").filter(Boolean) : [];
 	const colors = color ? color.split(",").filter(Boolean) : [];
 
-	const whereFragment = buildSearchWhereFragment(userId, query, collectionIds, colors);
+	const { text: whereText, params } = buildSearchWhereClause(
+		userId,
+		query,
+		collectionIds,
+		colors,
+	);
+
+	const sqlText = `
+		SELECT COUNT(*) AS count
+		FROM "Note" n
+		JOIN "Video" v ON v."videoId" = n."videoId"
+		WHERE ${whereText}
+	`;
 
 	try {
-		const result = await prisma.$queryRaw<{ count: bigint }[]>`
-			SELECT COUNT(*) AS count
-			FROM "Note" n
-			JOIN "Video" v ON v."videoId" = n."videoId"
-			WHERE ${whereFragment}
-		`;
+		const result = await prisma.$queryRawUnsafe<{ count: bigint }[]>(
+			sqlText,
+			...params,
+		);
 		return Number(result[0]?.count ?? 0);
 	} catch (error) {
 		console.error("Error fetching note search count", error);
