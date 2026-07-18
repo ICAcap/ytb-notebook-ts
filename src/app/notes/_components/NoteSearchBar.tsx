@@ -7,7 +7,7 @@ import { FolderBookmark, Palette, Search } from "lucide-react";
 import { SubmitEvent } from "react";
 import { NOTE_COLORS } from "../../../../utils/noteColors";
 
-type collectionFilterOption = {
+type CollectionFilterOption = {
 	label: string;
 	value: string;
 	videoNum: number;
@@ -29,7 +29,7 @@ const formatColorOptionLabel = ({ label, value }: ColorOption) => (
 const NoteSearchBar = ({
 	collections,
 }: {
-	collections: collectionFilterOption[];
+	collections: CollectionFilterOption[];
 }) => {
 	// get existing search params data
 	const searchParams = useSearchParams();
@@ -40,7 +40,7 @@ const NoteSearchBar = ({
 	//hooks
 	const [inputQuery, setInputQuery] = useState<string>(existingQuery ?? "");
 	const [collectionFilterApplied, setCollectionFilterApplied] = useState<
-		collectionFilterOption[]
+		CollectionFilterOption[]
 	>(() => {
 		return existingCollectionFilters
 			? collections.filter((c) =>
