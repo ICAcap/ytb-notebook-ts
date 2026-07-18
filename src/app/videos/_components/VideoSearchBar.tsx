@@ -1,157 +1,76 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useMemo } from "react";
 import { BrushCleaning, Search } from "lucide-react";
-import Link from "next/link";
-import { SubmitEvent } from "react";
-import Fuse from "fuse.js";
-
-const _ = require("lodash"); // for debounce purpose
+import CreatableSelect from "react-select/creatable";
 
 type Props = {
 	unqVidTitles: string[];
 	query?: string;
 	currentCollection?: string;
 };
-// component
+
+type TitleOption = {
+	label: string;
+	value: string;
+};
+
+// component - react-select handles matching & lets users type a new query
 const VideoSearchBar = ({ unqVidTitles, query, currentCollection }: Props) => {
-	const [vidSuggestion, setVidSuggestion] = useState<string[]>([]);
-	const [showSuggestion, setShowSuggestion] = useState(false);
-	const containerRef = useRef<HTMLDivElement>(null);
 	const router = useRouter();
-	const fuse = useMemo(
+
+	const options: TitleOption[] = useMemo(
 		() =>
-			new Fuse(unqVidTitles, {
-				threshold: 0.3,
-			}),
+			unqVidTitles.toSorted().map((title) => ({ label: title, value: title })),
 		[unqVidTitles],
 	);
 
-	// debounce on keystrokes
-	const handleSearchVidSuggest = useRef(
-		_.debounce((typedQuery: string) => {
-			const cleanedQuery = typedQuery.trim().toLowerCase();
-			if (!cleanedQuery) {
-				setVidSuggestion([]);
-				setShowSuggestion(false);
-				return;
-			}
+	const currentValue: TitleOption | null = query
+		? { label: query, value: query }
+		: null;
 
-			const topMatches = fuse
-				.search(cleanedQuery, { limit: 15 })
-				.map((result) => result.item);
-			setVidSuggestion(topMatches);
-			setShowSuggestion(topMatches.length > 0);
-		}, 250), // Delay execution to avoid excessive re-renders during typing.
-	);
-
-	// cancel any pending debounced search if the component unmounts mid-type
-	useEffect(() => {
-		return () => handleSearchVidSuggest.current.cancel();
-	}, []);
-
-	// close the dropdown on outside click; mousedown (not click) so it fires
-	// before a click on a suggestion would otherwise blur the input first
-	useEffect(() => {
-		const handleClickOutside = (e: MouseEvent) => {
-			if (!containerRef.current?.contains(e.target as Node)) {
-				setShowSuggestion(false);
-			}
-		};
-		document.addEventListener("mousedown", handleClickOutside);
-		return () => document.removeEventListener("mousedown", handleClickOutside);
-	}, []);
-
-	// submitting query handlers (cached)
-	const handleSubmit = useCallback(
-		(e: SubmitEvent<HTMLFormElement>) => {
-			e.preventDefault();
-			const formData = new FormData(e.currentTarget);
-			const query =
-				(formData.get("query") as string).trim().toLowerCase() ?? "";
-			const searchParam = new URLSearchParams({ query });
-			setShowSuggestion(false);
-			router.push(`/videos?${searchParam}`);
-			(
-				document.getElementById("vid-search-bar-input") as HTMLInputElement
-			).blur(); //un-focus input field
-		},
-		[router],
-	);
+	const handleChange = (option: TitleOption | null) => {
+		const searchParam = new URLSearchParams({
+			query: (option?.value ?? "").trim().toLowerCase(),
+		});
+		router.push(`/videos?${searchParam}`);
+	};
 
 	return (
 		<div
-			className="dropdown mb-8 w-full"
-			ref={containerRef}
+			className="mb-8 flex w-full items-center gap-2"
 			title="Search Video Title"
 		>
-			{/* Search bar */}
-			<form
-				className="flex w-full items-center gap-2"
-				onSubmit={handleSubmit}
-			>
-				<Search className="h-5 w-5 shrink-0 text-base-content/70" />
-				<div className="join flex-1">
-					<input
-						id="vid-search-bar-input"
-						name="query"
-						type="search"
-						defaultValue={query}
-						placeholder="Search Video Title..."
-						autoComplete="off"
-						onChange={(e) => handleSearchVidSuggest.current(e.target.value)}
-						onFocus={() => {
-							if (vidSuggestion.length > 0) setShowSuggestion(true);
+			<Search className="h-5 w-5 shrink-0 text-base-content/70" />
+			<div className="flex flex-1 items-center gap-2">
+				<CreatableSelect<TitleOption, false>
+					instanceId="vid-search-bar-select"
+					options={options}
+					value={currentValue}
+					onChange={(option) => handleChange(option)}
+					onCreateOption={(inputValue) =>
+						handleChange({ label: inputValue, value: inputValue })
+					}
+					placeholder="Search or type a video title..."
+					classNamePrefix="react-select"
+					className="flex-1 text-black"
+					createOptionPosition="first"
+					formatCreateLabel={(inputValue) => `Search for "${inputValue}"`}
+				/>
+				{(query || currentCollection) && (
+					<button
+						type="button"
+						onClick={() => {
+							router.push("/videos");
 						}}
-						className="join-item input input-bordered flex-1 focus:outline-none"
-					/>
-					<button type="submit" className="join-item btn btn-primary">
-						Search
+						className="btn btn-square btn-error btn-ghost"
+						title="Clear Filter"
+					>
+						<BrushCleaning size={25} />
 					</button>
-					{(query || currentCollection) && (
-						<button
-							type="button"
-							onClick={() => {
-								(
-									document.getElementById(
-										"vid-search-bar-input",
-									) as HTMLInputElement
-								).value = "";
-								setVidSuggestion([]);
-								setShowSuggestion(false);
-								router.push("/videos");
-							}}
-							className="join-item btn btn-square btn-error btn-ghost"
-							title="Clear Filter"
-						>
-							<BrushCleaning size={25} />
-						</button>
-					)}
-				</div>
-			</form>
-			{/* show suggestions if there are any */}
-			{vidSuggestion.length > 0 && showSuggestion && (
-				<ul className="menu dropdown-content bg-base-300 rounded-box z-999 w-full p-1 shadow-sm">
-					{vidSuggestion.map((vid, idx) => (
-						<li
-							key={idx}
-							onClick={() => {
-								setShowSuggestion(false);
-								(
-									document.getElementById(
-										"vid-search-bar-input",
-									) as HTMLInputElement
-								).value = vid;
-							}}
-						>
-							<Link href={`/videos?${new URLSearchParams({ query: vid })}`}>
-								{vid}
-							</Link>
-						</li>
-					))}
-				</ul>
-			)}
+				)}
+			</div>
 		</div>
 	);
 };
