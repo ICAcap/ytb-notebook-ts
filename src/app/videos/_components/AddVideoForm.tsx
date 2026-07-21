@@ -76,9 +76,21 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 
 			const existing = await getExistingVideo(userId, ytbId);
 			foundExistingVid.current = existing ?? null;
-			fetchedTitle.current = existing
-				? ""
-				: ((await fetchYouTubeTitle(ytbId)) ?? "");
+
+			if (existing) {
+				fetchedTitle.current = "";
+			} else {
+				const title = await fetchYouTubeTitle(ytbId);
+				fetchedTitle.current = title ?? "";
+				// fetchYouTubeTitle returns null for rate-limit, network, and
+				// not-found cases alike; surface a generic notice so the user
+				// knows to fill the title in manually instead of assuming a bug
+				if (!title) {
+					toast.error("Couldn't auto-fetch title, please enter it manually", {
+						id: "youtube-title-fetch-failed",
+					});
+				}
+			}
 		} else {
 			YouTubeIdToAdd.current = "";
 			fetchedTitle.current = "";
