@@ -157,10 +157,10 @@ const NoteContainer = ({
 		// re-apply the current search query immediately (no debounce, no scroll)
 		// so notes added/edited/deleted while a search is active don't flash the
 		// full unfiltered list before the debounced handler catches up
-		const currentSearchQ =
-			(document.getElementById("search-note-q") as HTMLInputElement).value ??
-			"";
-		setSearchedNoteList(filterNotes(currentSearchQ, fuse, sortedNoteList));
+		const currentSearchQuery =
+			(document.getElementById("search-note-query") as HTMLInputElement)
+				.value ?? "";
+		setSearchedNoteList(filterNotes(currentSearchQuery, fuse, sortedNoteList));
 	}, [sortedNoteList, fuse]);
 
 	// internal auto-scroll flag for temporary pauses (e.g. wheel-scroll timer);
@@ -308,7 +308,7 @@ const NoteContainer = ({
 	return (
 		<div
 			ref={scrollRef}
-			className="flex flex-col border-l-2 items-center flex-1 min-w-0 lg:min-w-xl overflow-auto"
+			className="flex flex-col items-center flex-1 min-w-0 lg:min-w-xl overflow-auto"
 			style={{ height: "98dvh" }}
 		>
 			<Toaster toasterId="note-container" />
@@ -329,7 +329,7 @@ const NoteContainer = ({
 						>
 							<Search className="h-[1em]" />
 							<input
-								id="search-note-q"
+								id="search-note-query"
 								type="search"
 								placeholder="Search Notes, results ranked by relevance"
 								onChange={(e) => handleSearchNote.current(e.target.value)}
@@ -421,7 +421,6 @@ const NoteContainer = ({
 											endTime={note.endTime}
 											content={note.content}
 											color={note.color}
-											createdAt={note.createdAt}
 											updatedAt={note.updatedAt}
 											playerRef={playerRef}
 											onDeleted={handleNoteDeleted}
@@ -445,7 +444,7 @@ const NoteContainer = ({
 			) : (
 				// empty notes placeholder
 				<div className="w-full border border-dashed rounded-b-lg p-4 flex items-center justify-center min-h-50">
-					<span className="card card-xl card-dash text-center items-center text-2xl font-semibold">
+					<span className="card card-xl text-center items-center text-2xl font-semibold">
 						<p>No notes related to this video/search query</p>
 						<br />
 						<p>

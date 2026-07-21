@@ -16,12 +16,6 @@ declare global {
  * Returns the shared warm browser instance, launching one if needed.
  * Pinned to globalThis so dev-mode Fast Refresh reuses it instead of orphaning
  * a fresh Chromium process on every route-handler recompile.
- *
- * We cache the launch Promise itself (not just the resolved Browser). If we
- * cached the resolved value, two requests arriving before the first launch
- * finishes would both see "nothing cached yet" and each call puppeteer.launch(),
- * leaking an extra Chromium process. Caching the Promise means every concurrent
- * caller awaits the same in-flight launch.
  */
 export function getBrowser(): Promise<Browser> {
 	if (!globalThis.__puppeteerBrowserPromise) {

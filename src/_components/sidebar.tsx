@@ -5,6 +5,7 @@ import {
 	LayoutPanelLeft,
 	Tv,
 	FolderBookmark,
+	BookSearch,
 	Settings,
 	Sun,
 	Moon,
@@ -38,6 +39,7 @@ export default function Sidebar({
 		{ name: "Dashboard", href: "/dashboard", icon: LayoutPanelLeft },
 		{ name: "Videos", href: "/videos", icon: Tv },
 		{ name: "Collection", href: "/collection", icon: FolderBookmark },
+		{ name: "Notes", href: "/notes", icon: BookSearch },
 		{ name: "Setting", href: "/setting", icon: Settings },
 	];
 

@@ -13,7 +13,7 @@ import Modal from "@/_components/ModalSkeleton";
 import toast from "react-hot-toast";
 import "@/_components/RichTextEditor/styles.scss";
 
-type Props = Note & {
+type Props = Omit<Note, "contentText" | "createdAt"> & {
 	playerRef?: React.RefObject<HTMLVideoElement | null>; // DOM ref to connect to react player
 	onDeleted?: (noteId: string) => void; // parent component's handler func when a note is deleted
 	onUpdated?: (note: Note) => void; // parent component's handler func when a note is updated (upserted)

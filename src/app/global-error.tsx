@@ -18,9 +18,6 @@ export default function GlobalError({
 							<h2 className="card-title text-xl">
 								Oops, something went wrong, please try again later.
 							</h2>
-							<div role="alert" className="alert alert-error text-left">
-								<span className="wrap-break-word">{error.message}</span>
-							</div>
 							<button className="btn btn-primary" onClick={() => reset()}>
 								Try again
 							</button>

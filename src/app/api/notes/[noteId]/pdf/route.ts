@@ -2,7 +2,7 @@
 import requireSession from "../../../../../../lib/requireSession";
 import { getNoteById } from "../../../../../../lib/dbTableAction/noteTableAction";
 import { printNotesToPDF } from "../../../../../../lib/puppeteerBrowser";
-
+import { pdfExportRatelimit } from "../../../../../../utils/ratelimiter";
 // puppeteer GET api endpoint
 
 export async function GET(
@@ -11,6 +11,20 @@ export async function GET(
 ) {
 	const session = await requireSession();
 	const userId = session.user.id;
+
+	const { success } = await pdfExportRatelimit.limit(userId);
+
+	if (!success) {
+		// return 429 response if rate limit exceeded
+		return new Response(
+			"<!DOCTYPE html><title>429 Too Many Requests</title><h1>Too Many Requests, Please Avoid Spamming PDF Export</h1></p>",
+			{
+				status: 429,
+				headers: { "Content-Type": "text/html; charset=utf-8" },
+			},
+		);
+	}
+
 	const noteId = (await params).noteId;
 
 	const note = await getNoteById(userId, noteId);
