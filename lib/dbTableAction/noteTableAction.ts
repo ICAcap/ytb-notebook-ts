@@ -5,6 +5,7 @@ import { InputJsonValue } from "../../generated/prisma/runtime/client";
 import { Note } from "../../generated/prisma";
 import { JSONContent } from "@tiptap/react";
 import { tiptapToText } from "../../utils/tiptapToText";
+import { noteWriteRateLimit } from "../../utils/ratelimiter";
 
 import { cache } from "react";
 
@@ -390,6 +391,13 @@ export async function createNote({
 			return null;
 		}
 
+		// Rate limit check for note creation
+		const { success } = await noteWriteRateLimit.limit(userId);
+		if (!success) {
+			console.error("Note rate limit exceeded for user", userId);
+			return null;
+		}
+
 		try {
 			const creation = await prisma.note.create({
 				data: {
@@ -430,6 +438,13 @@ export async function updateNote({
 			console.error(
 				"End Time cant be less than Start Time, fallback to null return",
 			);
+			return null;
+		}
+
+		// Rate limit check for note update
+		const { success } = await noteWriteRateLimit.limit(userId);
+		if (!success) {
+			console.error("Note rate limit exceeded for user", userId);
 			return null;
 		}
 

@@ -85,6 +85,15 @@ Full Tiptap-based editor suite. Note content is stored as Tiptap JSON, not plain
   - `printNotesToPDF(notes, videoTitle?)` — Renders Tiptap JSON content to HTML (`@tiptap/static-renderer`), disables JS on the page (`setJavaScriptEnabled(false)`), and returns a PDF buffer
 - **`utils/escapeHtml.ts`**: Escapes user-controlled strings (e.g. video title) before interpolating into the raw HTML string passed to `page.setContent()` — prevents stored XSS/SSRF via injected markup in the PDF render path
 
+### Rate Limiting (`utils/ratelimiter.ts`)
+Upstash Redis (`@upstash/ratelimit`), keyed per-`userId`, each surface isolated by its own prefixed `Ratelimit` instance:
+- `pdfExportRatelimit` — 5 req/10s, prefix `ratelimit:pdfExport`; checked in both PDF export routes before the Puppeteer render
+- `youtubeRatelimit` — 10 req/60s, prefix `ratelimit:youtube`; checked in `utils/youtubeFetchTitleServerSide.ts` before calling the YouTube Data API
+- `noteWriteRateLimit` — 30 req/60s, prefix `ratelimit:note-write`; checked in `createNote()`/`updateNote()` (`lib/dbTableAction/noteTableAction.ts`) before the DB write
+- `videoWriteRateLimit` — 10 req/60s, prefix `ratelimit:video-write`; checked in `upsertYouTubeVideo()` (`lib/dbTableAction/videoTableAction.ts`, backs both add-video and edit-video) before the DB write
+
+All four fail closed — a rejected `.limit(userId)` call returns `null`/`429` from the calling function/route rather than proceeding.
+
 ### Modal & Context Patterns
 **Modal System**: `ModalSkeleton` wraps `<dialog>` and manages `isOpen`/`onClose` props. Used for add video, add collection.
 
