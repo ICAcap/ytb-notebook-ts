@@ -1,5 +1,8 @@
 "use server";
 
+import requireSession from "../lib/requireSession";
+import { youtubeRatelimit } from "./ratelimiter";
+
 const youtubeAPIKey = process.env.YOUTUBE_API_KEY as string;
 
 /**
@@ -13,6 +16,14 @@ export async function fetchYouTubeTitle(
 	videoId: string,
 	apiKey: string = youtubeAPIKey,
 ): Promise<string | null> {
+	const session = await requireSession();
+	const { success } = await youtubeRatelimit.limit(session.user.id);
+
+	if (!success) {
+		console.error("YouTube title fetch rate limit exceeded for user:", session.user.id);
+		return null;
+	}
+
 	const baseUrl = "https://www.googleapis.com/youtube/v3/videos";
 	const url = `${baseUrl}?id=${videoId}&part=snippet&key=${apiKey}`;
 	try {

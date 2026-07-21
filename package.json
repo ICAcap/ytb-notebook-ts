@@ -23,6 +23,8 @@
     "@tiptap/react": "^3.26.1",
     "@tiptap/starter-kit": "^3.26.1",
     "@tiptap/static-renderer": "^3.26.1",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.38.0",
     "better-auth": "^1.6.11",
     "fuse.js": "^7.4.2",
     "lodash": "^4.18.1",
