@@ -5,6 +5,7 @@ import { cache } from "react";
 import { revalidatePath } from "next/cache";
 import { Collection } from "../../generated/prisma";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
+import { collectionWriteRateLimit } from "../../utils/ratelimiter";
 
 // export types
 export type CollectionCreationType = Pick<
@@ -14,7 +15,7 @@ export type CollectionCreationType = Pick<
 
 export type CollectionUpdateType = Pick<
 	Collection,
-	"collectionId" | "collectionName"
+	"collectionId" | "collectionName" | "userId"
 >;
 
 export type CollectionOptions = { label: string; value: string }[];
@@ -36,7 +37,11 @@ export const getUserCollectionNameIDs = cache(async function (
 	try {
 		const collections = await prisma.collection.findMany({
 			where: { userId },
-			select: { collectionName: true, collectionId: true, _count: { select: { videos: true } } },
+			select: {
+				collectionName: true,
+				collectionId: true,
+				_count: { select: { videos: true } },
+			},
 			orderBy: { collectionName: "asc" },
 		});
 		return collections.map((c) => ({
@@ -47,6 +52,7 @@ export const getUserCollectionNameIDs = cache(async function (
 	} catch (error) {
 		console.error(
 			"Error fetching user collection names and IDs, fallback to empty array",
+			error,
 		);
 		return [];
 	}
@@ -78,7 +84,10 @@ export const getUserCollectionByName = cache(async function (
 			},
 		});
 	} catch (error) {
-		console.error("Error fetching collection by name, fallback to null."); // Prevent crash during lookup.
+		console.error(
+			"Error fetching collection by name, fallback to null.",
+			error,
+		); // Prevent crash during lookup.
 		return null;
 	}
 });
@@ -93,6 +102,19 @@ export async function createCollection(
 		);
 		return null;
 	}
+
+	// Rate limit check for collection creation
+	const { success } = await collectionWriteRateLimit.limit(
+		collectionToCreate.userId,
+	);
+	if (!success) {
+		console.error(
+			"Collection rate limit exceeded for user",
+			collectionToCreate.userId,
+		);
+		return null;
+	}
+
 	try {
 		const creation = await prisma.collection.create({
 			data: {
@@ -105,6 +127,7 @@ export async function createCollection(
 	} catch (error) {
 		console.error(
 			"Error Creating Collection for User Profile, fallback to null",
+			error,
 		);
 		if (error instanceof PrismaClientKnownRequestError) {
 			if (error.code === "P2002") {
@@ -120,12 +143,29 @@ export async function createCollection(
 export async function updateCollection(
 	collectionToUpdate: CollectionUpdateType,
 ): Promise<Collection | null> {
-	if (!collectionToUpdate.collectionId || !collectionToUpdate.collectionName) {
+	if (
+		!collectionToUpdate.collectionId ||
+		!collectionToUpdate.collectionName ||
+		!collectionToUpdate.userId
+	) {
 		console.error(
-			"Error updating collection, collection id or name is undefined, fallback to null.",
+			"Error updating collection, collection id, name, or user id is undefined, fallback to null.",
 		);
 		return null;
 	}
+
+	// Rate limit check for collection updates
+	const { success } = await collectionWriteRateLimit.limit(
+		collectionToUpdate.userId,
+	);
+	if (!success) {
+		console.error(
+			"Collection rate limit exceeded for user",
+			collectionToUpdate.userId,
+		);
+		return null;
+	}
+
 	try {
 		const update = await prisma.collection.update({
 			where: {
@@ -138,7 +178,7 @@ export async function updateCollection(
 		revalidatePath("/collection");
 		return update;
 	} catch (error) {
-		console.error("Error updating collection, fallback to null.");
+		console.error("Error updating collection, fallback to null.", error);
 		return null;
 	}
 }
@@ -160,7 +200,7 @@ export async function deleteCollectionById(
 		revalidatePath("/collection");
 		return deletion;
 	} catch (error) {
-		console.error("Error deleting collection, fallback to null.");
+		console.error("Error deleting collection, fallback to null.", error);
 		return null;
 	}
 }

@@ -92,6 +92,7 @@ export default function CollectionForm({
 			const updateCollectionResult = await updateCollection({
 				collectionId: collectionID,
 				collectionName: name,
+				userId: userId,
 			});
 
 			if (updateCollectionResult) {

@@ -11,8 +11,32 @@ export const pdfExportRatelimit = new Ratelimit({
 
 export const youtubeRatelimit = new Ratelimit({
 	redis: Redis.fromEnv(),
-	limiter: Ratelimit.slidingWindow(1, "60 s"),
+	limiter: Ratelimit.slidingWindow(10, "60 s"),
 	analytics: true,
 	timeout: 30000,
 	prefix: "ratelimit:youtube",
+});
+
+export const noteWriteRateLimit = new Ratelimit({
+	redis: Redis.fromEnv(),
+	limiter: Ratelimit.slidingWindow(30, "60 s"),
+	analytics: true,
+	timeout: 20000,
+	prefix: "ratelimit:note-write",
+});
+
+export const videoWriteRateLimit = new Ratelimit({
+	redis: Redis.fromEnv(),
+	limiter: Ratelimit.slidingWindow(10, "60 s"),
+	analytics: true,
+	timeout: 20000,
+	prefix: "ratelimit:video-write",
+});
+
+export const collectionWriteRateLimit = new Ratelimit({
+	redis: Redis.fromEnv(),
+	limiter: Ratelimit.slidingWindow(20, "60 s"),
+	analytics: true,
+	timeout: 20000,
+	prefix: "ratelimit:collection-write",
 });
