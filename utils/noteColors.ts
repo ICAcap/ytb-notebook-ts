@@ -1,7 +1,7 @@
 export const NOTE_COLORS = [
-	{ name: "gray", value: "#808080" },
-	{ name: "blue", value: "#26A2FF" },
-	{ name: "green", value: "#3FA301" },
-	{ name: "gold", value: "#FF9026" },
-	{ name: "red", value: "#FF0000" },
+	{ label: "Gray", value: "#808080" },
+	{ label: "Blue", value: "#26A2FF" },
+	{ label: "Green", value: "#3FA301" },
+	{ label: "Gold", value: "#FF9026" },
+	{ label: "Red", value: "#FF0000" },
 ];

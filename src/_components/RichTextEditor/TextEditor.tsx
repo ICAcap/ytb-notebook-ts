@@ -64,7 +64,8 @@ const TextEditor = ({
 				{/* editor */}
 				<EditorContent
 					editor={editor}
-					className={`tiptap border m-0.5 p-2 min-h-12 w-full max-w-full grow-0 ${currentStyle === "light" ? themeStyles.light : themeStyles.dark}`}
+					className={`tiptap border m-0.5 p-1 w-full max-w-full grow-0 ${currentStyle === "light" ? themeStyles.light : themeStyles.dark}`}
+					style={{ minHeight: "7.5rem" }}
 					suppressHydrationWarning
 				/>
 				{/* word count */}

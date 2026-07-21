@@ -3,7 +3,7 @@ import requireSession from "../../../../../../../lib/requireSession";
 import { getNotesByVideo } from "../../../../../../../lib/dbTableAction/noteTableAction";
 import { getVideoById } from "../../../../../../../lib/dbTableAction/videoTableAction";
 import { printNotesToPDF } from "../../../../../../../lib/puppeteerBrowser";
-
+import { pdfExportRatelimit } from "../../../../../../../utils/ratelimiter";
 // puppeteer GET api endpoint
 
 export async function GET(
@@ -12,6 +12,19 @@ export async function GET(
 ) {
 	const session = await requireSession();
 	const userId = session.user.id;
+
+	const { success } = await pdfExportRatelimit.limit(userId);
+
+	if (!success) {
+		return new Response(
+			"<!DOCTYPE html><title>429 Too Many Requests</title><p><h1>Too Many Requests, Please Avoid Spamming PDF Export</h1></p>",
+			{
+				status: 429,
+				headers: { "Content-Type": "text/html; charset=utf-8" },
+			},
+		);
+	}
+
 	const videoId = (await params).videoId;
 
 	const video = await getVideoById(userId, videoId);

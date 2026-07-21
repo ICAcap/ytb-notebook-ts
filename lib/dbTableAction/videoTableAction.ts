@@ -5,6 +5,7 @@ import { cache } from "react";
 import { revalidatePath } from "next/cache";
 import { Video } from "../../generated/prisma";
 import { CollectionOptions } from "./collectionTableActions";
+import { videoWriteRateLimit } from "../../utils/ratelimiter";
 
 // export types
 export type VideoDetailType = Pick<
@@ -62,14 +63,14 @@ export const getVideoById = cache(async function (
  * @param userId - The unique identifier of the user.
  * @param page - The page number to retrieve (1-indexed).
  * @param pageSize - The maximum number of videos to return per page.
- * @param q - The search string used to filter video titles.
+ * @param query - The search string used to filter video titles.
  * @returns A promise resolving to an array of video data matching the VideoDetailType.
  */
 export const getVideoCardsWithSearchParam = cache(async function (
 	userId: string,
 	page: number,
 	pageSize: number,
-	q: string,
+	query: string,
 	collection: string,
 ): Promise<VideoDetailType[]> {
 	if (!userId) {
@@ -84,7 +85,9 @@ export const getVideoCardsWithSearchParam = cache(async function (
 	// Build the where clause for the query, including the search filter if provided.
 	const where = {
 		userId,
-		...(q ? { title: { contains: q, mode: "insensitive" as const } } : {}),
+		...(query
+			? { title: { contains: query, mode: "insensitive" as const } }
+			: {}),
 		...(collection
 			? { collections: { some: { collectionName: collection } } }
 			: {}),
@@ -115,7 +118,7 @@ export const getVideoCardsWithSearchParam = cache(async function (
 			})),
 		})) as VideoDetailType[];
 	} catch (error) {
-		console.error("Error fetching video card data with searchParam:", error);
+		console.error("Error fetching video card data with searchParam", error);
 		return [] as VideoDetailType[];
 	}
 });
@@ -125,12 +128,12 @@ export const getVideoCardsWithSearchParam = cache(async function (
  * The count can be filtered by a case-insensitive search query on the video title.
  *
  * @param userId - The unique identifier of the user.
- * @param q - The search string used to filter video titles.
+ * @param query - The search string used to filter video titles.
  * @returns A promise resolving to the total number of matching video records.
  */
 export const getVideoNumWithSearchParam = cache(async function (
 	userId: string,
-	q: string,
+	query: string,
 	collection: string,
 ): Promise<number> {
 	if (!userId) {
@@ -139,7 +142,9 @@ export const getVideoNumWithSearchParam = cache(async function (
 	}
 	const where = {
 		userId,
-		...(q ? { title: { contains: q, mode: "insensitive" as const } } : {}),
+		...(query
+			? { title: { contains: query, mode: "insensitive" as const } }
+			: {}),
 		...(collection
 			? { collections: { some: { collectionName: collection } } }
 			: {}),
@@ -151,6 +156,7 @@ export const getVideoNumWithSearchParam = cache(async function (
 	} catch (error) {
 		console.error(
 			"Error fetching total video num with searchParam, fallback to 0",
+			error,
 		);
 		return 0;
 	}
@@ -191,7 +197,7 @@ export const getExistingVideo = cache(async function (
 		if (!v) return null;
 		return { ...v, collections: [] } as VideoDetailType;
 	} catch (error) {
-		console.error("Error lookup user video table, fallback to null");
+		console.error("Error lookup user video table, fallback to null", error);
 		return null;
 	}
 });
@@ -218,7 +224,10 @@ export const getAllUniqueVideoTitles = cache(async function (
 		const vidTitlesUnique = [...new Set(allVidTitles)];
 		return vidTitlesUnique;
 	} catch (error) {
-		console.error("Error Getting all video titles, fallback to empty array");
+		console.error(
+			"Error Getting all video titles, fallback to empty array",
+			error,
+		);
 		return [];
 	}
 });
@@ -248,6 +257,14 @@ export const upsertYouTubeVideo = async function (
 		);
 		return null;
 	}
+
+	// Rate limit check for video creation/updating
+	const { success } = await videoWriteRateLimit.limit(userId);
+	if (!success) {
+		console.error("Video rate limit exceeded for user", userId);
+		return null;
+	}
+
 	try {
 		// Use upsert because of the @@unique([userId, youtubeVidID]) constraint
 		const video = await prisma.video.upsert({
@@ -295,7 +312,7 @@ export const upsertYouTubeVideo = async function (
 			})),
 		} as VideoDetailType;
 	} catch (error) {
-		console.error("Error Upserting Video to User Profile");
+		console.error("Error Upserting Video to User Profile", error);
 		return null;
 	}
 };
@@ -350,7 +367,7 @@ export const deleteVideo = async function (
 		revalidatePath("/videos");
 		return deletedVideo;
 	} catch (error) {
-		console.error("Video Deletion failed, fallback to return null");
+		console.error("Video Deletion failed, fallback to return null", error);
 		return null;
 	}
 };
