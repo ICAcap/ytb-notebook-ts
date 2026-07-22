@@ -20,7 +20,7 @@ const TextEditor = ({
 	onChange?: (json: JSONContent) => void;
 }) => {
 	// current theme
-	const currentStyle = useTheme().theme ?? "light";
+	const currentStyle = useTheme().resolvedTheme ?? "light";
 
 	// editor-exclusive styles based on the active theme
 	const themeStyles = {

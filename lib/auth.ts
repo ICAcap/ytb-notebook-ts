@@ -23,6 +23,9 @@ export const auth = betterAuth({
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 		},
 	},
+	account: {
+		encryptOAuthTokens: true,
+	},
 	user: {
 		additionalFields: { isSuper: { type: "boolean", input: false } },
 	},
