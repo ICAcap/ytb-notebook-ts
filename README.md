@@ -21,7 +21,7 @@ A Next.js app built for helping me (and hopefully you) organize YouTube videos t
 - [Tailwind CSS v4](https://tailwindcss.com/) + [DaisyUI](https://daisyui.com/)
 - [Puppeteer](https://pptr.dev/) for PDF generation
 - [Upstash Redis](https://upstash.com/) for rate limiting
-- Also other open-source dev tools that help me ship (check package.json for more details)
+- Also myriad of open-source dev tools that help me ship (check package.json for more details)
 
 ## Getting Started
 
