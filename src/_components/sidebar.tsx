@@ -140,7 +140,7 @@ export default function Sidebar({
 			<div className="p-3 space-y-2 border-t border-base-content/20">
 				{!isCollapsed && (
 					<p className="text-xs font-semibold text-center">
-						© {new Date().getFullYear()} YTB Notebook - By TW
+						© {new Date().getFullYear()} YTB Notebook - By Tdub
 					</p>
 				)}
 			</div>
