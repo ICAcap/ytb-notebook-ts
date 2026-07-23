@@ -14,7 +14,11 @@ export default function LandingPageGsapAnimation() {
 		// About: icon pops in, then text and signature slide up in sequence
 		gsap
 			.timeline({
-				scrollTrigger: { trigger: "#about-section", start: "top 70%" },
+				scrollTrigger: {
+					trigger: "#about-section",
+					start: "top 70%",
+					toggleActions: "play none none reverse",
+				},
 			})
 			.from("#quote", {
 				opacity: 0,
@@ -36,7 +40,11 @@ export default function LandingPageGsapAnimation() {
 
 		// Feature cards: whole group fades/slides up together as one unit
 		gsap.from("#feature-row .feature-card", {
-			scrollTrigger: { trigger: "#feature-row", start: "top 70%" },
+			scrollTrigger: {
+				trigger: "#feature-row",
+				start: "top 70%",
+				toggleActions: "play none none reverse",
+			},
 			opacity: 0,
 			y: 32,
 			duration: 0.6,
@@ -45,7 +53,11 @@ export default function LandingPageGsapAnimation() {
 
 		// CTA: text and image slide in from opposite sides
 		gsap.from("#cta-text", {
-			scrollTrigger: { trigger: "#cta-section", start: "top 70%" },
+			scrollTrigger: {
+				trigger: "#cta-section",
+				start: "top 70%",
+				toggleActions: "play none none reverse",
+			},
 			opacity: 0,
 			x: -40,
 			duration: 0.7,
@@ -53,7 +65,11 @@ export default function LandingPageGsapAnimation() {
 		});
 
 		gsap.from("#cta-image", {
-			scrollTrigger: { trigger: "#cta-section", start: "top 70%" },
+			scrollTrigger: {
+				trigger: "#cta-section",
+				start: "top 70%",
+				toggleActions: "play none none reverse",
+			},
 			opacity: 0,
 			x: 40,
 			duration: 0.7,
@@ -63,7 +79,11 @@ export default function LandingPageGsapAnimation() {
 		// FAQ: heading first, then each question staggers in
 		gsap
 			.timeline({
-				scrollTrigger: { trigger: "#faq-section", start: "top 70%" },
+				scrollTrigger: {
+					trigger: "#faq-section",
+					start: "top 70%",
+					toggleActions: "play none none reverse",
+				},
 			})
 			.from("#faq-heading", {
 				opacity: 0,
@@ -79,7 +99,11 @@ export default function LandingPageGsapAnimation() {
 
 		// Footer: simple fade/slide up as it comes into view
 		gsap.from("#footer-content", {
-			scrollTrigger: { trigger: "#landing-footer", start: "top 80%" },
+			scrollTrigger: {
+				trigger: "#landing-footer",
+				start: "top 80%",
+				toggleActions: "play none none reverse",
+			},
 			opacity: 0,
 			y: 32,
 			duration: 0.7,
