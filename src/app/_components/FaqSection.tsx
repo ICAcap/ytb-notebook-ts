@@ -25,30 +25,31 @@ const FAQS = [
 
 export default function FaqSection() {
 	return (
-		<section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-			<div className="mx-auto max-w-2xl text-center">
-				<h2 className="text-4xl font-bold text-base-content sm:text-5xl">
+		<section id="faq-section" className="mx-auto max-w-384 px-4 sm:px-6 lg:px-8">
+			<div id="faq-heading" className="mx-auto max-w-3xl text-center">
+				<h2 className="text-5xl font-bold text-base-content sm:text-6xl">
 					Frequently asked questions
 				</h2>
 			</div>
 
-			<div className="mx-auto mt-12 max-w-2xl space-y-4">
+			<div className="mx-auto mt-16 max-w-3xl space-y-5">
 				{FAQS.map(({ question, answer }, index) => (
 					<details
 						key={question}
+						data-faq-item
 						className="group [&_summary::-webkit-details-marker]:hidden"
 						open={index === 0}
 					>
-						<summary className="flex items-center justify-between gap-1.5 rounded-xl border border-base-300 bg-base-200 p-5 text-base-content">
-							<h3 className="text-xl font-medium">{question}</h3>
+						<summary className="flex items-center justify-between gap-1.5 rounded-xl border border-base-300 bg-base-200 p-6 text-base-content">
+							<h3 className="text-2xl font-medium">{question}</h3>
 
 							<ChevronDown
-								className="size-5 shrink-0 transition-transform duration-300 group-open:-rotate-180"
+								className="size-6 shrink-0 transition-transform duration-300 group-open:-rotate-180"
 								aria-hidden="true"
 							/>
 						</summary>
 
-						<p className="px-4 pt-4 text-lg text-base-content/70">{answer}</p>
+						<p className="px-5 pt-5 text-xl text-base-content/70">{answer}</p>
 					</details>
 				))}
 			</div>

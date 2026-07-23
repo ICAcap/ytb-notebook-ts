@@ -4,7 +4,8 @@ import { Metadata } from "next";
 import Image from "next/image";
 import { getVideoNumWithSearchParam } from "../../../lib/dbTableAction/videoTableAction";
 import { getUserCollectionNameIDs } from "../../../lib/dbTableAction/collectionTableActions";
-import { Video, FolderOpen, Play, CircleUserRound } from "lucide-react";
+import { getNoteCountByUser } from "../../../lib/dbTableAction/noteTableAction";
+import { Video, FolderOpen, Play, CircleUserRound, StickyNote } from "lucide-react";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -15,9 +16,10 @@ export default async function DashboardPage() {
 	const session = await requireSession();
 	const userId = session.user.id;
 
-	const [totalVideos, collections] = await Promise.all([
+	const [totalVideos, collections, totalNotes] = await Promise.all([
 		getVideoNumWithSearchParam(userId, "", ""),
 		getUserCollectionNameIDs(userId),
+		getNoteCountByUser(userId),
 	]);
 
 	return (
@@ -102,6 +104,24 @@ export default async function DashboardPage() {
 							</Link>
 						</div>
 					)}
+
+					{/* Note Count */}
+					<Link
+						href="/notes"
+						className="card bg-linear-to-br from-secondary/10 to-secondary/5 border border-secondary/20 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+					>
+						<div className="card-body flex-row items-center gap-6">
+							<div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-secondary/15 shrink-0">
+								<StickyNote className="w-8 h-8 text-secondary" />
+							</div>
+							<div>
+								<p className="text-4xl font-bold">{totalNotes}</p>
+								<p className="text-base-content/60">
+									{totalNotes === 1 ? "note" : "notes"} taken so far
+								</p>
+							</div>
+						</div>
+					</Link>
 				</div>
 			</main>
 		</div>
