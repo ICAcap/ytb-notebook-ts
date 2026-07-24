@@ -3,7 +3,7 @@ import { Quote } from "lucide-react";
 export default function AboutSection() {
 	return (
 		<section id="about-section">
-			<div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+			<div className="mx-auto max-w-7xl max-h-2xl px-4 sm:px-6 lg:px-8">
 				<div className="rounded-3xl bg-base-200 p-12 shadow-sm sm:p-16">
 					<div
 						id="quote"
@@ -23,12 +23,9 @@ export default function AboutSection() {
 					</p>
 
 					<div id="about-signature" className="mt-10 flex items-center gap-4">
+						--
 						<span className="flex size-12 items-center justify-center rounded-full bg-primary text-xl font-semibold text-primary-content">
 							Tdub
-						</span>
-
-						<span className="text-lg font-medium text-base-content/60">
-							— built solo, for my own rewatching habit
 						</span>
 					</div>
 				</div>
