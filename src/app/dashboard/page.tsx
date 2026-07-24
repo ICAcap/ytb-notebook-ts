@@ -5,7 +5,13 @@ import Image from "next/image";
 import { getVideoNumWithSearchParam } from "../../../lib/dbTableAction/videoTableAction";
 import { getUserCollectionNameIDs } from "../../../lib/dbTableAction/collectionTableActions";
 import { getNoteCountByUser } from "../../../lib/dbTableAction/noteTableAction";
-import { Video, FolderOpen, Play, CircleUserRound, StickyNote } from "lucide-react";
+import {
+	Video,
+	FolderOpen,
+	Play,
+	CircleUserRound,
+	StickyNote,
+} from "lucide-react";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -80,26 +86,24 @@ export default async function DashboardPage() {
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 							<Link
 								href="/videos"
-								className="card bg-base-100 border border-base-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+								className="card bg-info/15 border border-info/30 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
 							>
-								<div className="card-body items-center text-center">
-									<Video className="w-12 h-12 text-primary" />
-									<h2 className="card-title text-lg">My Videos</h2>
-									<p className="text-base-content/60 text-sm">
-										{totalVideos} videos
-									</p>
+								<div className="card-body items-center text-center py-10">
+									<Video className="w-16 h-16 text-info" />
+									<h2 className="card-title text-xl">My Videos</h2>
+									<p className="text-4xl font-bold">{totalVideos}</p>
+									<p className="text-base-content/60 text-sm">videos</p>
 								</div>
 							</Link>
 							<Link
 								href="/collection"
-								className="card bg-base-100 border border-base-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+								className="card bg-warning/15 border border-warning/30 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
 							>
-								<div className="card-body items-center text-center">
-									<FolderOpen className="w-12 h-12 text-primary" />
-									<h2 className="card-title text-lg">My Collections</h2>
-									<p className="text-base-content/60 text-sm">
-										{collections.length} collections
-									</p>
+								<div className="card-body items-center text-center py-10">
+									<FolderOpen className="w-16 h-16 text-warning" />
+									<h2 className="card-title text-xl">My Collections</h2>
+									<p className="text-4xl font-bold">{collections.length}</p>
+									<p className="text-base-content/60 text-sm">collections</p>
 								</div>
 							</Link>
 						</div>
@@ -108,14 +112,14 @@ export default async function DashboardPage() {
 					{/* Note Count */}
 					<Link
 						href="/notes"
-						className="card bg-linear-to-br from-secondary/10 to-secondary/5 border border-secondary/20 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+						className="card bg-success/15 border border-success/30 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
 					>
-						<div className="card-body flex-row items-center gap-6">
-							<div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-secondary/15 shrink-0">
-								<StickyNote className="w-8 h-8 text-secondary" />
+						<div className="card-body flex-row items-center gap-6 py-10">
+							<div className="flex items-center justify-center w-20 h-20 ">
+								<StickyNote className="w-16 h-16 text-success" />
 							</div>
 							<div>
-								<p className="text-4xl font-bold">{totalNotes}</p>
+								<p className="text-5xl font-bold">{totalNotes}</p>
 								<p className="text-base-content/60">
 									{totalNotes === 1 ? "note" : "notes"} taken so far
 								</p>
