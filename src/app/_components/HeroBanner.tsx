@@ -45,7 +45,7 @@ export default function HeroBanner() {
 
 				<div className="overflow-hidden rounded-2xl border border-base-300 shadow-2xl shadow-primary/20 ring-1 ring-base-content/5 lg:col-span-7">
 					<img
-						src="/note-ui-example.jpeg"
+						src="/note-ui-example.png"
 						alt="YTB Notebook: a YouTube video playing alongside a timestamped, rich-text note editor"
 						width={1920}
 						height={800}
