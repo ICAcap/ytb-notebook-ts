@@ -18,23 +18,23 @@ export default function Home() {
 			<LandingPageGsapAnimation />
 			<HeroBanner />
 
-			<div className="mt-24 sm:mt-40">
+			<div className="mt-12 sm:mt-20">
 				<AboutSection />
 			</div>
 
-			<div id="features" className="mt-24 sm:mt-40">
+			<div id="features" className="mt-12 sm:mt-20">
 				<FeatureRow />
 			</div>
 
-			<div className="mt-24 sm:mt-40">
+			<div className="mt-12 sm:mt-20">
 				<CtaSection />
 			</div>
 
-			<div id="faq" className="mt-24 sm:mt-40">
+			<div id="faq" className="mt-12 sm:mt-20">
 				<FaqSection />
 			</div>
 
-			<div className="mt-24 sm:mt-40">
+			<div className="mt-12 sm:mt-20">
 				<LandingFooter />
 			</div>
 		</>

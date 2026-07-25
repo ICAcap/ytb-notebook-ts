@@ -14,7 +14,7 @@ export default function LandingFooter() {
 
 			<div
 				id="footer-content"
-				className="relative mx-auto max-w-384 px-4 py-24 sm:px-6 sm:py-28 lg:px-8 lg:pt-32"
+				className="relative mx-auto max-w-384 px-4 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-16"
 			>
 				<div className="lg:flex lg:items-end lg:justify-between">
 					<div>
@@ -22,13 +22,13 @@ export default function LandingFooter() {
 							YTB Notebook
 						</p>
 
-						<p className="mx-auto mt-8 max-w-lg text-center text-xl leading-relaxed text-base-content/60 lg:text-left">
+						<p className="mx-auto mt-4 max-w-lg text-center text-xl leading-relaxed text-base-content/60 lg:text-left">
 							Timestamped, rich-text notes for the videos you actually rewatch —
 							organized into collections, always picking up where you left off.
 						</p>
 					</div>
 
-					<ul className="mt-14 flex flex-wrap justify-center gap-4 lg:mt-0 lg:justify-end">
+					<ul className="mt-8 flex flex-wrap justify-center gap-4 lg:mt-0 lg:justify-end">
 						<li>
 							<a
 								className="btn btn-primary btn-lg rounded-full"
@@ -51,7 +51,7 @@ export default function LandingFooter() {
 					</ul>
 				</div>
 
-				<p className="mt-20 text-center text-base text-base-content/50 lg:text-right">
+				<p className="mt-10 text-center text-base text-base-content/50 lg:text-right">
 					Copyright &copy; {new Date().getFullYear()} YTB Notebook - By Tdub.
 					All rights reserved.
 				</p>
