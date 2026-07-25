@@ -23,7 +23,6 @@ export default function AboutSection() {
 					</p>
 
 					<div id="about-signature" className="mt-10 flex items-center gap-4">
-						--
 						<span className="flex size-12 items-center justify-center rounded-full bg-primary text-xl font-semibold text-primary-content">
 							Tdub
 						</span>
