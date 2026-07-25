@@ -14,10 +14,7 @@ export default function SignOutButton() {
 	};
 
 	return (
-		<button
-			onClick={handleSignOut}
-			className="btn btn-warning w-full gap-2 my-3"
-		>
+		<button onClick={handleSignOut} className="btn btn-warning gap-2 my-3">
 			<LogOut size={18} />
 			<span>Sign Out</span>
 		</button>
