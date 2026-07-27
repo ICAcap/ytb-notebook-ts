@@ -5,7 +5,7 @@ import { RefObject, useRef } from "react";
 import { updateVideoPlayedTime } from "../../../../../lib/dbTableAction/videoTableAction";
 import { memo } from "react";
 import { useSearchParams } from "next/navigation";
-import { useIsDemoRoute } from "../../../../../utils/useIsDemoRoute";
+import { useIsDemoRoute } from "../../../../../utils/customHooks/useIsDemoRoute";
 
 interface VideoPlayerProps {
 	videoId: string;

@@ -12,7 +12,7 @@ import { deleteNote } from "../../../../lib/dbTableAction/noteTableAction";
 import Modal from "@/_components/ModalSkeleton";
 import toast from "react-hot-toast";
 import "@/_components/RichTextEditor/styles.scss";
-import { useIsDemoRoute } from "../../../../utils/useIsDemoRoute";
+import { useIsDemoRoute } from "../../../../utils/customHooks/useIsDemoRoute";
 
 type Props = Omit<Note, "contentText" | "createdAt"> & {
 	playerRef?: React.RefObject<HTMLVideoElement | null>; // DOM ref to connect to react player

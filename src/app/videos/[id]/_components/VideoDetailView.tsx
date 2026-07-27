@@ -7,7 +7,7 @@ import { VideoDetailType } from "../../../../../lib/dbTableAction/videoTableActi
 import { Note } from "../../../../../generated/prisma";
 import CollectionBadgeList from "../../_components/CollectionBadgeList";
 import { Group, Panel } from "react-resizable-panels";
-import { useIsDemoRoute } from "../../../../../utils/useIsDemoRoute";
+import { useIsDemoRoute } from "../../../../../utils/customHooks/useIsDemoRoute";
 
 const _ = require("lodash"); // for throttle purpose
 
