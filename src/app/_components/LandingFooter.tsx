@@ -1,16 +1,17 @@
 import { ChevronUp } from "lucide-react";
+import Link from "next/link";
 
 const GITHUB_URL = "https://github.com/ICAcap/ytb-notebook-ts";
 
 export default function LandingFooter() {
 	return (
 		<footer id="landing-footer" className="relative rounded-t-3xl bg-base-200">
-			<a
+			<Link
 				className="absolute inset-e-6 -top-6 inline-flex size-12 items-center justify-center rounded-full bg-primary text-primary-content shadow-lg transition hover:bg-primary/90 sm:inset-e-8 sm:-top-7 sm:size-14"
 				href="#MainContent"
 			>
 				<ChevronUp className="size-6 sm:size-7" aria-hidden="true" />
-			</a>
+			</Link>
 
 			<div
 				id="footer-content"
@@ -30,12 +31,12 @@ export default function LandingFooter() {
 
 					<ul className="mt-8 flex flex-wrap justify-center gap-4 lg:mt-0 lg:justify-end">
 						<li>
-							<a
+							<Link
 								className="btn btn-primary btn-lg rounded-full"
 								href="/sign-in"
 							>
 								Try It Out
-							</a>
+							</Link>
 						</li>
 
 						<li>

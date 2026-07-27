@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function CtaSection() {
 	return (
 		<section
@@ -20,12 +22,12 @@ export default function CtaSection() {
 						</p>
 
 						<div className="mt-8">
-							<a
+							<Link
 								className="btn btn-primary btn-lg rounded-full px-10 text-lg"
 								href="/sign-in"
 							>
 								Try It Out
-							</a>
+							</Link>
 						</div>
 					</div>
 				</div>
