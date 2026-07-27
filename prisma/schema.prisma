@@ -36,6 +36,9 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
+  // for live demo purpose
+  isAnonymous Boolean? @default(false)
+
   @@index([isActive])
   @@map("user")
 }
@@ -55,7 +58,8 @@ model Video {
   notes       Note[] // reverse relationship
   collections Collection[] // many-to-many
 
-  @@unique([userId, youtubeVidID]) // Ensure a user can't have duplicate video entries
+  // Ensure a user can't have duplicate video entries
+  @@unique([userId, youtubeVidID])
   @@index([userId])
   @@index([userId, createdAt])
 }
@@ -75,7 +79,8 @@ model Collection {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([userId, collectionName]) // Ensure a user can't have duplicate collection names
+  // Ensure a user can't have duplicate collection names
+  @@unique([userId, collectionName])
   @@index([userId])
   @@index([userId, createdAt])
 }
@@ -106,6 +111,7 @@ model Note {
 }
 
 // BetterAuth needed
+
 model Session {
   id        String   @id
   expiresAt DateTime
@@ -123,6 +129,7 @@ model Session {
 }
 
 // BetterAuth needed
+
 model Account {
   id                    String    @id
   accountId             String
@@ -144,6 +151,7 @@ model Account {
 }
 
 // BetterAuth needed
+
 model Verification {
   id         String   @id
   identifier String

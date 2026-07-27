@@ -5,6 +5,7 @@
  */
 import "dotenv/config";
 import { betterAuth } from "better-auth";
+import { anonymous } from "better-auth/plugins";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { inferAdditionalFields } from "better-auth/client/plugins";
 import { prisma } from "./prisma";
@@ -27,7 +28,10 @@ export const auth = betterAuth({
 		encryptOAuthTokens: true,
 	},
 	user: {
-		additionalFields: { isSuper: { type: "boolean", input: false } },
+		additionalFields: {
+			isSuper: { type: "boolean", input: false },
+			isActive: { type: "boolean", input: true },
+		},
 	},
 	session: {
 		cookieCache: {
@@ -35,7 +39,7 @@ export const auth = betterAuth({
 			maxAge: 30 * 60, // Cache duration in seconds
 		},
 	},
-	plugins: [inferAdditionalFields()],
+	plugins: [inferAdditionalFields(), anonymous()],
 });
 
 export type Session = typeof auth.$Infer.Session;

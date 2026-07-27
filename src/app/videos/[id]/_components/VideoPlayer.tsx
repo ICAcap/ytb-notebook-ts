@@ -5,6 +5,7 @@ import { RefObject, useRef } from "react";
 import { updateVideoPlayedTime } from "../../../../../lib/dbTableAction/videoTableAction";
 import { memo } from "react";
 import { useSearchParams } from "next/navigation";
+import { useIsDemoRoute } from "../../../../../utils/useIsDemoRoute";
 
 interface VideoPlayerProps {
 	videoId: string;
@@ -27,6 +28,7 @@ const VideoPlayer = ({
 	onTimeUpdate,
 }: VideoPlayerProps) => {
 	// hooks
+	const isDemo = useIsDemoRoute();
 	const internalRef = useRef<HTMLVideoElement | null>(null);
 	// fall back to internal hook if need to use the component by itself
 	const reactPlayerRef = playerRef ?? internalRef;
@@ -41,12 +43,14 @@ const VideoPlayer = ({
 	// heartbeat saves position every fixed seconds while playing
 	const heartbeat = useRef(
 		_.throttle(async (seconds: number) => {
+			if (isDemo) return;
 			await updateVideoPlayedTime(videoId, userId, seconds);
 		}, 30000),
 	).current;
 
 	// helper function to update the video played time
 	async function handleTimePlayedUpdate() {
+		if (isDemo) return;
 		if (reactPlayerRef.current) {
 			const currentTimeSeconds = Math.max(
 				0,
