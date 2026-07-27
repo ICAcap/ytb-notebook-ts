@@ -12,6 +12,7 @@ import { deleteNote } from "../../../../lib/dbTableAction/noteTableAction";
 import Modal from "@/_components/ModalSkeleton";
 import toast from "react-hot-toast";
 import "@/_components/RichTextEditor/styles.scss";
+import { useIsDemoRoute } from "../../../../utils/useIsDemoRoute";
 
 type Props = Omit<Note, "contentText" | "createdAt"> & {
 	playerRef?: React.RefObject<HTMLVideoElement | null>; // DOM ref to connect to react player
@@ -36,6 +37,7 @@ const NoteCard = (props: Props) => {
 	});
 
 	// hooks
+	const isDemoRoute = useIsDemoRoute();
 	const [editable, setEditable] = useState(false);
 	const [trashModalOpen, setTrashModalOpen] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
@@ -87,17 +89,24 @@ const NoteCard = (props: Props) => {
 				style={{ backgroundColor: color }}
 			>
 				<div className="flex gap-2">
-					<button
-						disabled={editable}
-						title="export this note"
-						className="btn btn-square btn-ghost btn-md"
-						onClick={() => {
-							window.open(`/api/notes/${props.noteId}/pdf`, "_blank");
-						}}
-						rel="noopener noreferrer"
+					<span
+						title={
+							isDemoRoute
+								? "Note Exportation Disabled in Demo"
+								: "Export This Note"
+						}
 					>
-						<Download className="w-6 h-6" color="white" />
-					</button>
+						<button
+							disabled={editable || isDemoRoute}
+							className="btn btn-square btn-ghost btn-md"
+							onClick={() => {
+								window.open(`/api/notes/${props.noteId}/pdf`, "_blank");
+							}}
+							rel="noopener noreferrer"
+						>
+							<Download className="w-6 h-6" color="white" />
+						</button>
+					</span>
 					<button
 						disabled={editable}
 						title="edit this note"
