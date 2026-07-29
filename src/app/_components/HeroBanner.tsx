@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function HeroBanner() {
 	return (
 		<section
@@ -25,27 +27,27 @@ export default function HeroBanner() {
 					</p>
 
 					<div className="mt-10 flex flex-wrap justify-center gap-4 lg:justify-start">
-						<a
+						<Link
 							className="btn btn-primary btn-lg rounded-full px-10 text-lg"
 							href="/sign-in"
 						>
 							Try It Out
-						</a>
+						</Link>
 
-						<a
+						<Link
 							className="btn btn-outline btn-lg rounded-full px-10 text-lg"
-							href="https://github.com/ICAcap/ytb-notebook-ts"
+							href="/demo"
 							target="_blank"
 							rel="noopener noreferrer"
 						>
-							View Source
-						</a>
+							Live Demo
+						</Link>
 					</div>
 				</div>
 
 				<div className="overflow-hidden rounded-2xl border border-base-300 shadow-2xl shadow-primary/20 ring-1 ring-base-content/5 lg:col-span-7">
 					<img
-						src="/note-ui-example.jpeg"
+						src="/note-ui-example.png"
 						alt="YTB Notebook: a YouTube video playing alongside a timestamped, rich-text note editor"
 						width={1920}
 						height={800}

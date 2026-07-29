@@ -7,11 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed": "npx prisma db seed"
+    "seed": "npx prisma db seed",
+    "clean:demo": "tsx -e \"require('./lib/cleanDemoAccounts').cleanDemoAccounts().then(() => process.exit(0))\""
   },
   "dependencies": {
     "@better-auth/prisma-adapter": "^1.6.11",
     "@gsap/react": "^2.1.2",
+    "@paralleldrive/cuid2": "^3.3.0",
     "@prisma/client": "^7.8.0",
     "@tanstack/react-virtual": "^3.14.3",
     "@tiptap/extension-code-block-lowlight": "^3.26.1",

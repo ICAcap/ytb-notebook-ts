@@ -30,7 +30,13 @@ export async function GET(
 	const note = await getNoteById(userId, noteId);
 
 	if (!note) {
-		return new Response("This Note No Longer Exists", { status: 404 });
+		return new Response(
+			"<!DOCTYPE html><title>404 Not Found</title><h1>This Note No Longer Exists</h1>",
+			{
+				status: 404,
+				headers: { "Content-Type": "text/html; charset=utf-8" },
+			},
+		);
 	}
 
 	// call puppeteer method

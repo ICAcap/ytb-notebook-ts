@@ -40,7 +40,6 @@ export default function Sidebar({
 		{ name: "Videos", href: "/videos", icon: Tv },
 		{ name: "Collection", href: "/collection", icon: FolderBookmark },
 		{ name: "Notes", href: "/notes", icon: BookSearch },
-		{ name: "Setting", href: "/setting", icon: Settings },
 	];
 
 	return (
@@ -63,7 +62,7 @@ export default function Sidebar({
 						title={isCollapsed ? "Expand" : "Collapse"}
 					>
 						<ChevronLeft
-							className={`h-5 w-5 transition-transform duration-300 ${isCollapsed ? "rotate-180" : ""}`}
+							className={`w-6 h-6 transition-transform duration-300 ${isCollapsed ? "rotate-180" : ""}`}
 						/>
 					</button>
 				</div>
@@ -84,11 +83,11 @@ export default function Sidebar({
 							title="Toggle theme"
 						>
 							{!mounted ? (
-								<div className="h-5 w-5" />
+								<div className="w-6 h-6" />
 							) : resolvedTheme === "light" ? (
-								<Sun className="h-5 w-5" />
+								<Sun className="w-6 h-6" />
 							) : (
-								<Moon className="h-5 w-5" />
+								<Moon className="w-6 h-6" />
 							)}
 						</button>
 					) : (
@@ -98,14 +97,14 @@ export default function Sidebar({
 								className={`join-item btn btn-square flex-1 flex items-center justify-center py-1.5 ${resolvedTheme === "light" && mounted ? "bg-secondary text-secondary-content" : "hover:bg-neutral-content/10"}`}
 								title="Light"
 							>
-								<Sun className="h-5 w-5" />
+								<Sun className="w-6 h-6" />
 							</button>
 							<button
 								onClick={() => handleThemeToggle("dark")}
 								className={`join-item btn btn-square flex-1 flex items-center justify-center py-1.5 ${resolvedTheme === "dark" && mounted ? "bg-secondary text-secondary-content" : "hover:bg-neutral-content/10"}`}
 								title="Dark"
 							>
-								<Moon className="h-5 w-5" />
+								<Moon className="w-6 h-6" />
 							</button>
 						</div>
 					)}

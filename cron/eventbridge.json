@@ -1,0 +1,12 @@
+{
+	"Name": "clean-demo-accounts",
+	"ScheduleExpression": "cron(0 0,12 * * ? *)",
+	"ScheduleExpressionTimezone": "UTC",
+	"FlexibleTimeWindow": {
+		"Mode": "OFF"
+	},
+	"Target": {
+		"Arn": "arn:aws:lambda:REGION:ACCOUNT_ID:function:clean-demo-accounts",
+		"RoleArn": "arn:aws:iam::ACCOUNT_ID:role/clean-demo-accounts-scheduler-role"
+	}
+}

@@ -7,9 +7,12 @@ import { VideoDetailType } from "../../../../../lib/dbTableAction/videoTableActi
 import { Note } from "../../../../../generated/prisma";
 import CollectionBadgeList from "../../_components/CollectionBadgeList";
 import { Group, Panel } from "react-resizable-panels";
+import { useIsDemoRoute } from "../../../../../utils/customHooks/useIsDemoRoute";
+import toast from "react-hot-toast";
 
+const DEMO_ADD_NEW = 3;
+const DEMO_EDIT = 3;
 const _ = require("lodash"); // for throttle purpose
-
 const VideoDetailView = ({
 	userId,
 	video,
@@ -20,6 +23,7 @@ const VideoDetailView = ({
 	notes: Note[] | null;
 }) => {
 	// hooks
+	const isDemoRoute = useIsDemoRoute();
 	// ref to bridge the player and the notes container to enable timestamp seeking
 	const playerRef = useRef<HTMLVideoElement | null>(null);
 
@@ -73,18 +77,26 @@ const VideoDetailView = ({
 							</div>
 						</div>
 						{/* export all notes button */}
-						<button
-							title="Export All Notes"
-							disabled={noteList.length === 0}
-							type="button"
-							className="btn btn-lg btn-primary max-w-xl lg:max-w-md mx-auto"
-							onClick={() =>
-								window.open(`/api/notes/video/${video.videoId}/pdf`, "_blank")
+						<span
+							title={
+								isDemoRoute
+									? "Note Exportation Disabled in Demo"
+									: "Export All Notes"
 							}
-							rel="noopener noreferrer"
+							className="max-w-xl lg:max-w-md mx-auto"
 						>
-							Export All Notes
-						</button>
+							<button
+								disabled={noteList.length === 0 || isDemoRoute}
+								type="button"
+								className="btn btn-lg btn-primary w-full"
+								onClick={() =>
+									window.open(`/api/notes/video/${video.videoId}/pdf`, "_blank")
+								}
+								rel="noopener noreferrer"
+							>
+								Export All Notes
+							</button>
+						</span>
 					</div>
 				</Panel>
 				<Panel>

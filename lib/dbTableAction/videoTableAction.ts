@@ -243,6 +243,8 @@ export const getAllUniqueVideoTitles = cache(async function (
  * @param youtubeVideoId - The unique YouTube identifier for the video.
  * @param title - The title of the video.
  * @param collectionsID - A list of collection IDs to associate with the video.
+ * @param isDemo - When true, skips revalidatePath("/videos"); used when this is called
+ *   during a Server Component's render (e.g. the demo page), where revalidatePath is unsupported.
  * @returns A promise resolving to the created or updated video record, or null on error.
  */
 export const upsertYouTubeVideo = async function (
@@ -250,6 +252,7 @@ export const upsertYouTubeVideo = async function (
 	youtubeVideoId: string,
 	title: string,
 	collectionsID: string[],
+	isDemo: boolean = false,
 ): Promise<VideoDetailType | null> {
 	if (!userId || !youtubeVideoId || !title) {
 		console.error(
@@ -303,7 +306,7 @@ export const upsertYouTubeVideo = async function (
 			},
 		});
 
-		revalidatePath("/videos");
+		if (!isDemo) revalidatePath("/videos");
 		return {
 			...video,
 			collections: video.collections.map((c) => ({
