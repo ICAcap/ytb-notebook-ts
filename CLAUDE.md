@@ -86,13 +86,16 @@ Full Tiptap-based editor suite. Note content is stored as Tiptap JSON, not plain
 - **`utils/escapeHtml.ts`**: Escapes user-controlled strings (e.g. video title) before interpolating into the raw HTML string passed to `page.setContent()` — prevents stored XSS/SSRF via injected markup in the PDF render path
 
 ### Rate Limiting (`utils/ratelimiter.ts`)
-Upstash Redis (`@upstash/ratelimit`), keyed per-`userId`, each surface isolated by its own prefixed `Ratelimit` instance:
+Upstash Redis (`@upstash/ratelimit`), keyed per-`userId` (except where noted), each surface isolated by its own prefixed `Ratelimit` instance:
 - `pdfExportRatelimit` — 5 req/10s, prefix `ratelimit:pdfExport`; checked in both PDF export routes before the Puppeteer render
 - `youtubeRatelimit` — 10 req/60s, prefix `ratelimit:youtube`; checked in `utils/youtubeFetchTitleServerSide.ts` before calling the YouTube Data API
 - `noteWriteRateLimit` — 30 req/60s, prefix `ratelimit:note-write`; checked in `createNote()`/`updateNote()` (`lib/dbTableAction/noteTableAction.ts`) before the DB write
 - `videoWriteRateLimit` — 10 req/60s, prefix `ratelimit:video-write`; checked in `upsertYouTubeVideo()` (`lib/dbTableAction/videoTableAction.ts`, backs both add-video and edit-video) before the DB write
+- `collectionWriteRateLimit` — 20 req/60s, prefix `ratelimit:collection-write`; checked before collection create/update
+- `demoAccessRateLimit` — 15 req/60s, prefix `ratelimit:demo`; keyed on the `ytb_demo_visitor_id` cookie, checked in `src/app/demo/page.tsx` before seeding a new demo session
+- `anonymousSignInRateLimit` — 5 req/60s, prefix `ratelimit:anon-signin`; keyed on IP (not userId, since anonymous sign-in mints a fresh userId every call)
 
-All four fail closed — a rejected `.limit(userId)` call returns `null`/`429` from the calling function/route rather than proceeding.
+All fail closed — a rejected `.limit(key)` call returns `null`/`429` from the calling function/route rather than proceeding.
 
 ### Modal & Context Patterns
 **Modal System**: `ModalSkeleton` wraps `<dialog>` and manages `isOpen`/`onClose` props. Used for add video, add collection.
@@ -106,6 +109,17 @@ All four fail closed — a rejected `.limit(userId)` call returns `null`/`429` f
 - Simple context wrapping userId for child components (`AddCollectionButton`, forms)
 - Wraps entire collection page to share userId
 
+### Demo Mode (`src/app/demo/`)
+Unauthenticated, instant "live demo" — no sign-in required, backed by better-auth's anonymous plugin.
+- **`middleware.ts`**: matches only `/demo`; mints an httpOnly `ytb_demo_visitor_id` cookie (30-day expiry) on first visit, used purely as a rate-limit key
+- **`src/app/demo/page.tsx`**: server component — checks `demoAccessRateLimit` against the visitor cookie, then calls `authClient.signIn.anonymous()` to create a throwaway `User` (`isAnonymous: true`), seeds it with one demo video + note (`_data/demoData.ts`, `DEMO_ALLOWED_ADD_NEW_NOTE = 3`), and renders the normal `VideoDetailView`
+- **Restrictions applied to anonymous users**:
+  - `createNote()` (`lib/dbTableAction/noteTableAction.ts`) looks up `user.isAnonymous` and blocks note creation once the demo user's total note count reaches `1 + DEMO_ALLOWED_ADD_NEW_NOTE`
+  - Both PDF export routes 403 immediately when `session.user.isAnonymous` is true (`"PDF Export Is Not Available In The Demo"`)
+  - `VideoDetailView.tsx` derives `isDemoRoute` from `usePathname().startsWith("/demo")` (not a custom hook) and disables the "Export All Notes" button on that route
+  - `upsertYouTubeVideo(..., isDemo)` takes a trailing `isDemo` flag to skip `revalidatePath("/videos")` when called from the demo page's server-component render (`revalidatePath` isn't valid there)
+- **Cleanup**: `lib/cleanDemoAccounts.ts` hard-deletes any `User` with `isAnonymous: true` older than 45 minutes; run via `npm run clean:demo` (intended to be invoked on a schedule/cron, not automatically)
+
 ## Commands
 
 ```bash
@@ -114,6 +128,7 @@ npm run build        # Build for production
 npm start            # Start production server
 npm run lint         # Run ESLint
 npm run seed         # Seed database (npx prisma db seed)
+npm run clean:demo   # Delete expired anonymous demo accounts (isAnonymous users older than 45 min)
 npx prisma studio   # Open Prisma Studio (GUI for database)
 npx prisma migrate dev --name <name>  # Create migration
 npx prisma db push   # Apply schema changes (dev only)
@@ -136,7 +151,7 @@ See `node_modules/next/dist/docs/` — this version has breaking changes in APIs
   - `getVideoNumWithSearchParam(userId, query, collection)` — Total count for pagination
   - `getAllUniqueVideoTitles(userId)` — All distinct video titles for a user (cached); used to build the search bar's autocomplete index
   - `getExistingVideo(userId, youtubeVidID)` — Check if video already added
-  - `upsertYouTubeVideo(userId, youtubeVidID, title, collectionIds)` — Add/update video with collection associations
+  - `upsertYouTubeVideo(userId, youtubeVidID, title, collectionIds, isDemo?)` — Add/update video with collection associations; `isDemo` skips `revalidatePath("/videos")` (used from the demo page's server-component render)
   - `updateVideoPlayedTime(videoId, userId, playedTime)` — Persist playback position in seconds
   - `deleteVideo(videoId, userId)` — Delete video and cascade-delete its notes; revalidates `/videos`
 - **Collection queries** (`lib/dbTableAction/collectionTableActions.ts`):

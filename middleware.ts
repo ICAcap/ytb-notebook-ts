@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const DEMO_VISITOR_COOKIE = "ytb_demo_visitor_id";
+export const DEMO_VISITOR_COOKIE = "ytb_demo_visitor_id";
 
 export function middleware(request: NextRequest) {
 	// Create a response that allows the request to proceed

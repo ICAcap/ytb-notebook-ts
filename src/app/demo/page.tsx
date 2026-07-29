@@ -20,8 +20,7 @@ import { createNote } from "../../../lib/dbTableAction/noteTableAction";
 import VideoDetailView from "../videos/[id]/_components/VideoDetailView";
 import { demoAccessRateLimit } from "../../../utils/ratelimiter";
 import { cookies } from "next/headers";
-
-const DEMO_VISITOR_COOKIE = "ytb_demo_visitor_id";
+import { DEMO_VISITOR_COOKIE } from "../../../middleware";
 
 type DemoUser = Omit<User, "image" | "isSuper">;
 
