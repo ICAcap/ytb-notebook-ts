@@ -48,3 +48,12 @@ export const demoAccessRateLimit = new Ratelimit({
 	timeout: 120000,
 	prefix: "ratelimit:demo",
 });
+
+// Keyed on IP (not userId) since anonymous sign-in mints a brand new userId every call.
+export const anonymousSignInRateLimit = new Ratelimit({
+	redis: Redis.fromEnv(),
+	limiter: Ratelimit.slidingWindow(5, "60 s"),
+	analytics: true,
+	timeout: 20000,
+	prefix: "ratelimit:anon-signin",
+});

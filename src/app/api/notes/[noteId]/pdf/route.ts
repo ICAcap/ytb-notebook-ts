@@ -12,6 +12,16 @@ export async function GET(
 	const session = await requireSession();
 	const userId = session.user.id;
 
+	if (session.user.isAnonymous) {
+		return new Response(
+			"<!DOCTYPE html><title>403 Forbidden</title><h1>PDF Export Is Not Available In The Demo</h1>",
+			{
+				status: 403,
+				headers: { "Content-Type": "text/html; charset=utf-8" },
+			},
+		);
+	}
+
 	const { success } = await pdfExportRatelimit.limit(userId);
 
 	if (!success) {
