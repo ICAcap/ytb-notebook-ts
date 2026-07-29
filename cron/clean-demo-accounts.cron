@@ -1,0 +1,3 @@
+# Clean up expired anonymous demo accounts, twice a day (00:00 and 12:00 server time).
+# Install: crontab -e, paste the line below (adjust path if repo lives elsewhere), then :wq.
+0 0,12 * * * cd /path/to/ytb-notebook-ts && /usr/bin/npm run clean:demo >> /var/log/clean-demo-accounts.log 2>&1

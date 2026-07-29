@@ -18,9 +18,12 @@ import {
 } from "../../../lib/dbTableAction/videoTableAction";
 import { createNote } from "../../../lib/dbTableAction/noteTableAction";
 import VideoDetailView from "../videos/[id]/_components/VideoDetailView";
+import { demoAccessRateLimit } from "../../../utils/ratelimiter";
+import { cookies } from "next/headers";
+
+const DEMO_VISITOR_COOKIE = "ytb_demo_visitor_id";
 
 type DemoUser = Omit<User, "image" | "isAnonymous" | "isSuper">;
-const TEST_NOTE_NUM = 3;
 
 export const metadata: Metadata = {
 	title: "YTB Demo",
@@ -70,7 +73,20 @@ async function seedDemo(
 }
 
 // html
-export default async function Demo() {
+export default async function DemoPage() {
+	// rate limiting
+	const visitorId =
+		(await cookies()).get(DEMO_VISITOR_COOKIE)?.value ?? "unknown";
+	const { success } = await demoAccessRateLimit.limit(visitorId);
+
+	if (!success) {
+		return (
+			<div className="alert alert-error text-xl text-error-content mb-4">
+				Error 429: Too many demo requests, please try again later
+			</div>
+		);
+	}
+
 	const demoUser = await getAnonymousUser();
 	const seedVidNote = demoUser ? await seedDemo(demoUser) : null;
 

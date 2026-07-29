@@ -40,3 +40,11 @@ export const collectionWriteRateLimit = new Ratelimit({
 	timeout: 20000,
 	prefix: "ratelimit:collection-write",
 });
+
+export const demoAccessRateLimit = new Ratelimit({
+	redis: Redis.fromEnv(),
+	limiter: Ratelimit.slidingWindow(15, "60 s"),
+	analytics: true,
+	timeout: 120000,
+	prefix: "ratelimit:demo",
+});
