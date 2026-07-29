@@ -11,8 +11,8 @@ import EditableNoteForm from "./EditableNoteForm";
 import { deleteNote } from "../../../../lib/dbTableAction/noteTableAction";
 import Modal from "@/_components/ModalSkeleton";
 import toast from "react-hot-toast";
+import { usePathname } from "next/navigation";
 import "@/_components/RichTextEditor/styles.scss";
-import { useIsDemoRoute } from "../../../../utils/customHooks/useIsDemoRoute";
 
 type Props = Omit<Note, "contentText" | "createdAt"> & {
 	playerRef?: React.RefObject<HTMLVideoElement | null>; // DOM ref to connect to react player
@@ -37,7 +37,7 @@ const NoteCard = (props: Props) => {
 	});
 
 	// hooks
-	const isDemoRoute = useIsDemoRoute();
+	const isDemoRoute = usePathname().startsWith("/demo");
 	const [editable, setEditable] = useState(false);
 	const [trashModalOpen, setTrashModalOpen] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);

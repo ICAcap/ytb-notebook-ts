@@ -7,8 +7,8 @@ import { VideoDetailType } from "../../../../../lib/dbTableAction/videoTableActi
 import { Note } from "../../../../../generated/prisma";
 import CollectionBadgeList from "../../_components/CollectionBadgeList";
 import { Group, Panel } from "react-resizable-panels";
-import { useIsDemoRoute } from "../../../../../utils/customHooks/useIsDemoRoute";
 import toast from "react-hot-toast";
+import { usePathname } from "next/navigation";
 
 const DEMO_ADD_NEW = 3;
 const DEMO_EDIT = 3;
@@ -23,7 +23,7 @@ const VideoDetailView = ({
 	notes: Note[] | null;
 }) => {
 	// hooks
-	const isDemoRoute = useIsDemoRoute();
+	const isDemoRoute = usePathname().startsWith("/demo");
 	// ref to bridge the player and the notes container to enable timestamp seeking
 	const playerRef = useRef<HTMLVideoElement | null>(null);
 
