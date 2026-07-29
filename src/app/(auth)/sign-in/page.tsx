@@ -58,7 +58,9 @@ export default function SignIn() {
 
 								<div className="mt-4 md:mt-8">
 									{error && (
-										<div className="alert alert-error text-sm mb-4">{error}</div>
+										<div className="alert alert-error text-sm mb-4">
+											{error}
+										</div>
 									)}
 									{isPending || session ? (
 										<div className="skeleton btn btn-lg w-56"></div>

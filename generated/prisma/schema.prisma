@@ -37,7 +37,7 @@ model User {
   accounts      Account[]
 
   // for live demo purpose
-  isAnonymous Boolean? @default(false)
+  isAnonymous Boolean @default(false)
 
   @@index([isActive])
   @@map("user")

@@ -8,11 +8,13 @@ import { Note } from "../../../../generated/prisma";
 import { getH, getM, getS } from "../../../../utils/formatTimeStamp";
 import { NOTE_COLORS } from "../../../../utils/noteColors";
 import { AlertCircle } from "lucide-react";
+import { usePathname } from "next/navigation";
 import toast from "react-hot-toast";
 import {
 	createNote,
 	updateNote,
 } from "../../../../lib/dbTableAction/noteTableAction";
+import { DEMO_ALLOWED_ADD_NEW_NOTE } from "@/app/demo/_data/demoData";
 
 type Props = (Omit<Note, "createdAt" | "updatedAt" | "contentText"> | null) & {
 	playerRef?: React.RefObject<HTMLVideoElement | null>;
@@ -75,6 +77,8 @@ const EditableNoteForm = (props: Props) => {
 		},
 	});
 
+	const isDemoRoute = usePathname().startsWith("/demo");
+
 	// helpers
 	const onSubmitNote: SubmitHandler<noteForm> = async (data) => {
 		// retrieve data
@@ -95,28 +99,34 @@ const EditableNoteForm = (props: Props) => {
 
 		let noteUpserted = null;
 
-		// update existing note
-		if (props.userId && props.videoId && props.noteId) {
-			noteUpserted = await updateNote({
-				userId: props.userId,
-				noteId: props.noteId,
-				startTime: startTotalSeconds,
-				endTime: endTotalSeconds,
-				content: contentJson,
-				color: colorTag,
-			});
-		}
+		try {
+			// update existing note
+			if (props.userId && props.videoId && props.noteId) {
+				noteUpserted = await updateNote({
+					userId: props.userId,
+					noteId: props.noteId,
+					startTime: startTotalSeconds,
+					endTime: endTotalSeconds,
+					content: contentJson,
+					color: colorTag,
+				});
+			}
 
-		// create new note
-		else if (props.userId && props.videoId) {
-			noteUpserted = await createNote({
-				userId: props.userId,
-				videoId: props.videoId,
-				startTime: startTotalSeconds,
-				endTime: endTotalSeconds,
-				content: contentJson,
-				color: colorTag,
-			});
+			// create new note
+			else if (props.userId && props.videoId) {
+				noteUpserted = await createNote({
+					userId: props.userId,
+					videoId: props.videoId,
+					startTime: startTotalSeconds,
+					endTime: endTotalSeconds,
+					content: contentJson,
+					color: colorTag,
+				});
+			}
+		} catch (error) {
+			console.error("Note submission error:", error);
+			toast.error("Note Submission Failed, Please Try Again");
+			return;
 		}
 
 		if (noteUpserted) {
@@ -124,7 +134,11 @@ const EditableNoteForm = (props: Props) => {
 			props.onUpdated?.(noteUpserted);
 			props.setEditable?.(false);
 		} else {
-			toast.error("Note Submission Failed, Please Try Again");
+			isDemoRoute
+				? toast.error(
+						`Demo only allows ${DEMO_ALLOWED_ADD_NEW_NOTE} new note additions. Consider signing in if you'd like to see more.`,
+					)
+				: toast.error("Note Submission Failed, Please Try Again");
 		}
 	};
 

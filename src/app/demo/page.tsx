@@ -23,7 +23,7 @@ import { cookies } from "next/headers";
 
 const DEMO_VISITOR_COOKIE = "ytb_demo_visitor_id";
 
-type DemoUser = Omit<User, "image" | "isAnonymous" | "isSuper">;
+type DemoUser = Omit<User, "image" | "isSuper">;
 
 export const metadata: Metadata = {
 	title: "YTB Demo",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 async function getAnonymousUser(): Promise<DemoUser | null> {
 	try {
 		const user = (await authClient.signIn.anonymous()).data?.user;
-		return user ?? null;
+		return (user as DemoUser) ?? null;
 	} catch (err) {
 		console.error(err);
 		return null;

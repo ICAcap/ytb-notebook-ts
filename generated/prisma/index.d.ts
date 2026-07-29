@@ -1722,7 +1722,7 @@ export namespace Prisma {
     name: string
     emailVerified: boolean
     image: string | null
-    isAnonymous: boolean | null
+    isAnonymous: boolean
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -1831,7 +1831,7 @@ export namespace Prisma {
       name: string
       emailVerified: boolean
       image: string | null
-      isAnonymous: boolean | null
+      isAnonymous: boolean
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -9780,7 +9780,7 @@ export namespace Prisma {
     name?: StringFilter<"User"> | string
     emailVerified?: BoolFilter<"User"> | boolean
     image?: StringNullableFilter<"User"> | string | null
-    isAnonymous?: BoolNullableFilter<"User"> | boolean | null
+    isAnonymous?: BoolFilter<"User"> | boolean
     videos?: VideoListRelationFilter
     notes?: NoteListRelationFilter
     collections?: CollectionListRelationFilter
@@ -9798,7 +9798,7 @@ export namespace Prisma {
     name?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrderInput | SortOrder
-    isAnonymous?: SortOrderInput | SortOrder
+    isAnonymous?: SortOrder
     videos?: VideoOrderByRelationAggregateInput
     notes?: NoteOrderByRelationAggregateInput
     collections?: CollectionOrderByRelationAggregateInput
@@ -9819,7 +9819,7 @@ export namespace Prisma {
     name?: StringFilter<"User"> | string
     emailVerified?: BoolFilter<"User"> | boolean
     image?: StringNullableFilter<"User"> | string | null
-    isAnonymous?: BoolNullableFilter<"User"> | boolean | null
+    isAnonymous?: BoolFilter<"User"> | boolean
     videos?: VideoListRelationFilter
     notes?: NoteListRelationFilter
     collections?: CollectionListRelationFilter
@@ -9837,7 +9837,7 @@ export namespace Prisma {
     name?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrderInput | SortOrder
-    isAnonymous?: SortOrderInput | SortOrder
+    isAnonymous?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -9856,7 +9856,7 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"User"> | string
     emailVerified?: BoolWithAggregatesFilter<"User"> | boolean
     image?: StringNullableWithAggregatesFilter<"User"> | string | null
-    isAnonymous?: BoolNullableWithAggregatesFilter<"User"> | boolean | null
+    isAnonymous?: BoolWithAggregatesFilter<"User"> | boolean
   }
 
   export type VideoWhereInput = {
@@ -10309,7 +10309,7 @@ export namespace Prisma {
     name: string
     emailVerified?: boolean
     image?: string | null
-    isAnonymous?: boolean | null
+    isAnonymous?: boolean
     videos?: VideoCreateNestedManyWithoutUserInput
     notes?: NoteCreateNestedManyWithoutUserInput
     collections?: CollectionCreateNestedManyWithoutUserInput
@@ -10327,7 +10327,7 @@ export namespace Prisma {
     name: string
     emailVerified?: boolean
     image?: string | null
-    isAnonymous?: boolean | null
+    isAnonymous?: boolean
     videos?: VideoUncheckedCreateNestedManyWithoutUserInput
     notes?: NoteUncheckedCreateNestedManyWithoutUserInput
     collections?: CollectionUncheckedCreateNestedManyWithoutUserInput
@@ -10345,7 +10345,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    isAnonymous?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isAnonymous?: BoolFieldUpdateOperationsInput | boolean
     videos?: VideoUpdateManyWithoutUserNestedInput
     notes?: NoteUpdateManyWithoutUserNestedInput
     collections?: CollectionUpdateManyWithoutUserNestedInput
@@ -10363,7 +10363,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    isAnonymous?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isAnonymous?: BoolFieldUpdateOperationsInput | boolean
     videos?: VideoUncheckedUpdateManyWithoutUserNestedInput
     notes?: NoteUncheckedUpdateManyWithoutUserNestedInput
     collections?: CollectionUncheckedUpdateManyWithoutUserNestedInput
@@ -10381,7 +10381,7 @@ export namespace Prisma {
     name: string
     emailVerified?: boolean
     image?: string | null
-    isAnonymous?: boolean | null
+    isAnonymous?: boolean
   }
 
   export type UserUpdateManyMutationInput = {
@@ -10394,7 +10394,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    isAnonymous?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isAnonymous?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -10407,7 +10407,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    isAnonymous?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isAnonymous?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type VideoCreateInput = {
@@ -10931,11 +10931,6 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type BoolNullableFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
-    not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
-  }
-
   export type VideoListRelationFilter = {
     every?: VideoWhereInput
     some?: VideoWhereInput
@@ -11086,14 +11081,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
-  export type BoolNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
-    not?: NestedBoolNullableWithAggregatesFilter<$PrismaModel> | boolean | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedBoolNullableFilter<$PrismaModel>
-    _max?: NestedBoolNullableFilter<$PrismaModel>
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -11520,10 +11507,6 @@ export namespace Prisma {
     set?: string | null
   }
 
-  export type NullableBoolFieldUpdateOperationsInput = {
-    set?: boolean | null
-  }
-
   export type VideoUpdateManyWithoutUserNestedInput = {
     create?: XOR<VideoCreateWithoutUserInput, VideoUncheckedCreateWithoutUserInput> | VideoCreateWithoutUserInput[] | VideoUncheckedCreateWithoutUserInput[]
     connectOrCreate?: VideoCreateOrConnectWithoutUserInput | VideoCreateOrConnectWithoutUserInput[]
@@ -11922,11 +11905,6 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type NestedBoolNullableFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
-    not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
-  }
-
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -12003,14 +11981,6 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type NestedBoolNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
-    not?: NestedBoolNullableWithAggregatesFilter<$PrismaModel> | boolean | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedBoolNullableFilter<$PrismaModel>
-    _max?: NestedBoolNullableFilter<$PrismaModel>
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
@@ -12413,7 +12383,7 @@ export namespace Prisma {
     name: string
     emailVerified?: boolean
     image?: string | null
-    isAnonymous?: boolean | null
+    isAnonymous?: boolean
     notes?: NoteCreateNestedManyWithoutUserInput
     collections?: CollectionCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -12430,7 +12400,7 @@ export namespace Prisma {
     name: string
     emailVerified?: boolean
     image?: string | null
-    isAnonymous?: boolean | null
+    isAnonymous?: boolean
     notes?: NoteUncheckedCreateNestedManyWithoutUserInput
     collections?: CollectionUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -12518,7 +12488,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    isAnonymous?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isAnonymous?: BoolFieldUpdateOperationsInput | boolean
     notes?: NoteUpdateManyWithoutUserNestedInput
     collections?: CollectionUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -12535,7 +12505,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    isAnonymous?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isAnonymous?: BoolFieldUpdateOperationsInput | boolean
     notes?: NoteUncheckedUpdateManyWithoutUserNestedInput
     collections?: CollectionUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -12584,7 +12554,7 @@ export namespace Prisma {
     name: string
     emailVerified?: boolean
     image?: string | null
-    isAnonymous?: boolean | null
+    isAnonymous?: boolean
     videos?: VideoCreateNestedManyWithoutUserInput
     notes?: NoteCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -12601,7 +12571,7 @@ export namespace Prisma {
     name: string
     emailVerified?: boolean
     image?: string | null
-    isAnonymous?: boolean | null
+    isAnonymous?: boolean
     videos?: VideoUncheckedCreateNestedManyWithoutUserInput
     notes?: NoteUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -12661,7 +12631,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    isAnonymous?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isAnonymous?: BoolFieldUpdateOperationsInput | boolean
     videos?: VideoUpdateManyWithoutUserNestedInput
     notes?: NoteUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -12678,7 +12648,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    isAnonymous?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isAnonymous?: BoolFieldUpdateOperationsInput | boolean
     videos?: VideoUncheckedUpdateManyWithoutUserNestedInput
     notes?: NoteUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -12711,7 +12681,7 @@ export namespace Prisma {
     name: string
     emailVerified?: boolean
     image?: string | null
-    isAnonymous?: boolean | null
+    isAnonymous?: boolean
     videos?: VideoCreateNestedManyWithoutUserInput
     collections?: CollectionCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
@@ -12728,7 +12698,7 @@ export namespace Prisma {
     name: string
     emailVerified?: boolean
     image?: string | null
-    isAnonymous?: boolean | null
+    isAnonymous?: boolean
     videos?: VideoUncheckedCreateNestedManyWithoutUserInput
     collections?: CollectionUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
@@ -12788,7 +12758,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    isAnonymous?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isAnonymous?: BoolFieldUpdateOperationsInput | boolean
     videos?: VideoUpdateManyWithoutUserNestedInput
     collections?: CollectionUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
@@ -12805,7 +12775,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    isAnonymous?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isAnonymous?: BoolFieldUpdateOperationsInput | boolean
     videos?: VideoUncheckedUpdateManyWithoutUserNestedInput
     collections?: CollectionUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -12855,7 +12825,7 @@ export namespace Prisma {
     name: string
     emailVerified?: boolean
     image?: string | null
-    isAnonymous?: boolean | null
+    isAnonymous?: boolean
     videos?: VideoCreateNestedManyWithoutUserInput
     notes?: NoteCreateNestedManyWithoutUserInput
     collections?: CollectionCreateNestedManyWithoutUserInput
@@ -12872,7 +12842,7 @@ export namespace Prisma {
     name: string
     emailVerified?: boolean
     image?: string | null
-    isAnonymous?: boolean | null
+    isAnonymous?: boolean
     videos?: VideoUncheckedCreateNestedManyWithoutUserInput
     notes?: NoteUncheckedCreateNestedManyWithoutUserInput
     collections?: CollectionUncheckedCreateNestedManyWithoutUserInput
@@ -12905,7 +12875,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    isAnonymous?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isAnonymous?: BoolFieldUpdateOperationsInput | boolean
     videos?: VideoUpdateManyWithoutUserNestedInput
     notes?: NoteUpdateManyWithoutUserNestedInput
     collections?: CollectionUpdateManyWithoutUserNestedInput
@@ -12922,7 +12892,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    isAnonymous?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isAnonymous?: BoolFieldUpdateOperationsInput | boolean
     videos?: VideoUncheckedUpdateManyWithoutUserNestedInput
     notes?: NoteUncheckedUpdateManyWithoutUserNestedInput
     collections?: CollectionUncheckedUpdateManyWithoutUserNestedInput
@@ -12939,7 +12909,7 @@ export namespace Prisma {
     name: string
     emailVerified?: boolean
     image?: string | null
-    isAnonymous?: boolean | null
+    isAnonymous?: boolean
     videos?: VideoCreateNestedManyWithoutUserInput
     notes?: NoteCreateNestedManyWithoutUserInput
     collections?: CollectionCreateNestedManyWithoutUserInput
@@ -12956,7 +12926,7 @@ export namespace Prisma {
     name: string
     emailVerified?: boolean
     image?: string | null
-    isAnonymous?: boolean | null
+    isAnonymous?: boolean
     videos?: VideoUncheckedCreateNestedManyWithoutUserInput
     notes?: NoteUncheckedCreateNestedManyWithoutUserInput
     collections?: CollectionUncheckedCreateNestedManyWithoutUserInput
@@ -12989,7 +12959,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    isAnonymous?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isAnonymous?: BoolFieldUpdateOperationsInput | boolean
     videos?: VideoUpdateManyWithoutUserNestedInput
     notes?: NoteUpdateManyWithoutUserNestedInput
     collections?: CollectionUpdateManyWithoutUserNestedInput
@@ -13006,7 +12976,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    isAnonymous?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isAnonymous?: BoolFieldUpdateOperationsInput | boolean
     videos?: VideoUncheckedUpdateManyWithoutUserNestedInput
     notes?: NoteUncheckedUpdateManyWithoutUserNestedInput
     collections?: CollectionUncheckedUpdateManyWithoutUserNestedInput

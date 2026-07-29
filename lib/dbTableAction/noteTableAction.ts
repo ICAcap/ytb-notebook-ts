@@ -6,7 +6,7 @@ import { Note } from "../../generated/prisma";
 import { JSONContent } from "@tiptap/react";
 import { tiptapToText } from "../../utils/tiptapToText";
 import { noteWriteRateLimit } from "../../utils/ratelimiter";
-
+import { DEMO_ALLOWED_ADD_NEW_NOTE } from "@/app/demo/_data/demoData";
 import { cache } from "react";
 
 // Type
@@ -399,6 +399,18 @@ export async function createNote({
 		}
 
 		try {
+			// lookup user to check demo status flag
+			const user = await prisma.user.findUnique({
+				where: { id: userId },
+				select: { isAnonymous: true },
+			});
+			if (user?.isAnonymous) {
+				const demoNotesNum = await prisma.note.count({
+					where: { userId: userId },
+				});
+				if (demoNotesNum >= 1 + DEMO_ALLOWED_ADD_NEW_NOTE) return null;
+			}
+
 			const creation = await prisma.note.create({
 				data: {
 					userId: userId,

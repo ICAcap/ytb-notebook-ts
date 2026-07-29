@@ -107,17 +107,23 @@ const NoteCard = (props: Props) => {
 							<Download className="w-6 h-6" color="white" />
 						</button>
 					</span>
-					<button
-						disabled={editable}
-						title="edit this note"
-						onClick={() => {
-							setEditable(true);
-							props.onOpenEdit?.();
-						}}
-						className="btn btn-square btn-ghost btn-md"
+					<span
+						title={
+							isDemoRoute ? "Note Edition Disabled in Demo" : "Edit This Note"
+						}
 					>
-						<PencilLine className="w-6 h-6" color="white" />
-					</button>
+						<button
+							disabled={editable || isDemoRoute}
+							onClick={() => {
+								setEditable(true);
+								props.onOpenEdit?.();
+							}}
+							className="btn btn-square btn-ghost btn-md"
+						>
+							<PencilLine className="w-6 h-6" color="white" />
+						</button>
+					</span>
+
 					<button
 						title="delete this note"
 						className="btn btn-square btn-ghost btn-md"

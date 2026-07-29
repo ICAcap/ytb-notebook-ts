@@ -7,11 +7,8 @@ import { VideoDetailType } from "../../../../../lib/dbTableAction/videoTableActi
 import { Note } from "../../../../../generated/prisma";
 import CollectionBadgeList from "../../_components/CollectionBadgeList";
 import { Group, Panel } from "react-resizable-panels";
-import toast from "react-hot-toast";
 import { usePathname } from "next/navigation";
-
-const DEMO_ADD_NEW = 3;
-const DEMO_EDIT = 3;
+import { Toaster } from "react-hot-toast";
 const _ = require("lodash"); // for throttle purpose
 const VideoDetailView = ({
 	userId,
@@ -50,6 +47,7 @@ const VideoDetailView = ({
 					minSize="20%"
 					className="border rounded-lg"
 				>
+					<Toaster />
 					<div className="flex flex-col w-full gap-1">
 						<VideoPlayer
 							videoId={video.videoId}

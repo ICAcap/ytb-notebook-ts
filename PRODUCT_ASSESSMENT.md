@@ -9,7 +9,6 @@ A from-the-code read of where this project stands, whether it's deployable, what
 ## TL;DR
 
 - **Architecturally solid.** Auth, data isolation, schema design, and Next.js App Router usage are all done correctly — not "tutorial-quality."
-- **Two of the original blockers are closed**: the exposed `/tiptap` dev route is deleted, and `.env.example` now documents every required credential.
 - **Two real features shipped since the original draft**: authenticated, XSS-hardened PDF export (single note + whole-video) backed by a cached warm Puppeteer instance, and full-text search across note content, not just video titles (see §1 and §4). Both are genuinely good systems-design talking points.
 - **Rate limiting is fully closed.** All four write/fetch surfaces are backed by Upstash Redis (`@upstash/ratelimit`, `utils/ratelimiter.ts`), keyed per-`userId` with prefix-isolated instances: PDF export (`pdfExportRatelimit`: 5 req/10s) and the shared-key YouTube title fetch (`youtubeRatelimit`: 10 req/60s) were closed first; note creation/update (`noteWriteRateLimit`: 30 req/60s) and video add/edit (`videoWriteRateLimit`: 10 req/60s) closed 2026-07-20. Each fails closed — a rejected `.limit(userId)` returns `null`/`429` before the expensive render, external API call, or DB write happens.
 - **`README.md` is rewritten** (closed as of this pass) — real project description, feature list, tech stack, setup steps, points to `CLAUDE.md` for architecture depth. No longer boilerplate.
@@ -80,17 +79,18 @@ This project already clears the hardest bar — it's not a tutorial clone, and t
 5. Deploy to Vercel + Neon per the checklist in Section 6.
 6. Everything else in Section 4 (Markdown export, collection-level notebook view, tagging, AI features) is additive polish, not a blocker — ship after the live link exists.
 
-### Vercel vs. AWS
+### Vercel vs. AWS vs. EC2
 
 This came up directly and is worth settling explicitly rather than leaving open. Recommendation: **Vercel.**
 
 The rest of the stack is already serverless-native — Neon (serverless Postgres), Upstash Redis (serverless-first), Next.js App Router. `cron/vercel.json` (the demo-account cleanup job) is already written in Vercel's Cron Jobs config format, which is an existing signal in the repo toward this choice, deliberate or not.
 
-The one piece of code that doesn't fit a serverless target as-is is `lib/puppeteerBrowser.ts` (full `puppeteer` + `globalThis` warm-browser singleton, see §2). Concretely:
+The one piece of code that doesn't fit a serverless target as-is is `lib/puppeteerBrowser.ts` (full `puppeteer` + `globalThis` warm-browser singleton, see §2). Concretely, three options:
 - **Vercel path**: swap to `puppeteer-core` + `@sparticuz/chromium` (a Lambda/serverless-sized Chromium build). The warm-`globalThis`-singleton pattern still works opportunistically under Vercel Fluid Compute, just isn't guaranteed across cold starts — acceptable for a PDF-export code path that isn't latency-critical. This is a scoped, well-known swap (~1-2 hours of work), not a rewrite.
-- **AWS path**: run as a container (ECS/Fargate) so the current Puppeteer code works completely unmodified, with the warm-browser singleton behaving exactly as designed. But this trades a code change for standing up a container image, task definitions, an ALB or equivalent, and replacing `cron/vercel.json` with an EventBridge scheduled rule — real ongoing ops surface for a project whose primary goal right now is a portfolio-piece demo, not production scale.
+- **AWS (ECS/Fargate) path**: run as a container so the current Puppeteer code works completely unmodified, with the warm-browser singleton behaving exactly as designed. But this trades a code change for standing up a container image, task definitions, an ALB or equivalent, and replacing `cron/vercel.json` with an EventBridge scheduled rule — real ongoing ops surface for a project whose primary goal right now is a portfolio-piece demo, not production scale.
+- **Bare EC2 instance**: also lets `lib/puppeteerBrowser.ts` ship untouched — full `puppeteer` and the `globalThis` warm-singleton both work exactly as designed on a long-running process, no cold starts to worry about. But it's the most ops-heavy of the three: you own OS patching, a process supervisor (pm2/systemd) to keep the app alive and restart on crash, a reverse proxy + TLS (nginx/certbot) that Vercel gives for free, no autoscaling without manually configuring an ASG, and `cron/vercel.json` becomes dead weight — replace with a real cron job or systemd timer. Legitimate if actual infra cost or hands-on ops practice matters more than dev time right now, but it's a bad trade purely for a portfolio-piece demo.
 
-Net: AWS is the "keep this file untouched" option; Vercel is the "small, well-trodden code change, zero ops overhead" option. For this project's current goal, Vercel wins on effort-to-value.
+Net: EC2 and AWS containers are both "keep this file untouched" options at the cost of ongoing ops surface (EC2 more so — no managed container orchestration at all); Vercel is the "small, well-trodden code change, zero ops overhead" option. For this project's current goal, Vercel still wins on effort-to-value.
 
 ---
 

@@ -1,4 +1,5 @@
 import { JSONContent } from "@tiptap/react";
+export const DEMO_ALLOWED_ADD_NEW_NOTE = 3;
 
 const noteContentObj = {
 	type: "doc",
