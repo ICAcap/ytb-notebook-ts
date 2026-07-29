@@ -8,9 +8,11 @@ import { Note } from "../../../../../generated/prisma";
 import CollectionBadgeList from "../../_components/CollectionBadgeList";
 import { Group, Panel } from "react-resizable-panels";
 import { useIsDemoRoute } from "../../../../../utils/customHooks/useIsDemoRoute";
+import toast from "react-hot-toast";
 
+const DEMO_ADD_NEW = 3;
+const DEMO_EDIT = 3;
 const _ = require("lodash"); // for throttle purpose
-
 const VideoDetailView = ({
 	userId,
 	video,

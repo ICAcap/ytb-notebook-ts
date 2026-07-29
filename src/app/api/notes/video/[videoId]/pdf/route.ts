@@ -29,13 +29,25 @@ export async function GET(
 
 	const video = await getVideoById(userId, videoId);
 	if (!video) {
-		return new Response("Video Not Existing", { status: 404 });
+		return new Response(
+			"<!DOCTYPE html><title>404 Not Found</title><h1>Video Not Existing</h1>",
+			{
+				status: 404,
+				headers: { "Content-Type": "text/html; charset=utf-8" },
+			},
+		);
 	}
 
 	const notes = await getNotesByVideo(userId, videoId);
 
 	if (!notes || notes.length === 0) {
-		return new Response("No Notes Found", { status: 404 });
+		return new Response(
+			"<!DOCTYPE html><title>404 Not Found</title><h1>No Notes Found</h1>",
+			{
+				status: 404,
+				headers: { "Content-Type": "text/html; charset=utf-8" },
+			},
+		);
 	}
 
 	// call puppeteer method
