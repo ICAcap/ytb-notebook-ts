@@ -1,8 +1,8 @@
-# YTB Notebook — Product & Codebase Assessment (2026-07-09, revised 2026-07-17)
+# YTB Notebook — Product & Codebase Assessment (2026-07-09, revised 2026-07-29)
 
 A from-the-code read of where this project stands, whether it's deployable, what to build next, and what to use for a showcase homepage. Based on direct inspection of the repo (schema, data layer, auth, components, git history) plus research on what gets developers hired in 2026.
 
-> This assessment was originally written in June 2026 and re-verified four times since (2026-07-08, 2026-07-09, 2026-07-17, 2026-07-20). Earlier drafts tracked corrections as a bolted-on addendum; this version folds everything into one current read so it doesn't contradict itself mid-document.
+> This assessment was originally written in June 2026 and re-verified five times since (2026-07-08, 2026-07-09, 2026-07-17, 2026-07-20, 2026-07-29). Earlier drafts tracked corrections as a bolted-on addendum; this version folds everything into one current read so it doesn't contradict itself mid-document.
 
 ---
 
@@ -10,10 +10,12 @@ A from-the-code read of where this project stands, whether it's deployable, what
 
 - **Architecturally solid.** Auth, data isolation, schema design, and Next.js App Router usage are all done correctly — not "tutorial-quality."
 - **Two of the original blockers are closed**: the exposed `/tiptap` dev route is deleted, and `.env.example` now documents every required credential.
-- **Two real features shipped since the original draft**: authenticated, XSS-hardened PDF export (single note + whole-video) backed by a cached warm Puppeteer instance, and — new as of 2026-07-17 — **full-text search across note content**, not just video titles (see §1 and §4). Both are genuinely good systems-design talking points.
-- **Rate limiting is now fully closed.** All four write/fetch surfaces are backed by Upstash Redis (`@upstash/ratelimit`, `utils/ratelimiter.ts`), keyed per-`userId` with prefix-isolated instances: PDF export (`pdfExportRatelimit`: 5 req/10s) and the shared-key YouTube title fetch (`youtubeRatelimit`: 10 req/60s) were closed first; note creation/update (`noteWriteRateLimit`: 30 req/60s) and video add/edit (`videoWriteRateLimit`: 10 req/60s) closed 2026-07-20. Each fails closed — a rejected `.limit(userId)` returns `null`/`429` before the expensive render, external API call, or DB write happens. The title-fetch path also surfaces a toast on failure instead of silently leaving the title field blank; the note/video write paths already had generic "Submission Failed" toasts on any `null` return, so no new UI work was needed there.
-- `README.md` is still `create-next-app` boilerplate — cheap but no longer purely a "blocker" framing, see below. A root `global-error.tsx` boundary is implemented; the dead `screenshotUrl` schema field has been removed; security headers are set in `next.config.ts`; `LICENSE` (MIT) has been added.
-- **Remaining effort to "launchable as a resume portfolio piece": ~1 focused day**, no architecture changes required.
+- **Two real features shipped since the original draft**: authenticated, XSS-hardened PDF export (single note + whole-video) backed by a cached warm Puppeteer instance, and full-text search across note content, not just video titles (see §1 and §4). Both are genuinely good systems-design talking points.
+- **Rate limiting is fully closed.** All four write/fetch surfaces are backed by Upstash Redis (`@upstash/ratelimit`, `utils/ratelimiter.ts`), keyed per-`userId` with prefix-isolated instances: PDF export (`pdfExportRatelimit`: 5 req/10s) and the shared-key YouTube title fetch (`youtubeRatelimit`: 10 req/60s) were closed first; note creation/update (`noteWriteRateLimit`: 30 req/60s) and video add/edit (`videoWriteRateLimit`: 10 req/60s) closed 2026-07-20. Each fails closed — a rejected `.limit(userId)` returns `null`/`429` before the expensive render, external API call, or DB write happens.
+- **`README.md` is rewritten** (closed as of this pass) — real project description, feature list, tech stack, setup steps, points to `CLAUDE.md` for architecture depth. No longer boilerplate.
+- **The "demoable without your Google login" gap is now closed**, via a different mechanism than originally planned. Instead of a read-only share link (the Tier 1 recommendation in the prior draft), the `add-live-demo` branch ships a full anonymous-auth demo route: `/demo` seeds sample data, a visitor-scoped cookie (`middleware.ts`) tracks anonymous sessions, and `lib/cleanDemoAccounts.ts` expires them after 45 minutes via a Vercel Cron job (`cron/vercel.json`). Landing page also got a real design pass (hero, feature rows, FAQ, CTA, GSAP animations) — no longer "one `<h1>` and a sign-in form." See §1, §4, §5.
+- **New blocker surfaced this pass, not previously flagged**: `lib/puppeteerBrowser.ts` uses full `puppeteer` (bundles its own ~300MB Chromium) plus a `globalThis`-pinned warm-browser singleton — a pattern that assumes a long-lived process. This does not survive standard serverless deployment as-is (see §3 and §6 for the Vercel-specific fix). This is the one concrete piece of deploy-target-dependent work left.
+- **Remaining effort to "launchable as a resume portfolio piece": ~half a day** — the Puppeteer serverless swap, then deploy.
 
 ---
 
@@ -28,6 +30,7 @@ A from-the-code read of where this project stands, whether it's deployable, what
 - **PDF export (new since June draft, commits `f730ad3`…`4dbfcf5`)**: two authenticated routes (`src/app/api/notes/[noteId]/pdf`, `src/app/api/notes/video/[videoId]/pdf`), both call `requireSession()` and scope by `userId`. `lib/puppeteerBrowser.ts` caches a **warm Puppeteer `Browser` on `globalThis`, keyed by the launch Promise** (not the resolved value), so concurrent requests await one in-flight launch instead of racing separate `puppeteer.launch()` calls, with auto-recovery on `disconnected`. `escapeHtml()` sanitizes the video title before it's interpolated into the HTML passed to `page.setContent()`, and `setJavaScriptEnabled(false)` closes the obvious stored-XSS/SSRF vector. This is a substantive, interview-ready systems-design answer: "shared warm-process pool for an expensive external resource, promise-based dedup to avoid a launch race, XSS hardening on the render path."
 - **Full-text note content search (new since 2026-07-09 draft, ~8 commits, 2026-07-12 → 2026-07-17)**: this was the top item in the "Feature Additions Worth Considering" list in the prior draft, and it's now built and working — not a stub. `prisma/schema.prisma` adds `Note.contentText String @default("") @db.Text` (Tiptap JSON flattened to plain text via `utils/tiptapToText.ts`) plus `@@index([userId, contentText])`; `createNote()`/`updateNote()` in `lib/dbTableAction/noteTableAction.ts` keep it in sync on every write. `getNotesWithSearchParam(userId, page, pageSize, query, collection, color)` filters on `contentText: { contains: query, mode: "insensitive" }` with optional collection/color filters — a real content match, not a title-only search dressed up. The UI lives at `src/app/notes/page.tsx` (`NoteSearchPage`), driven by `src/app/notes/_components/NoteSearchBar.tsx` via URL search params, with results grouped by video into an alphabetical accordion (`NoteListItem` per note) and a `startAt` param that jumps `VideoPlayer` straight to the matched timestamp. That last part — search result → exact playback position — is a nice end-to-end UX detail worth mentioning in an interview, not just "we added a search box."
 - **19+ migrations across ~5 weeks** of steady, incremental schema evolution (renames, index additions, cascade-rule fixes) — real iteration, not a single big-bang commit.
+- **Anonymous live-demo flow (new, `add-live-demo` branch)**: `/demo` (`src/app/demo/page.tsx`) seeds a signed-out visitor into a working session via better-auth anonymous auth, backed by pre-baked sample data (`src/app/demo/_data/demoData.ts`). `middleware.ts` sets an httpOnly visitor cookie scoped to `/demo`; `lib/cleanDemoAccounts.ts` deletes anonymous users older than 45 minutes, invoked on a schedule via `cron/vercel.json`. `utils/customHooks/useIsDemoRoute.ts` gates demo-aware UI (e.g. suppressing destructive actions or nudging toward real sign-up). This is a stronger answer to "show me it works" than a static share link would have been — a recruiter gets the actual product, not a read-only snapshot.
 
 ---
 
@@ -49,10 +52,15 @@ A from-the-code read of where this project stands, whether it's deployable, what
 
 - ~~Unbounded note/video creation~~ — `createNote()`/`updateNote()` (`lib/dbTableAction/noteTableAction.ts`) now call `noteWriteRateLimit.limit(userId)` (Upstash, 30 req/60s, prefix `ratelimit:note-write`) before the DB write; `upsertYouTubeVideo()` (`lib/dbTableAction/videoTableAction.ts`, backs both add-video and edit-video) calls `videoWriteRateLimit.limit(userId)` (10 req/60s, prefix `ratelimit:video-write`). Both fail closed by returning `null`, matching each function's existing failure-return convention — the three calling forms (`EditableNoteForm.tsx`, `AddVideoForm.tsx`, `EditVideoForm.tsx`) already had generic `toast.error(...)` on a `null` return, so no new UI work was needed. Windows are looser (60s) than the PDF/YouTube limiters since these are plain DB writes, not expensive external calls, and shouldn't interrupt normal editing bursts.
 
-**Still open:**
-1. **`README.md` is still the unmodified `create-next-app` boilerplate.** For a public repo this is the first thing a hiring manager sees. Still the single highest-leverage item for portfolio presentation. (`robots.ts`/`sitemap.ts` remain a no-op until a public route — e.g. the Tier 1 share link — actually exists. See Tier 4 in Section 4.)
+**Closed since 2026-07-20 pass (this pass):**
+- ~~`README.md` still boilerplate~~ — rewritten with real project description, feature list, tech stack, setup steps, and a pointer to `CLAUDE.md` for architecture depth.
+- ~~No way to demo without a Google login~~ — closed via the anonymous `/demo` route rather than the originally-planned share link; see §1 and §4.
 
-None of these require touching the data model or architecture. This is a polish pass, not a rebuild.
+**Still open:**
+1. **`lib/puppeteerBrowser.ts` uses full `puppeteer` + a `globalThis`-pinned warm-browser singleton — not serverless-safe as written.** Full `puppeteer` bundles its own Chromium (~300MB), which exceeds Vercel's function size budget, and the warm-`globalThis` reuse pattern assumes a long-lived process that standard serverless invocations don't guarantee. This is the one piece of deploy-blocking work left, and it's deploy-target-dependent — see §3 and §6 for the fix.
+2. `robots.ts`/`sitemap.ts` remain a no-op — low priority now that `/demo` is a real public, crawlable route (previously this was blocked on the Tier 1 share link shipping; that's no longer the gating condition). See Tier 4 in Section 4.
+
+None of these require touching the data model or core architecture. This is a polish + deploy-target-compatibility pass, not a rebuild.
 
 ---
 
@@ -60,24 +68,38 @@ None of these require touching the data model or architecture. This is a polish 
 
 Two different questions hide in that one:
 
-**(a) Deployable as a real product, for real users?** Architecturally yes — auth and data isolation are correct. All rate-limiting gaps (PDF export, YouTube title fetch, note/video creation) are now closed as of 2026-07-20.
+**(a) Deployable as a real product, for real users?** Architecturally yes — auth and data isolation are correct. All rate-limiting gaps (PDF export, YouTube title fetch, note/video creation) are closed as of 2026-07-20. The only remaining item is making the PDF export path serverless-compatible (see §2, §6) — a deploy-target-dependent code change, not an architecture problem.
 
 **(b) Deployable as a portfolio piece to land a job right now?** Per current hiring-manager research ([sources below](#sources)): the bar in 2026 is a small number (2–3) of *polished, deployed* projects with a strong README and visible architecture — not a pile of unfinished repos, and explicitly *not* another tutorial clone (to-do apps, weather apps, Netflix clones are specifically called out as not moving the needle). 84% of employers reportedly want to see a working, live app, not just source.
 
-This project already clears the hardest bar — it's not a tutorial clone, and the architecture is real. What's still failing is the cheap part: *deployed, documented, demoable without your Google login.* Recommend proceeding to launch, in this order:
+This project already clears the hardest bar — it's not a tutorial clone, and the architecture is real. What was still failing — *deployed, documented, demoable without your Google login* — is now down to one item: an actual live URL. README is rewritten, the anonymous `/demo` route means anyone can try the real product with zero setup. Recommend proceeding to launch, in this order:
 1. ~~Basic rate limiting on the PDF/YouTube-title routes, plus note/video creation~~ — done (Upstash + `@upstash/ratelimit`, see §2). All four surfaces closed.
-2. Rewrite `README.md`.
-3. Deploy to Vercel + Neon per the checklist in Section 6.
-4. Everything in Section 4 (share links, showcase homepage) is additive polish, not a blocker — ship after the live link exists.
+2. ~~Rewrite `README.md`~~ — done.
+3. ~~Ship something that lets a stranger try the app without your Google login~~ — done, via the anonymous `/demo` route (see §1, §4) rather than the originally-planned read-only share link.
+4. **Swap Puppeteer to a serverless-compatible build** (`puppeteer-core` + `@sparticuz/chromium`) — the one remaining code change gating deployment. See §6.
+5. Deploy to Vercel + Neon per the checklist in Section 6.
+6. Everything else in Section 4 (Markdown export, collection-level notebook view, tagging, AI features) is additive polish, not a blocker — ship after the live link exists.
+
+### Vercel vs. AWS
+
+This came up directly and is worth settling explicitly rather than leaving open. Recommendation: **Vercel.**
+
+The rest of the stack is already serverless-native — Neon (serverless Postgres), Upstash Redis (serverless-first), Next.js App Router. `cron/vercel.json` (the demo-account cleanup job) is already written in Vercel's Cron Jobs config format, which is an existing signal in the repo toward this choice, deliberate or not.
+
+The one piece of code that doesn't fit a serverless target as-is is `lib/puppeteerBrowser.ts` (full `puppeteer` + `globalThis` warm-browser singleton, see §2). Concretely:
+- **Vercel path**: swap to `puppeteer-core` + `@sparticuz/chromium` (a Lambda/serverless-sized Chromium build). The warm-`globalThis`-singleton pattern still works opportunistically under Vercel Fluid Compute, just isn't guaranteed across cold starts — acceptable for a PDF-export code path that isn't latency-critical. This is a scoped, well-known swap (~1-2 hours of work), not a rewrite.
+- **AWS path**: run as a container (ECS/Fargate) so the current Puppeteer code works completely unmodified, with the warm-browser singleton behaving exactly as designed. But this trades a code change for standing up a container image, task definitions, an ALB or equivalent, and replacing `cron/vercel.json` with an EventBridge scheduled rule — real ongoing ops surface for a project whose primary goal right now is a portfolio-piece demo, not production scale.
+
+Net: AWS is the "keep this file untouched" option; Vercel is the "small, well-trodden code change, zero ops overhead" option. For this project's current goal, Vercel wins on effort-to-value.
 
 ---
 
 ## 4. Feature Additions Worth Considering
 
 **Tier 1 — cheap, finishes the product, directly serves the "demoable" gap above:**
-- ~~**Search across note *content***, not just video titles~~ — **shipped 2026-07-17.** `src/app/notes/page.tsx` + `getNotesWithSearchParam()` (`lib/dbTableAction/noteTableAction.ts`) do real `contentText` matching (Prisma `contains`, case-insensitive) against a flattened-Tiptap field kept in sync on every note write, with collection/color filters and jump-to-timestamp playback. See §1.
-- **Public, read-only share link** for a single Video+Notes or a whole Collection. Right now the only way to show this to anyone is to hand them your Google account — confirmed no such feature exists yet. With content search now done, this is the single highest-leverage item left on the whole list for "is this deployable as a demo."
-- **Export notes** — already shipped as PDF; Markdown export would be a cheap addition on top of the existing Tiptap-JSON-to-plain-text path — and that path (`utils/tiptapToText.ts`) now already exists as a side effect of building content search, so this is cheaper than it was in the last draft.
+- ~~**Search across note *content***, not just video titles~~ — shipped. `src/app/notes/page.tsx` + `getNotesWithSearchParam()` (`lib/dbTableAction/noteTableAction.ts`) do real `contentText` matching (Prisma `contains`, case-insensitive) against a flattened-Tiptap field kept in sync on every note write, with collection/color filters and jump-to-timestamp playback. See §1.
+- ~~**Public, read-only share link**~~ — superseded, not shipped as originally scoped. Instead of a static share link, the anonymous `/demo` route (see §1, §4-note-below) gives a stranger the *actual product* — full interactivity, not a read-only view — with zero setup. Arguably a stronger demo than the original plan, though it means there's still no way to share one specific video/collection with someone (e.g. "check out these notes I took"). If that specific use case comes up, a read-only share link is still worth revisiting as a distinct feature, not a demo-access workaround.
+- **Export notes** — already shipped as PDF; Markdown export would be a cheap addition on top of the existing Tiptap-JSON-to-plain-text path (`utils/tiptapToText.ts`), which already exists as a side effect of content search.
 
 **Tier 2 — medium effort, meaningfully different surface area:**
 - A **collection-level notebook view** — notes aggregated across every video in a collection, not just per-video.
@@ -90,7 +112,7 @@ This project already clears the hardest bar — it's not a tutorial clone, and t
 - Treat both as genuinely optional — don't add AI just to check a box; add it if it's the actual next thing that makes the product better.
 
 **Tier 4 — operational, not user-facing:**
-- `robots.txt`/sitemap + OG images — pointless today (no public route exists to crawl), worth adding once the Tier 1 share link ships.
+- `robots.txt`/sitemap + OG images — `/demo` is now a real public route worth being crawlable; low effort, still not done.
 - Self-hosted analytics (see below) to know if the live demo is actually being looked at.
 - Error tracking so a recruiter's edge-case click doesn't just silently white-screen.
 
@@ -98,15 +120,11 @@ This project already clears the hardest bar — it's not a tutorial clone, and t
 
 ## 5. Building the Showcase Homepage
 
-The stack already in place — Next.js 16 + Tailwind v4 + DaisyUI — is enough; no need for a separate static site generator. `src/app/page.tsx` already exists as the `/` route, it's just currently one `<h1>` and a sign-in form.
+**Closed since last pass.** The prior draft recommended pulling sections from Cruip's Open template or similar; that recommendation is superseded — a real, hand-built landing page shipped instead. `src/app/page.tsx` now has a hero (`HeroBanner.tsx`), feature rows (`FeatureRow.tsx`), an About section, FAQ, CTA (`CtaSection.tsx`), and a footer (`LandingFooter.tsx`), with GSAP-driven animation (commit `5702b19`). The dashboard also got a layout pass (`5ef7a6e`) and now surfaces note counts.
 
-**Recommended, in order:**
-
-1. **[Cruip's "Open" template](https://github.com/cruip/open-react-template)** — free, Next.js + Tailwind v4, built specifically to "showcase open source projects, SaaS products, and online services." Closest match to this exact use case.
-2. **[ixartz/Next-JS-Landing-Page-Starter-Template](https://github.com/ixartz/Next-JS-Landing-Page-Starter-Template)** — Next.js + TypeScript + Tailwind + ESLint + Prettier preconfigured. Heavier dev-experience scaffold; good if cherry-picking sections into a clean structure.
-3. **Component-level (lighter touch)**: HyperUI or Flowbite's free Tailwind blocks — copy individual hero/feature/footer sections directly rather than adopting a whole template's layout, so it doesn't fight the DaisyUI theming (`cmyk`/`dark`) already driving the rest of the app.
-
-**Practical recommendation:** don't import a full template wholesale. Pull 3–4 individual sections — hero with a real screenshot/GIF of notes-on-video in action (the most differentiated thing this product does), a 3-icon feature row (timestamped notes / collections / resume playback), and a footer with "Live Demo" + "View Source" buttons — and re-skin them with the existing DaisyUI tokens so the landing page matches the app instead of looking like a different product bolted onto it.
+Remaining polish, not blockers:
+- A real screenshot/GIF of notes-on-video in the hero, if not already present — worth confirming against the current `HeroBanner.tsx` since a `public/note-ui-example.png` asset exists in the repo.
+- A footer/nav "Live Demo" link pointed at `/demo` once deployed, and a "View Source" link to the repo — the connective tissue between the landing page and the anonymous demo route that already exists.
 
 ---
 
@@ -114,8 +132,11 @@ The stack already in place — Next.js 16 + Tailwind v4 + DaisyUI — is enough;
 
 | Need | Recommendation | Why |
 |---|---|---|
-| Hosting | Vercel free tier | Native Next.js support, zero-config |
+| Hosting | **Vercel free tier** (decision made this pass — see §3) | Native Next.js support, zero-config, already the implicit target (`cron/vercel.json` is written in Vercel Cron format) |
+| PDF rendering | `puppeteer-core` + `@sparticuz/chromium` (swap from full `puppeteer` in `lib/puppeteerBrowser.ts`) | Full `puppeteer`'s bundled Chromium is too large for Vercel's function size limit; this is the standard serverless-compatible swap, ~1-2 hours of work |
 | Database | Neon free tier (already implied by `prisma.config.ts`/seed setup) | Serverless Postgres, generous free tier |
+| Cache/rate-limit | Upstash Redis (already in use, `utils/ratelimiter.ts`) | Already serverless-first, no change needed |
+| Scheduled jobs | Vercel Cron (already configured, `cron/vercel.json`) | Backs the demo-account cleanup job; no change needed |
 | Analytics | [Umami](https://umami.is/) (MIT, self-host free) or Plausible Community Edition (AGPL) | Privacy-first, no cookie-banner obligation, unlike GA |
 | Error tracking | Sentry free tier (5k events/mo) | Wire into the existing `global-error.tsx` (and any future per-segment `error.tsx`) |
 | CI | GitHub Actions (free for public repos) | Lint + build (+ tests later) on every push |
@@ -125,12 +146,13 @@ The stack already in place — Next.js 16 + Tailwind v4 + DaisyUI — is enough;
 
 ## 7. Suggested Order of Operations
 
-1. ~~Half day: basic per-user rate limiting on the PDF export routes, the YouTube title fetch, and note/video creation~~ — done 2026-07-20 (Upstash Redis, `utils/ratelimiter.ts`, four prefix-isolated per-surface limiters keyed on `userId`).
-2. **Half day**: rewrite `README.md` with screenshots + a short architecture section, including the note-content-search feature and its search→timestamp-jump UX — it's now one of the more differentiated things in the app and should be shown, not just PDF export. (`LICENSE` already added — MIT.)
-3. **Half day**: deploy to Vercel + Neon, smoke-test the golden path end to end on the live URL.
-4. **1 day**: build the showcase homepage from the template/section sources above.
-5. **1 day**: ship the public read-only share link (Tier 1 feature) — now the single highest-leverage item on the whole list, because it turns "trust me, it works" into something a hiring manager can click. Content search being done removes the only other Tier 1 competitor for this slot.
-6. After that: pick one Tier 2/3 feature that's genuinely interesting to build, not the one that looks best on paper — genuine depth reads better than checklist completeness.
+1. ~~Half day: basic per-user rate limiting on the PDF export routes, the YouTube title fetch, and note/video creation~~ — done 2026-07-20.
+2. ~~Half day: rewrite `README.md`~~ — done.
+3. ~~1 day: build the showcase homepage~~ — done (hero, feature rows, About, FAQ, CTA, footer, GSAP animation).
+4. ~~1 day: ship a way to demo without a Google login~~ — done, via the anonymous `/demo` route rather than the originally-planned share link.
+5. **1-2 hours**: swap `lib/puppeteerBrowser.ts` from `puppeteer` to `puppeteer-core` + `@sparticuz/chromium` — the one remaining code change, needed specifically because the deploy target is Vercel (see §3, §6).
+6. **Half day**: deploy to Vercel + Neon, wire up the demo-account cleanup cron (already configured in `cron/vercel.json`, just needs the project connected), smoke-test the golden path — including `/demo` — end to end on the live URL.
+7. After that: pick one Tier 2/3 feature that's genuinely interesting to build (collection-level notebook view, tagging, AI recap), not the one that looks best on paper — genuine depth reads better than checklist completeness. A dedicated read-only share link (distinct from `/demo`) is also worth revisiting if "share one specific video with someone" becomes a real use case.
 
 ---
 
