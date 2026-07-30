@@ -24,7 +24,6 @@ export function getBrowser(): Promise<Browser> {
 }
 
 async function launchBrowser(): Promise<Browser> {
-	console.log("Launching a warm browser instance...");
 	try {
 		// Vercel (and other serverless targets) only have @sparticuz/chromium's
 		// Amazon-Linux binary available; it doesn't ship a Windows/macOS build,
@@ -34,6 +33,7 @@ async function launchBrowser(): Promise<Browser> {
 					// vercel function
 					const { default: puppeteerCore } = await import("puppeteer-core");
 					const { default: chromium } = await import("@sparticuz/chromium");
+					console.log("serverless - Launching a warm browser instance...");
 					return puppeteerCore.launch({
 						args: chromium.args,
 						executablePath: await chromium.executablePath(),
@@ -43,6 +43,7 @@ async function launchBrowser(): Promise<Browser> {
 			: await (async () => {
 					// local host
 					const { default: puppeteer } = await import("puppeteer");
+					console.log("Launching a warm browser instance...");
 					return puppeteer.launch({
 						headless: true,
 						args: ["--no-sandbox", "--disable-setuid-sandbox"],
