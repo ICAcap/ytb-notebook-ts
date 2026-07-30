@@ -1,6 +1,6 @@
 // reference: https://mofadlalla.io/2025/08/21/the-ultimate-guide-to-generating-pdfs-from-html-with-nodejs-and-puppeteer-2292.html
-import puppeteer, { Page } from "puppeteer";
-import { Browser } from "puppeteer";
+
+import type { Page, Browser } from "puppeteer-core";
 import { JSONContent } from "@tiptap/react";
 import { renderToHTMLString } from "@tiptap/static-renderer";
 import { TiptapExtensions } from "@/_components/RichTextEditor/TiptapExtension";
@@ -15,7 +15,6 @@ declare global {
 /**
  * Returns the shared warm browser instance, launching one if needed.
  * Pinned to globalThis so dev-mode Fast Refresh reuses it instead of orphaning
- * a fresh Chromium process on every route-handler recompile.
  */
 export function getBrowser(): Promise<Browser> {
 	if (!globalThis.__puppeteerBrowserPromise) {
@@ -27,11 +26,28 @@ export function getBrowser(): Promise<Browser> {
 async function launchBrowser(): Promise<Browser> {
 	console.log("Launching a warm browser instance...");
 	try {
-		const browser = await puppeteer.launch({
-			headless: true,
-			// Essential for environments without a GUI or inside Docker containers.
-			args: ["--no-sandbox", "--disable-setuid-sandbox"],
-		});
+		// Vercel (and other serverless targets) only have @sparticuz/chromium's
+		// Amazon-Linux binary available; it doesn't ship a Windows/macOS build,
+		// so local dev must keep using full `puppeteer`'s own downloaded Chromium.
+		const browser = process.env.VERCEL
+			? await (async () => {
+					// vercel function
+					const { default: puppeteerCore } = await import("puppeteer-core");
+					const { default: chromium } = await import("@sparticuz/chromium");
+					return puppeteerCore.launch({
+						args: chromium.args,
+						executablePath: await chromium.executablePath(),
+						headless: true,
+					});
+				})()
+			: await (async () => {
+					// local host
+					const { default: puppeteer } = await import("puppeteer");
+					return puppeteer.launch({
+						headless: true,
+						args: ["--no-sandbox", "--disable-setuid-sandbox"],
+					});
+				})();
 
 		// If the warm browser crashes or gets killed externally (e.g. via Task
 		// Manager), clear the cached promise so the next getBrowser() call
