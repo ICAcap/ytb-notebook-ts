@@ -44,7 +44,7 @@ export default function SignIn() {
 	return (
 		<div>
 			<section>
-				<div className="mx-auto max-w-full my-auto max-h-dvh">
+				<div className="mx-auto max-w-full my-auto max-h-dvh h-dvh">
 					<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 						<div className="bg-base-200 p-8 md:p-12 lg:px-16 lg:py-24">
 							<div className="mx-auto max-w-xl text-center">
@@ -85,11 +85,11 @@ export default function SignIn() {
 							</div>
 						</div>
 
-						<div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-1">
+						<div className="hidden md:block">
 							<img
 								alt=""
-								src="https://images.unsplash.com/photo-1621274790572-7c32596bc67f?auto=format&fit=crop&q=80&w=1160"
-								className="h-40 w-full object-cover sm:h-full md:h-full"
+								src="https://images.unsplash.com/photo-1615107899082-044cc1133649?q=80&w=956&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+								className="h-64 w-full object-cover sm:h-80 md:h-full"
 							/>
 						</div>
 					</div>

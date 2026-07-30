@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "npx prisma db seed",
-    "clean:demo": "tsx -e \"require('./lib/cleanDemoAccounts').cleanDemoAccounts().then(() => process.exit(0))\""
+    "clean:demo": "tsx -e \"require('./lib/dbTableAction/userTableAction').cleanDemoAccounts().then(() => process.exit(0))\""
   },
   "dependencies": {
     "@better-auth/prisma-adapter": "^1.6.11",

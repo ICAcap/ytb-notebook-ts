@@ -40,6 +40,7 @@ export default function Sidebar({
 		{ name: "Videos", href: "/videos", icon: Tv },
 		{ name: "Collection", href: "/collection", icon: FolderBookmark },
 		{ name: "Notes", href: "/notes", icon: BookSearch },
+		{ name: "Setting", href: "/setting", icon: Settings },
 	];
 
 	return (

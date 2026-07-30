@@ -118,7 +118,7 @@ Unauthenticated, instant "live demo" — no sign-in required, backed by better-a
   - Both PDF export routes 403 immediately when `session.user.isAnonymous` is true (`"PDF Export Is Not Available In The Demo"`)
   - `VideoDetailView.tsx` derives `isDemoRoute` from `usePathname().startsWith("/demo")` (not a custom hook) and disables the "Export All Notes" button on that route
   - `upsertYouTubeVideo(..., isDemo)` takes a trailing `isDemo` flag to skip `revalidatePath("/videos")` when called from the demo page's server-component render (`revalidatePath` isn't valid there)
-- **Cleanup**: `lib/cleanDemoAccounts.ts` hard-deletes any `User` with `isAnonymous: true` older than 45 minutes; run via `npm run clean:demo` (intended to be invoked on a schedule/cron, not automatically)
+- **Cleanup**: `cleanDemoAccounts()` (`lib/dbTableAction/userTableAction.ts`) hard-deletes any `User` with `isAnonymous: true` older than 45 minutes; run manually via `npm run clean:demo`, or scheduled via the Vercel Cron job (`cron/vercel.json` → `src/app/api/cron/clean-demo-accounts/route.ts`, guarded by a `CRON_SECRET` bearer-token check)
 
 ## Commands
 
@@ -172,6 +172,9 @@ See `node_modules/next/dist/docs/` — this version has breaking changes in APIs
   - `createNote(NoteCreation)` — Create new note; derives `contentText` from `content` via `tiptapToText`
   - `updateNote(NoteUpdate)` — Update existing note; re-derives `contentText`
   - `deleteNote(userId, noteId)` — Delete note
+- **User queries** (`lib/dbTableAction/userTableAction.ts`):
+  - `purgeUser(userId)` — Dangerous: permanently deletes a user and all owned data via Prisma cascade deletes; used by the settings page's self-service account deletion
+  - `cleanDemoAccounts()` — Dangerous: deletes anonymous demo accounts (and cascaded data) older than 45 minutes; invoked via `npm run clean:demo` or the Vercel Cron route (`src/app/api/cron/clean-demo-accounts/route.ts`)
 - **Session access**:
   - Server-side: `lib/requireSession.ts` validates session and throws redirect if missing
   - Client-side: `lib/auth-client.ts` provides auth utilities (signIn, signOut, etc.)

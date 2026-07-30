@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import HeroBanner from "./_components/HeroBanner";
 import FeatureRow from "./_components/FeatureRow";
 import AboutSection from "./_components/AboutSection";
-import CtaSection from "./_components/CtaSection";
+import TechStackSection from "./_components/TechStackSection";
 import FaqSection from "./_components/FaqSection";
 import LandingFooter from "./_components/LandingFooter";
 import LandingPageGsapAnimation from "./_components/LandingPageGsapAnimation";
@@ -18,23 +18,23 @@ export default function Home() {
 			<LandingPageGsapAnimation />
 			<HeroBanner />
 
-			<div className="mt-12 sm:mt-20">
+			<div className="mt-8 sm:mt-14">
 				<AboutSection />
 			</div>
 
-			<div id="features" className="mt-12 sm:mt-20">
+			<div id="features" className="mt-8 sm:mt-14">
 				<FeatureRow />
 			</div>
 
-			<div className="mt-12 sm:mt-20">
-				<CtaSection />
+			<div className="mt-8 sm:mt-14">
+				<TechStackSection />
 			</div>
 
-			<div id="faq" className="mt-12 sm:mt-20">
+			<div id="faq" className="mt-8 sm:mt-14">
 				<FaqSection />
 			</div>
 
-			<div className="mt-12 sm:mt-20">
+			<div className="mt-8 sm:mt-14">
 				<LandingFooter />
 			</div>
 		</>

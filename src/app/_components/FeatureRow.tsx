@@ -35,25 +35,25 @@ export default function FeatureRow() {
 	return (
 		<section id="feature-row">
 			<div className="mx-auto max-w-384 px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
-				<div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+				<div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
 					{FEATURES.map(({ icon: Icon, title, description, color }) => (
 						<div
 							key={title}
-							className="feature-card flex flex-col items-start gap-5 rounded-2xl border border-base-300 bg-base-100 p-10 transition-all hover:-translate-y-1 hover:shadow-lg"
+							className="feature-card flex flex-col items-start gap-6 rounded-2xl border border-base-300 bg-base-100 p-12 transition-all hover:-translate-y-1 hover:shadow-lg"
 						>
 							<div
-								className="inline-flex size-16 shrink-0 items-center justify-center rounded-xl"
+								className="inline-flex size-20 shrink-0 items-center justify-center rounded-xl"
 								style={{ backgroundColor: `${color}1A`, color }}
 							>
-								<Icon className="size-8" />
+								<Icon className="size-10" />
 							</div>
 
 							<div>
-								<h3 className="text-2xl font-semibold text-base-content">
+								<h3 className="text-3xl font-semibold text-base-content">
 									{title}
 								</h3>
 
-								<p className="mt-3 text-pretty text-lg text-base-content/70">
+								<p className="mt-4 text-pretty text-xl text-base-content/70">
 									{description}
 								</p>
 							</div>

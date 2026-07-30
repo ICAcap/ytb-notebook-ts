@@ -51,30 +51,26 @@ export default function LandingPageGsapAnimation() {
 			ease: "power2.out",
 		});
 
-		// CTA: text and image slide in from opposite sides
-		gsap.from("#cta-text", {
-			scrollTrigger: {
-				trigger: "#cta-section",
-				start: "top 70%",
-				toggleActions: "play none none reverse",
-			},
-			opacity: 0,
-			x: -40,
-			duration: 0.7,
-			ease: "power2.out",
-		});
-
-		gsap.from("#cta-image", {
-			scrollTrigger: {
-				trigger: "#cta-section",
-				start: "top 70%",
-				toggleActions: "play none none reverse",
-			},
-			opacity: 0,
-			x: 40,
-			duration: 0.7,
-			ease: "power2.out",
-		});
+		// Tech stack: heading pops in, then each logo staggers up after it
+		gsap
+			.timeline({
+				scrollTrigger: {
+					trigger: "#tech-stack-section",
+					start: "top 70%",
+					toggleActions: "play none none reverse",
+				},
+			})
+			.from("#tech-stack-heading", {
+				opacity: 0,
+				y: 20,
+				duration: 0.5,
+				ease: "power2.out",
+			})
+			.from(
+				"#tech-stack-section [data-tech-group]",
+				{ opacity: 0, y: 16, duration: 0.5, ease: "power2.out", stagger: 0.12 },
+				"-=0.2",
+			);
 
 		// FAQ: heading first, then each question staggers in
 		gsap
@@ -87,9 +83,10 @@ export default function LandingPageGsapAnimation() {
 			})
 			.from("#faq-heading", {
 				opacity: 0,
+				scale: 0.6,
 				y: 20,
-				duration: 0.5,
-				ease: "power2.out",
+				duration: 0.6,
+				ease: "back.out(1.7)",
 			})
 			.from(
 				"#faq-section [data-faq-item]",

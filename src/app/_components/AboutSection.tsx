@@ -3,7 +3,7 @@ import { Quote } from "lucide-react";
 export default function AboutSection() {
 	return (
 		<section id="about-section">
-			<div className="mx-auto max-w-7xl max-h-2xl px-4 sm:px-6 lg:px-8">
+			<div className="mx-auto max-w-384 px-4 sm:px-6 lg:px-8">
 				<div className="rounded-3xl bg-base-200 p-12 shadow-sm sm:p-16">
 					<div
 						id="quote"

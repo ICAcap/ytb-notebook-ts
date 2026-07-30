@@ -124,16 +124,22 @@ const NoteCard = (props: Props) => {
 						</button>
 					</span>
 
-					<button
-						title="delete this note"
-						className="btn btn-square btn-ghost btn-md"
-						onClick={() => {
-							props.playerRef?.current && props.playerRef.current.pause(); // pause vid
-							setTrashModalOpen(true);
-						}}
+					<span
+						title={
+							isDemoRoute ? "Note Deletion Disabled in Demo" : "Delete This Note"
+						}
 					>
-						<Shredder className="w-6 h-6" color="white" />
-					</button>
+						<button
+							disabled={isDemoRoute}
+							className="btn btn-square btn-ghost btn-md"
+							onClick={() => {
+								props.playerRef?.current && props.playerRef.current.pause(); // pause vid
+								setTrashModalOpen(true);
+							}}
+						>
+							<Shredder className="w-6 h-6" color="white" />
+						</button>
+					</span>
 				</div>
 			</div>
 			<div className="border-b border-accent px-4 py-2">
