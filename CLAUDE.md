@@ -118,7 +118,7 @@ Unauthenticated, instant "live demo" — no sign-in required, backed by better-a
   - Both PDF export routes 403 immediately when `session.user.isAnonymous` is true (`"PDF Export Is Not Available In The Demo"`)
   - `VideoDetailView.tsx` derives `isDemoRoute` from `usePathname().startsWith("/demo")` (not a custom hook) and disables the "Export All Notes" button on that route
   - `upsertYouTubeVideo(..., isDemo)` takes a trailing `isDemo` flag to skip `revalidatePath("/videos")` when called from the demo page's server-component render (`revalidatePath` isn't valid there)
-- **Cleanup**: `cleanDemoAccounts()` (`lib/dbTableAction/userTableAction.ts`) hard-deletes any `User` with `isAnonymous: true` older than 45 minutes; run manually via `npm run clean:demo`, or scheduled via the Vercel Cron job (`cron/vercel.json` → `src/app/api/cron/clean-demo-accounts/route.ts`, guarded by a `CRON_SECRET` bearer-token check)
+- **Cleanup**: `cleanDemoAccounts()` (`lib/dbTableAction/userTableAction.ts`) hard-deletes any `User` with `isAnonymous: true` older than 45 minutes; run manually via `npm run clean:demo`, or scheduled via the Vercel Cron job (`vercel.json` → `src/app/api/cron/clean-demo-accounts/route.ts`, guarded by a `CRON_SECRET` bearer-token check)
 
 ## Commands
 
