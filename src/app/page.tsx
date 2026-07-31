@@ -16,6 +16,7 @@ export default function Home() {
 	return (
 		<>
 			<LandingPageGsapAnimation />
+
 			<HeroBanner />
 
 			<div className="mt-8 sm:mt-14">
@@ -26,12 +27,12 @@ export default function Home() {
 				<FeatureRow />
 			</div>
 
-			<div className="mt-8 sm:mt-14">
-				<TechStackSection />
-			</div>
-
 			<div id="faq" className="mt-8 sm:mt-14">
 				<FaqSection />
+			</div>
+
+			<div className="mt-8 sm:mt-14">
+				<TechStackSection />
 			</div>
 
 			<div className="mt-8 sm:mt-14">

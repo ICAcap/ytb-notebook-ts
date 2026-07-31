@@ -15,7 +15,7 @@ export default function LandingFooter() {
 
 			<div
 				id="footer-content"
-				className="relative mx-auto max-w-384 px-4 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-16"
+				className="relative mx-auto max-w-[1800px] px-4 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-16"
 			>
 				<div className="lg:flex lg:items-end lg:justify-between">
 					<div>

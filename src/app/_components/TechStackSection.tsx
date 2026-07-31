@@ -37,7 +37,7 @@ export default function TechStackSection() {
 	return (
 		<section
 			id="tech-stack-section"
-			className="mx-auto max-w-384 px-4 sm:px-6 lg:px-8"
+			className="mx-auto max-w-[1800px] px-4 sm:px-6 lg:px-8"
 		>
 			<p
 				id="tech-stack-heading"
@@ -53,8 +53,8 @@ export default function TechStackSection() {
 						data-tech-group
 						className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-8"
 					>
-						<p className="w-40 shrink-0 text-center text-xs font-semibold tracking-widest text-base-content/40 uppercase sm:text-right">
-							{group.label}
+						<p className="w-40 shrink-0 text-center text-sm font-extrabold tracking-widest text-base-content/40 uppercase sm:text-right">
+							{group.label}:
 						</p>
 
 						<ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3">

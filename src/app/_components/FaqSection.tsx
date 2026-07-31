@@ -25,7 +25,7 @@ export default function FaqSection() {
 	return (
 		<section
 			id="faq-section"
-			className="mx-auto max-w-384 px-4 sm:px-6 lg:px-8"
+			className="mx-auto max-w-[1800px] px-4 sm:px-6 lg:px-8"
 		>
 			<div id="faq-heading" className="mx-auto max-w-3xl text-center">
 				<h2 className="text-5xl font-bold text-base-content sm:text-6xl">

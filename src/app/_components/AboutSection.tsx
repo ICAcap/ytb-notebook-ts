@@ -3,7 +3,7 @@ import { Quote } from "lucide-react";
 export default function AboutSection() {
 	return (
 		<section id="about-section">
-			<div className="mx-auto max-w-384 px-4 sm:px-6 lg:px-8">
+			<div className="mx-auto max-w-[1800px] px-4 sm:px-6 lg:px-8">
 				<div className="rounded-3xl bg-base-200 p-12 shadow-sm sm:p-16">
 					<div
 						id="quote"
@@ -16,10 +16,11 @@ export default function AboutSection() {
 						id="about-text"
 						className="mt-10 text-pretty text-2xl/relaxed text-base-content/80"
 					>
-						I kept rewatching long tutorials and lecture videos just to find the
-						one moment I needed, scrubbing through a timeline with no context.
-						So I built YTB Notebook: drop a rich-text note on the exact second
-						it applies to, then jump straight back to it later.
+						YouTube is a goldmine for learning, but it's a battle against the
+						algorithm. To combat doomscrolling through recommendations and
+						passively watching videos without retaining a thing. I built YTB
+						Notebook to stop the noise and bring back the power of active
+						note-taking learning.
 					</p>
 
 					<div id="about-signature" className="mt-10 flex items-center gap-4">

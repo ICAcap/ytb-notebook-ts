@@ -34,7 +34,7 @@ const FEATURES = [
 export default function FeatureRow() {
 	return (
 		<section id="feature-row">
-			<div className="mx-auto max-w-384 px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
+			<div className="mx-auto max-w-[1800px] px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
 				<div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
 					{FEATURES.map(({ icon: Icon, title, description, color }) => (
 						<div
