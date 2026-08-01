@@ -81,7 +81,8 @@ Full Tiptap-based editor suite. Note content is stored as Tiptap JSON, not plain
   - `src/app/api/notes/[noteId]/pdf/route.ts` — Single-note PDF (`GET`)
   - `src/app/api/notes/video/[videoId]/pdf/route.ts` — All notes for a video, one PDF (`GET`)
 - **`lib/puppeteerBrowser.ts`**:
-  - `getBrowser()` — Returns a shared warm `Browser` instance, cached on `globalThis` (survives dev Fast Refresh); caches the launch `Promise` itself so concurrent callers await one in-flight launch instead of racing separate `puppeteer.launch()` calls; auto-clears the cache on `disconnected` so a crashed browser relaunches on next request
+  - `getBrowser()` — Returns a shared warm `Browser` instance, cached on `globalThis` (survives dev Fast Refresh); caches the launch `Promise` itself so concurrent callers await one in-flight launch instead of racing separate launch calls; auto-clears the cache on `disconnected` so a crashed browser relaunches on next request
+  - Launch target branches on `process.env.VERCEL`: on Vercel, launches `puppeteer-core` with `@sparticuz/chromium`'s bundled Amazon-Linux binary (no Windows/macOS build available); locally, launches full `puppeteer`'s own downloaded Chromium
   - `printNotesToPDF(notes, videoTitle?)` — Renders Tiptap JSON content to HTML (`@tiptap/static-renderer`), disables JS on the page (`setJavaScriptEnabled(false)`), and returns a PDF buffer
 - **`utils/escapeHtml.ts`**: Escapes user-controlled strings (e.g. video title) before interpolating into the raw HTML string passed to `page.setContent()` — prevents stored XSS/SSRF via injected markup in the PDF render path
 
