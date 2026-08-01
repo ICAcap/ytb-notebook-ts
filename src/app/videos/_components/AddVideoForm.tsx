@@ -33,8 +33,8 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 	const {
 		modalOpen,
 		router,
-		showStage2,
-		setShowStage2,
+		showDetailForm,
+		setShowDetailForm,
 		YouTubeIdToAdd,
 		foundExistingVid,
 		fetchedTitle,
@@ -62,10 +62,10 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 	//Clear form state when returning to
 	//stage 1 or close modal to prevent stale data.
 	useEffect(() => {
-		if (!modalOpen || !showStage2) {
+		if (!modalOpen || !showDetailForm) {
 			reset();
 		}
-	}, [modalOpen, showStage2]);
+	}, [modalOpen, showDetailForm]);
 
 	// form submit handler(s)
 	const onSubmitYoutubeUrl: SubmitHandler<UpsertVideo> = async (data) => {
@@ -95,7 +95,7 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 			YouTubeIdToAdd.current = "";
 			fetchedTitle.current = "";
 		}
-		setShowStage2(true);
+		setShowDetailForm(true);
 	};
 
 	const onSubmitToBackend: SubmitHandler<UpsertVideo> = async (data) => {
@@ -131,7 +131,7 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 			<Toaster />
 
 			{/* Existing video link - outside form, no form context */}
-			{showStage2 && YouTubeIdToAdd.current && foundExistingVid.current && (
+			{showDetailForm && YouTubeIdToAdd.current && foundExistingVid.current && (
 				<div className="space-y-4 m-3">
 					<div className="alert alert-warning shadow-lg">
 						<AlertCircle size={24} />
@@ -148,7 +148,7 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 					</Link>
 					<button
 						onClick={() => {
-							setShowStage2(false);
+							setShowDetailForm(false);
 						}}
 						className="btn btn-accent gap-2 w-full"
 					>
@@ -160,11 +160,11 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 
 			<form
 				onSubmit={handleSubmit(
-					showStage2 ? onSubmitToBackend : onSubmitYoutubeUrl,
+					showDetailForm ? onSubmitToBackend : onSubmitYoutubeUrl,
 				)}
 				className="m-3"
 			>
-				{!showStage2 && (
+				{!showDetailForm && (
 					<div className="space-y-6">
 						<div className="flex items-center gap-3">
 							<Plus size={28} className="text-primary" />
@@ -221,7 +221,7 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 				)}
 
 				{/* if video id not valid */}
-				{showStage2 && !YouTubeIdToAdd.current && (
+				{showDetailForm && !YouTubeIdToAdd.current && (
 					<div className="card bg-error/10 border-2 border-error shadow-lg">
 						<div className="card-body">
 							<div className="flex items-start gap-4">
@@ -239,7 +239,7 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 							<div className="card-actions justify-end mt-4">
 								<button
 									type="button"
-									onClick={() => setShowStage2(false)}
+									onClick={() => setShowDetailForm(false)}
 									className="btn btn-sm btn-outline btn-error gap-2"
 								>
 									<RotateCcw size={25} strokeWidth={3} />
@@ -251,7 +251,7 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 				)}
 
 				{/* if not existing in user profile*/}
-				{showStage2 && YouTubeIdToAdd.current && !foundExistingVid.current && (
+				{showDetailForm && YouTubeIdToAdd.current && !foundExistingVid.current && (
 					<div className="card bg-base-100 shadow-lg border border-base-200">
 						<div className="card-body space-y-6">
 							<div className="flex items-center gap-3">
@@ -333,7 +333,7 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 							</button>
 							<button
 								onClick={() => {
-									setShowStage2(false);
+									setShowDetailForm(false);
 								}}
 								className="btn btn-accent gap-2 w-full"
 							>

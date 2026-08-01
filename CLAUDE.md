@@ -6,6 +6,31 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 YouTube Notebook: A Next.js 16 application for managing video collections with timestamped notes. Users authenticate via Google OAuth, create video collections, and attach time-stamped rich-text notes to videos.
 
+## Commands
+
+```bash
+npm run dev          # Start dev server (localhost:3000)
+npm run build        # Build for production
+npm start            # Start production server
+npm run lint         # Run ESLint
+npm run seed         # Seed database (npx prisma db seed)
+npm run clean:demo   # Delete expired anonymous demo accounts (isAnonymous users older than 45 min)
+npx prisma studio    # Open Prisma Studio (GUI for database)
+npx prisma migrate dev --name <name>  # Create migration
+npx prisma db push   # Apply schema changes (dev only)
+```
+
+There is no test suite configured in this repo.
+
+## Important Notes
+
+### Next.js 16 Breaking Changes
+See `node_modules/next/dist/docs/` — this version has breaking changes in APIs, conventions, and file structure. Always consult the bundled Next.js docs before implementing features that touch the framework (routing, server components, middleware, etc.).
+
+### React 19 & Compiler
+- **React Compiler**: Enabled in `next.config.ts` (Babel plugin)
+- **React 19**: Uses new hooks; check React docs for deprecated patterns from earlier versions
+
 ## Core Architecture
 
 ### Authentication (better-auth)
@@ -25,6 +50,42 @@ YouTube Notebook: A Next.js 16 application for managing video collections with t
   - Note: tied to User and Video; has `startTime`, `endTime`, `color`, JSON `content` (Tiptap), and flattened `contentText` (plain text mirror of `content`, search-only)
 - **Indexes**: Optimized for user_id and user_id+createdAt lookups on Video/Collection/Note; `Note.contentText` has a `pg_trgm` GIN index (`Note_contentText_trgm_idx`) for fuzzy search — requires the `pg_trgm` Postgres extension (see migration `20260717204814_add_pgextension`)
 - **Prisma Client**: Output to `generated/prisma` (generated location)
+
+### Data Access Layer
+- **Database utility**: `lib/prisma.ts` exports singleton PrismaClient
+- **Video queries** (`lib/dbTableAction/videoTableAction.ts`):
+  - `getVideoById(userId, videoId)` — Single video with collections (cached); returns `VideoDetailPageProp`
+  - `getVideoCardsWithSearchParam(userId, page, pageSize, query, collection)` — Paginated search with title matching and collection filter
+  - `getVideoNumWithSearchParam(userId, query, collection)` — Total count for pagination
+  - `getAllUniqueVideoTitles(userId)` — All distinct video titles for a user (cached); used to build the search bar's autocomplete index
+  - `getExistingVideo(userId, youtubeVidID)` — Check if video already added
+  - `upsertYouTubeVideo(userId, youtubeVidID, title, collectionIds, isDemo?)` — Add/update video with collection associations; `isDemo` skips `revalidatePath("/videos")` (used from the demo page's server-component render)
+  - `updateVideoPlayedTime(videoId, userId, playedTime)` — Persist playback position in seconds
+  - `deleteVideo(videoId, userId)` — Delete video and cascade-delete its notes; revalidates `/videos`
+- **Collection queries** (`lib/dbTableAction/collectionTableActions.ts`):
+  - `getUserCollectionNameIDs(userId)` — All collections as `{label, value}` pairs for react-select
+  - `getUserCollectionByName(userId, collectionName)` — Lookup by composite unique key
+  - `createCollection({userId, collectionName})` — Create; handles P2002 unique violation
+  - `updateCollection({collectionId, collectionName})` — Rename collection
+  - `deleteCollectionById(collectionId, userId)` — Delete collection
+- **Note queries** (`lib/dbTableAction/noteTableAction.ts`):
+  - `getNoteById(userId, noteId)` — Single note (cached); used by the single-note PDF export route
+  - `getNotesByVideo(userId, videoId)` — All notes for a video (cached, sorted by startTime then createdAt)
+  - `getNotesByColor(userId, videoId, color)` — Filter notes by color
+  - `getNoteCountByVideo(userId, videoId)` — Note count for a video
+  - `getNotesByUser(userId, page, pageSize)` — Paginated notes for user
+  - `getNoteCountByUser(userId)` — Total note count for user
+  - `getNotesWithSearchParam(userId, page, pageSize, query, collection, color)` — Cross-video note search; raw SQL (`Prisma.sql`) combining `ILIKE` substring + `pg_trgm` `similarity()` fuzzy match on `contentText`, collection filter (via `_CollectionToVideo` join table), and color filter; ranks by similarity when `query` is set, else by video title/startTime
+  - `getNoteCountWithSearchParams(userId, query, collection, color)` — Total count for the above, same WHERE fragment (`buildSearchWhereFragment`)
+  - `createNote(NoteCreation)` — Create new note; derives `contentText` from `content` via `tiptapToText`
+  - `updateNote(NoteUpdate)` — Update existing note; re-derives `contentText`
+  - `deleteNote(userId, noteId)` — Delete note
+- **User queries** (`lib/dbTableAction/userTableAction.ts`):
+  - `purgeUser(userId)` — Dangerous: permanently deletes a user and all owned data via Prisma cascade deletes; used by the settings page's self-service account deletion
+  - `cleanDemoAccounts()` — Dangerous: deletes anonymous demo accounts (and cascaded data) older than 45 minutes; invoked via `npm run clean:demo` or the Vercel Cron route (`src/app/api/cron/clean-demo-accounts/route.ts`)
+- **Session access**:
+  - Server-side: `lib/requireSession.ts` validates session and throws redirect if missing
+  - Client-side: `lib/auth-client.ts` provides auth utilities (signIn, signOut, etc.)
 
 ### Frontend Pages
 - `src/app/page.tsx` — Home/landing with sign-in form
@@ -76,6 +137,18 @@ Full Tiptap-based editor suite. Note content is stored as Tiptap JSON, not plain
 - `CollectionCard.tsx` — Collection card UI
 - `CollectionForm.tsx` — Collection creation/edit form
 
+### Modal & Context Patterns
+**Modal System**: `ModalSkeleton` wraps `<dialog>` and manages `isOpen`/`onClose` props. Used for add video, add collection.
+
+**AddVideoButton Pattern**:
+- Manages modal state (`modalOpen`, `showDetailForm`) and form data via refs (YouTube ID, existing video check, fetched title, collection options)
+- Provides context (`AddVideoButtonContext`) to child `AddVideoForm`
+- Resets state on modal close
+
+**CollectionContextProvider**:
+- Simple context wrapping userId for child components (`AddCollectionButton`, forms)
+- Wraps entire collection page to share userId
+
 ### PDF Export (Puppeteer)
 - **API routes** (both authenticated via `requireSession()`, scoped by `userId`):
   - `src/app/api/notes/[noteId]/pdf/route.ts` — Single-note PDF (`GET`)
@@ -98,18 +171,6 @@ Upstash Redis (`@upstash/ratelimit`), keyed per-`userId` (except where noted), e
 
 All fail closed — a rejected `.limit(key)` call returns `null`/`429` from the calling function/route rather than proceeding.
 
-### Modal & Context Patterns
-**Modal System**: `ModalSkeleton` wraps `<dialog>` and manages `isOpen`/`onClose` props. Used for add video, add collection.
-
-**AddVideoButton Pattern**: 
-- Manages modal state (`modalOpen`, `showStage2`) and form data via refs (YouTube ID, existing video check, fetched title, collection options)
-- Provides context (`AddVideoButtonContext`) to child `AddVideoForm`
-- Resets state on modal close
-
-**CollectionContextProvider**:
-- Simple context wrapping userId for child components (`AddCollectionButton`, forms)
-- Wraps entire collection page to share userId
-
 ### Demo Mode (`src/app/demo/`)
 Unauthenticated, instant "live demo" — no sign-in required, backed by better-auth's anonymous plugin.
 - **`middleware.ts`**: matches only `/demo`; mints an httpOnly `ytb_demo_visitor_id` cookie (30-day expiry) on first visit, used purely as a rate-limit key
@@ -120,65 +181,6 @@ Unauthenticated, instant "live demo" — no sign-in required, backed by better-a
   - `VideoDetailView.tsx` derives `isDemoRoute` from `usePathname().startsWith("/demo")` (not a custom hook) and disables the "Export All Notes" button on that route
   - `upsertYouTubeVideo(..., isDemo)` takes a trailing `isDemo` flag to skip `revalidatePath("/videos")` when called from the demo page's server-component render (`revalidatePath` isn't valid there)
 - **Cleanup**: `cleanDemoAccounts()` (`lib/dbTableAction/userTableAction.ts`) hard-deletes any `User` with `isAnonymous: true` older than 45 minutes; run manually via `npm run clean:demo`, or scheduled via the Vercel Cron job (`vercel.json` → `src/app/api/cron/clean-demo-accounts/route.ts`, guarded by a `CRON_SECRET` bearer-token check)
-
-## Commands
-
-```bash
-npm run dev          # Start dev server (localhost:3000)
-npm run build        # Build for production
-npm start            # Start production server
-npm run lint         # Run ESLint
-npm run seed         # Seed database (npx prisma db seed)
-npm run clean:demo   # Delete expired anonymous demo accounts (isAnonymous users older than 45 min)
-npx prisma studio   # Open Prisma Studio (GUI for database)
-npx prisma migrate dev --name <name>  # Create migration
-npx prisma db push   # Apply schema changes (dev only)
-```
-
-## Important Notes
-
-### Next.js 16 Breaking Changes
-See `node_modules/next/dist/docs/` — this version has breaking changes in APIs, conventions, and file structure. Always consult the bundled Next.js docs before implementing features that touch the framework (routing, server components, middleware, etc.).
-
-### React 19 & Compiler
-- **React Compiler**: Enabled in `next.config.ts` (Babel plugin)
-- **React 19**: Uses new hooks; check React docs for deprecated patterns from earlier versions
-
-### Data Access Layer
-- **Database utility**: `lib/prisma.ts` exports singleton PrismaClient
-- **Video queries** (`lib/dbTableAction/videoTableAction.ts`):
-  - `getVideoById(userId, videoId)` — Single video with collections (cached); returns `VideoDetailPageProp`
-  - `getVideoCardsWithSearchParam(userId, page, pageSize, query, collection)` — Paginated search with title matching and collection filter
-  - `getVideoNumWithSearchParam(userId, query, collection)` — Total count for pagination
-  - `getAllUniqueVideoTitles(userId)` — All distinct video titles for a user (cached); used to build the search bar's autocomplete index
-  - `getExistingVideo(userId, youtubeVidID)` — Check if video already added
-  - `upsertYouTubeVideo(userId, youtubeVidID, title, collectionIds, isDemo?)` — Add/update video with collection associations; `isDemo` skips `revalidatePath("/videos")` (used from the demo page's server-component render)
-  - `updateVideoPlayedTime(videoId, userId, playedTime)` — Persist playback position in seconds
-  - `deleteVideo(videoId, userId)` — Delete video and cascade-delete its notes; revalidates `/videos`
-- **Collection queries** (`lib/dbTableAction/collectionTableActions.ts`):
-  - `getUserCollectionNameIDs(userId)` — All collections as `{label, value}` pairs for react-select
-  - `getUserCollectionByName(userId, collectionName)` — Lookup by composite unique key
-  - `createCollection({userId, collectionName})` — Create; handles P2002 unique violation
-  - `updateCollection({collectionId, collectionName})` — Rename collection
-  - `deleteCollectionById(collectionId, userId)` — Delete collection
-- **Note queries** (`lib/dbTableAction/noteTableAction.ts`):
-  - `getNoteById(userId, noteId)` — Single note (cached); used by the single-note PDF export route
-  - `getNotesByVideo(userId, videoId)` — All notes for a video (cached, sorted by startTime then createdAt)
-  - `getNotesByColor(userId, videoId, color)` — Filter notes by color
-  - `getNoteCountByVideo(userId, videoId)` — Note count for a video
-  - `getNotesByUser(userId, page, pageSize)` — Paginated notes for user
-  - `getNoteCountByUser(userId)` — Total note count for user
-  - `getNotesWithSearchParam(userId, page, pageSize, query, collection, color)` — Cross-video note search; raw SQL (`Prisma.sql`) combining `ILIKE` substring + `pg_trgm` `similarity()` fuzzy match on `contentText`, collection filter (via `_CollectionToVideo` join table), and color filter; ranks by similarity when `query` is set, else by video title/startTime
-  - `getNoteCountWithSearchParams(userId, query, collection, color)` — Total count for the above, same WHERE fragment (`buildSearchWhereFragment`)
-  - `createNote(NoteCreation)` — Create new note; derives `contentText` from `content` via `tiptapToText`
-  - `updateNote(NoteUpdate)` — Update existing note; re-derives `contentText`
-  - `deleteNote(userId, noteId)` — Delete note
-- **User queries** (`lib/dbTableAction/userTableAction.ts`):
-  - `purgeUser(userId)` — Dangerous: permanently deletes a user and all owned data via Prisma cascade deletes; used by the settings page's self-service account deletion
-  - `cleanDemoAccounts()` — Dangerous: deletes anonymous demo accounts (and cascaded data) older than 45 minutes; invoked via `npm run clean:demo` or the Vercel Cron route (`src/app/api/cron/clean-demo-accounts/route.ts`)
-- **Session access**:
-  - Server-side: `lib/requireSession.ts` validates session and throws redirect if missing
-  - Client-side: `lib/auth-client.ts` provides auth utilities (signIn, signOut, etc.)
 
 ### Database Migrations
 - Development: Use `npx prisma db push` or `npm run seed`
@@ -206,7 +208,6 @@ See `node_modules/next/dist/docs/` — this version has breaking changes in APIs
   - `NOTE_COLORS` — Predefined color palette for notes (gray, blue, green, gold, red)
 - **Note content flattening** (`utils/tiptapToText.ts`):
   - `tiptapToText(doc)` — Flattens Tiptap JSON to plain text (whitespace-joined, collapsed) for storage in `Note.contentText`, which powers note search
-- **Backfill script** (`prisma/backfillNoteContentText.ts`): One-off script to populate `contentText` for existing notes after the field was added; run with `npx tsx prisma/backfillNoteContentText.ts`
 - **React Hook Form**: Used for form management (register, Controller, watch, handleSubmit)
 - **React Select**: Multi-select dropdown (collection selection in AddVideoForm)
 - **Lodash**: throttle/debounce for video playback, scroll, and search input

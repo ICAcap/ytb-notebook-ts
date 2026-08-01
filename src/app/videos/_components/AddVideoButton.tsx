@@ -13,7 +13,7 @@ export const AddVideoButtonContext = createContext({});
 export default function AddVideoButton({ userId }: { userId: string }) {
 	const [modalOpen, setModalOpen] = useState(false);
 	const router = useRouter();
-	const [showStage2, setShowStage2] = useState(false);
+	const [showDetailForm, setShowDetailForm] = useState(false);
 	const YouTubeIdToAdd = useRef("");
 	const foundExistingVid = useRef<VideoDetailType | null>(null);
 	const fetchedTitle = useRef("");
@@ -24,8 +24,8 @@ export default function AddVideoButton({ userId }: { userId: string }) {
 			value={{
 				modalOpen,
 				router,
-				showStage2,
-				setShowStage2,
+				showDetailForm,
+				setShowDetailForm,
 				YouTubeIdToAdd,
 				foundExistingVid,
 				fetchedTitle,
@@ -35,9 +35,9 @@ export default function AddVideoButton({ userId }: { userId: string }) {
 			<div>
 				<button
 					onClick={() => setModalOpen(true)}
-					className="btn btn-primary btn-sm text-lg gap-2"
+					className="btn btn-primary rounded-3xl text-xl gap-2"
 				>
-					<Plus size={20} />
+					<Plus size={30} />
 					New Video
 				</button>
 
@@ -46,7 +46,7 @@ export default function AddVideoButton({ userId }: { userId: string }) {
 					// clean up context passed
 					onClose={() => {
 						setModalOpen(false);
-						setShowStage2(false);
+						setShowDetailForm(false);
 						YouTubeIdToAdd.current = "";
 						foundExistingVid.current = null;
 						fetchedTitle.current = "";
