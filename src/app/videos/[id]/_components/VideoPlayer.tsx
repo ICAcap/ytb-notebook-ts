@@ -58,7 +58,6 @@ const VideoPlayer = ({
 					Math.floor(reactPlayerRef.current.duration),
 				),
 			);
-			// console.log(`${currentTimeSeconds}`);
 			await updateVideoPlayedTime(videoId, userId, currentTimeSeconds);
 		}
 	}

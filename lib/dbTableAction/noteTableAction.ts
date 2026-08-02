@@ -92,97 +92,33 @@ export const getNoteById = cache(async function (
 	return null;
 });
 
-export const getNotesByColor = cache(async function (
+// Batched note count for a page of videos: one groupBy query instead of one count() per video.
+export const getNoteCountsByVideoIds = cache(async function (
 	userId: string,
-	videoId: string,
-	color: string,
-): Promise<Note[] | null> {
-	if (userId && videoId && color) {
-		try {
-			const notes = await prisma.note.findMany({
-				where: {
-					userId: userId,
-					videoId: videoId,
-					color: color,
-				},
-				orderBy: [{ startTime: "asc" }, { createdAt: "asc" }],
-			});
-			return notes;
-		} catch (error) {
-			console.error(
-				"Get Notes By Color processed failed, fallback to null return",
-				error,
-			);
-			return null;
-		}
+	videoIds: string[],
+): Promise<Record<string, number>> {
+	if (!userId || videoIds.length === 0) return {};
+
+	try {
+		const counts = await prisma.note.groupBy({
+			by: ["videoId"],
+			where: {
+				userId: userId,
+				videoId: { in: videoIds },
+			},
+			_count: { videoId: true },
+		});
+
+		return Object.fromEntries(
+			counts.map((c) => [c.videoId, c._count.videoId]),
+		);
+	} catch (error) {
+		console.error(
+			"Get Note Counts By Video Ids processed failed, fallback to empty object",
+			error,
+		);
+		return {};
 	}
-
-	console.error(
-		"Get Notes By Color failed, userId, videoId, or color is undefined, fallback to null return",
-	);
-	return null;
-});
-
-export const getNoteCountByVideo = cache(async function (
-	userId: string,
-	videoId: string,
-): Promise<number> {
-	if (userId && videoId) {
-		try {
-			const count = await prisma.note.count({
-				where: {
-					userId: userId,
-					videoId: videoId,
-				},
-			});
-			return count;
-		} catch (error) {
-			console.error(
-				"Get Note Count By Video processed failed, fallback to 0 return",
-				error,
-			);
-			return 0;
-		}
-	}
-
-	console.error(
-		"Get Note Count By Video failed, userId or videoId is undefined, fallback to 0 return",
-	);
-	return 0;
-});
-
-export const getNotesByUser = cache(async function (
-	userId: string,
-	page: number,
-	pageSize: number,
-): Promise<Note[]> {
-	if (userId) {
-		try {
-			const skipItemNum = (page - 1) * pageSize;
-			const notes = await prisma.note.findMany({
-				where: {
-					userId: userId,
-				},
-				skip: skipItemNum,
-				take: pageSize,
-				orderBy: {
-					createdAt: "desc",
-				},
-			});
-			return notes;
-		} catch (error) {
-			console.error(
-				"Get Notes By User processed failed, fallback to empty array return",
-				error,
-			);
-			return [];
-		}
-	}
-
-	console.error(
-		"Get Notes By User failed, userId is undefined, fallback to empty array return",
-	);
-	return [];
 });
 
 export const getNoteCountByUser = cache(async function (

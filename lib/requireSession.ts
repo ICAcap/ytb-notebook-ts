@@ -11,6 +11,5 @@ export default cache(async function requireSession() {
 	if (!session) {
 		redirect("/sign-in");
 	}
-	// console.log("session got");
 	return session;
 });

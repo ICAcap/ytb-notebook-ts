@@ -24,7 +24,8 @@ export default memo(function VideoCard({
 	createdAt,
 	userId,
 	collections,
-}: VideoDetailType & { userId: string }) {
+	noteCount,
+}: VideoDetailType & { userId: string; noteCount: number }) {
 	const thumbnailUrl = youtubeVidID ? getThumbnailUrl(youtubeVidID) : null;
 	const [trashModalOpen, setTrashModalOpen] = useState(false);
 	const [pencilModalOpen, setPencilModalOpen] = useState(false);
@@ -95,6 +96,11 @@ export default memo(function VideoCard({
 				>
 					{title}
 				</Link>
+				{noteCount > 0 && (
+					<div className="font-medium text-info mt-1">
+						{noteCount} note{noteCount === 1 ? "" : "s"}
+					</div>
+				)}
 				<div className="text-xs font-medium text-base-content/60 mt-1">
 					Last Watched: {formatTimeStamp(lastPlayedTime)}
 				</div>
@@ -170,7 +176,7 @@ export default memo(function VideoCard({
 				{pencilModalOpen && (
 					<EditVideoForm
 						modalOpen={pencilModalOpen}
-						setModalOpen={() => setPencilModalOpen(true)}
+						setModalOpen={setPencilModalOpen}
 						userId={userId}
 						youtubeVideoId={youtubeVidID}
 						oldTitle={title}

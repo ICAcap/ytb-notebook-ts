@@ -10,6 +10,7 @@ import {
 	getVideoCardsWithSearchParam,
 	getVideoNumWithSearchParam,
 } from "../../../lib/dbTableAction/videoTableAction";
+import { getNoteCountsByVideoIds } from "../../../lib/dbTableAction/noteTableAction";
 import { Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 
@@ -31,7 +32,7 @@ export default async function VideoPage({
 	const session = await requireSession();
 	const userId = session.user.id;
 
-	const pageSize = 20;
+	const PAGE_SIZE = 20;
 
 	const params = await searchParams;
 	const query = (params.query ?? "").trim();
@@ -42,10 +43,16 @@ export default async function VideoPage({
 	const [unqVidTitles, totalCount, videoCards] = await Promise.all([
 		getAllUniqueVideoTitles(userId),
 		getVideoNumWithSearchParam(userId, query, collection),
-		getVideoCardsWithSearchParam(userId, page, pageSize, query, collection),
+		getVideoCardsWithSearchParam(userId, page, PAGE_SIZE, query, collection),
 	]);
 
-	const totalPagesNum = Math.max(1, Math.ceil(totalCount / pageSize)); // Ensure at least one page exists for the UI.
+	const totalPagesNum = Math.max(1, Math.ceil(totalCount / PAGE_SIZE)); // Ensure at least one page exists for the UI.
+
+	// get {video: # of notes contained} record for current page of vids
+	const noteCounts = await getNoteCountsByVideoIds(
+		userId,
+		videoCards.map((v) => v.videoId),
+	);
 
 	return (
 		<div className="flex min-h-screen">
@@ -68,8 +75,8 @@ export default async function VideoPage({
 
 				{videoCards.length > 0 && (
 					<div className="label mb-3">
-						Page {page} of {totalPagesNum}, showing {1 + (page - 1) * pageSize}{" "}
-						to {(page - 1) * pageSize + Math.min(videoCards.length, pageSize)}{" "}
+						Page {page} of {totalPagesNum}, showing {1 + (page - 1) * PAGE_SIZE}{" "}
+						to {(page - 1) * PAGE_SIZE + Math.min(videoCards.length, PAGE_SIZE)}{" "}
 						out of {totalCount} results
 					</div>
 				)}
@@ -85,10 +92,14 @@ export default async function VideoPage({
 							{videoCards.map((video, idx) => (
 								<div key={video.videoId}>
 									<label className="label ml-1 font-semibold">
-										{idx + 1 + (page - 1) * pageSize}
+										{idx + 1 + (page - 1) * PAGE_SIZE}
 									</label>
 									<li className="list-row">
-										<VideoCard {...video} userId={userId} />
+										<VideoCard
+											{...video}
+											userId={userId}
+											noteCount={noteCounts[video.videoId] ?? 0}
+										/>
 									</li>
 								</div>
 							))}

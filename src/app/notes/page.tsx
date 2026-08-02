@@ -32,7 +32,7 @@ export default async function NoteSearchPage({
 	const session = await requireSession();
 	const userId = session.user.id;
 
-	const pageSize = 50;
+	const PAGE_SIZE = 50;
 
 	const params = await searchParams;
 	const query = (params.query ?? "").trim();
@@ -42,7 +42,7 @@ export default async function NoteSearchPage({
 
 	const [collections, searchedNotes, searchedNotesCnt] = await Promise.all([
 		(await getUserCollectionNameIDs(userId)).filter((c) => c.videoNum > 0),
-		getNotesWithSearchParam(userId, page, pageSize, query, collection, color),
+		getNotesWithSearchParam(userId, page, PAGE_SIZE, query, collection, color),
 		getNoteCountWithSearchParams(userId, query, collection, color),
 	]);
 
@@ -50,7 +50,7 @@ export default async function NoteSearchPage({
 		searchedNotes,
 		({ videoId }) => videoId,
 	) as Record<string, NoteWithVideo[]>;
-	const totalPagesNum = Math.max(1, Math.ceil(searchedNotesCnt / pageSize));
+	const totalPagesNum = Math.max(1, Math.ceil(searchedNotesCnt / PAGE_SIZE));
 
 	return (
 		<div className="flex min-h-screen">
@@ -65,9 +65,9 @@ export default async function NoteSearchPage({
 
 				{searchedNotes.length > 0 && (
 					<div className="label mb-3">
-						Page {page} of {totalPagesNum}, showing {1 + (page - 1) * pageSize}{" "}
+						Page {page} of {totalPagesNum}, showing {1 + (page - 1) * PAGE_SIZE}{" "}
 						to{" "}
-						{(page - 1) * pageSize + Math.min(searchedNotes.length, pageSize)}{" "}
+						{(page - 1) * PAGE_SIZE + Math.min(searchedNotes.length, PAGE_SIZE)}{" "}
 						out of {searchedNotesCnt} results
 					</div>
 				)}

@@ -71,9 +71,7 @@ See `node_modules/next/dist/docs/` — this version has breaking changes in APIs
 - **Note queries** (`lib/dbTableAction/noteTableAction.ts`):
   - `getNoteById(userId, noteId)` — Single note (cached); used by the single-note PDF export route
   - `getNotesByVideo(userId, videoId)` — All notes for a video (cached, sorted by startTime then createdAt)
-  - `getNotesByColor(userId, videoId, color)` — Filter notes by color
-  - `getNoteCountByVideo(userId, videoId)` — Note count for a video
-  - `getNotesByUser(userId, page, pageSize)` — Paginated notes for user
+  - `getNoteCountsByVideoIds(userId, videoIds)` — Batched note counts for a page of videos (one `groupBy` query, avoids N+1); returns `{videoId: count}`
   - `getNoteCountByUser(userId)` — Total note count for user
   - `getNotesWithSearchParam(userId, page, pageSize, query, collection, color)` — Cross-video note search; raw SQL (`Prisma.sql`) combining `ILIKE` substring + `pg_trgm` `similarity()` fuzzy match on `contentText`, collection filter (via `_CollectionToVideo` join table), and color filter; ranks by similarity when `query` is set, else by video title/startTime
   - `getNoteCountWithSearchParams(userId, query, collection, color)` — Total count for the above, same WHERE fragment (`buildSearchWhereFragment`)

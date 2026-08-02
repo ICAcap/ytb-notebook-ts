@@ -20,7 +20,10 @@ export async function fetchYouTubeTitle(
 	const { success } = await youtubeRatelimit.limit(session.user.id);
 
 	if (!success) {
-		console.error("YouTube title fetch rate limit exceeded for user:", session.user.id);
+		console.error(
+			"YouTube title fetch rate limit exceeded for user:",
+			session.user.id,
+		);
 		return null;
 	}
 
@@ -43,7 +46,6 @@ export async function fetchYouTubeTitle(
 			return null;
 		}
 		const title = data.items[0].snippet.title;
-		// console.log(title);
 		return title;
 	} catch (error) {
 		// Catch network failures to prevent the entire page from crashing (Triggering error.ts)

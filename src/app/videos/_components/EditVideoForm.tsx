@@ -76,11 +76,11 @@ const EditVideoForm = ({
 			// success
 			setModalOpen(false);
 			router.refresh();
-			toast.success("Video Edition Successful", {
+			toast.success("Video Detail Edition Successful", {
 				id: "video-edition-failed",
 			});
 		} else {
-			toast.error("Video Edition Failed, Please Try Again Later", {
+			toast.error("Video Detail Edition Failed, Please Try Again Later", {
 				id: "video-edition-failed",
 			});
 		}
@@ -91,7 +91,10 @@ const EditVideoForm = ({
 			<header>
 				<h1 className="text-2xl font-semibold text-center">Edit Video</h1>
 			</header>
-			<form onSubmit={handleSubmit(onSubmitVideoEdit)} className="flex flex-col gap-8">
+			<form
+				onSubmit={handleSubmit(onSubmitVideoEdit)}
+				className="flex flex-col gap-8"
+			>
 				<div>
 					<label className="label">
 						<span className="label-text font-semibold my-0.5">

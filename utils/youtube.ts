@@ -11,7 +11,3 @@ export function getYoutubeId(url: string): string | null {
 export function getThumbnailUrl(youtubeVideoId: string): string {
 	return `https://img.youtube.com/vi/${youtubeVideoId}/mqdefault.jpg`;
 }
-
-export function validateYoutubeUrl(url: string): boolean {
-	return YOUTUBE_URL_REGEX.test(url);
-}
