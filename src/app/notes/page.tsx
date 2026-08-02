@@ -99,7 +99,7 @@ export default async function NoteSearchPage({
 										<summary className="collapse-title font-semibold text-xl min-w-0 flex flex-col items-start">
 											<Link
 												href={`/videos/${videoId}`}
-												className="link link-hover link-accent truncate inline-block max-w-full"
+												className="link link-hover text-blue-400 text-xl truncate inline-block max-w-full"
 											>
 												{notes[0].video.title}
 											</Link>

@@ -24,9 +24,9 @@ export default function AddCollectionButton() {
 				onClick={() => {
 					setAddModalOpen(true);
 				}}
-				className="btn btn-primary btn-sm gap-2"
+				className="btn btn-primary btn-lg rounded-3xl gap-2 text-xl"
 			>
-				<Plus size={18} />
+				<Plus size={25} />
 				New Collection
 			</button>
 
