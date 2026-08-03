@@ -3,6 +3,12 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
 	reactCompiler: true,
 	serverExternalPackages: ["@sparticuz/chromium", "puppeteer-core"],
+	outputFileTracingIncludes: {
+		"/api/notes/[noteId]/pdf": ["./node_modules/@sparticuz/chromium/bin/**"],
+		"/api/notes/video/[videoId]/pdf": [
+			"./node_modules/@sparticuz/chromium/bin/**",
+		],
+	},
 	images: {
 		remotePatterns: [
 			{
