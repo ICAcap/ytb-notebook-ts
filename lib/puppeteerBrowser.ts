@@ -12,6 +12,11 @@ declare global {
 	var __puppeteerBrowserPromise: Promise<Browser> | undefined;
 }
 
+// @sparticuz/chromium-min ships no local binary (avoids Next/Vercel build
+// tracing dropping it); it downloads this pack tar to /tmp on cold start.
+const CHROMIUM_PACK_URL =
+	"https://github.com/Sparticuz/chromium/releases/download/v149.0.0/chromium-v149.0.0-pack.x64.tar";
+
 /**
  * Returns the shared warm browser instance, launching one if needed.
  * Pinned to globalThis so dev-mode Fast Refresh reuses it instead of orphaning
@@ -28,15 +33,19 @@ async function launchBrowser(): Promise<Browser> {
 		// Vercel (and other serverless targets) only have @sparticuz/chromium's
 		// Amazon-Linux binary available; it doesn't ship a Windows/macOS build,
 		// so local dev must keep using full `puppeteer`'s own downloaded Chromium.
+		// Uses chromium-min + a remote pack URL so no local binary needs to
+		// survive Next/Vercel's build-time file tracing (see CHROMIUM_PACK_URL).
 		const browser = process.env.VERCEL
 			? await (async () => {
 					// vercel function
 					const { default: puppeteerCore } = await import("puppeteer-core");
-					const { default: chromium } = await import("@sparticuz/chromium");
+					const { default: chromium } = await import(
+						"@sparticuz/chromium-min"
+					);
 					console.log("serverless - Launching a warm browser instance...");
 					return puppeteerCore.launch({
 						args: chromium.args,
-						executablePath: await chromium.executablePath(),
+						executablePath: await chromium.executablePath(CHROMIUM_PACK_URL),
 						headless: true,
 					});
 				})()

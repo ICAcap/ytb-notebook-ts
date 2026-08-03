@@ -17,7 +17,7 @@
     "@paralleldrive/cuid2": "^3.3.0",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
-    "@sparticuz/chromium": "^149.0.0",
+    "@sparticuz/chromium-min": "^149.0.0",
     "@tanstack/react-virtual": "^3.14.3",
     "@tiptap/extension-code-block-lowlight": "^3.26.1",
     "@tiptap/extension-highlight": "^3.26.1",
