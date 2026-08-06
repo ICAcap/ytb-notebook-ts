@@ -1,8 +1,8 @@
 "use client";
 
 import {
-	ChevronLeft,
-	LayoutPanelLeft,
+	PanelRightOpen,
+	LayoutDashboard,
 	Tv,
 	FolderBookmark,
 	BookSearch,
@@ -36,7 +36,7 @@ export default function Sidebar({
 	}
 
 	const navigation = [
-		{ name: "Dashboard", href: "/dashboard", icon: LayoutPanelLeft },
+		{ name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
 		{ name: "Videos", href: "/videos", icon: Tv },
 		{ name: "Collection", href: "/collection", icon: FolderBookmark },
 		{ name: "Notes", href: "/notes", icon: BookSearch },
@@ -62,8 +62,8 @@ export default function Sidebar({
 						className="p-1 rounded-lg hover:bg-neutral-content/10"
 						title={isCollapsed ? "Expand" : "Collapse"}
 					>
-						<ChevronLeft
-							className={`w-6 h-6 transition-transform duration-300 ${isCollapsed ? "rotate-180" : ""}`}
+						<PanelRightOpen
+							className={`w-6 h-6 cursor-pointer transition-transform duration-100 ${isCollapsed ? "rotate-180" : ""}`}
 						/>
 					</button>
 				</div>

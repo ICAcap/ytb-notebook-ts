@@ -3,6 +3,9 @@
 import { useRef, useState } from "react";
 import VideoPlayer from "./VideoPlayer";
 import NoteContainer from "./NoteContainer";
+import { MoveHorizontal } from "lucide-react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { VideoDetailType } from "../../../../../lib/dbTableAction/videoTableAction";
 import { Note } from "../../../../../generated/prisma";
 import CollectionBadgeList from "../../_components/CollectionBadgeList";
@@ -24,6 +27,35 @@ const VideoDetailView = ({
 	// ref to bridge the player and the notes container to enable timestamp seeking
 	const playerRef = useRef<HTMLVideoElement | null>(null);
 
+	// resize icon overlaid between the two panels, wiggles then fades on mount
+	const resizeIconRef = useRef<HTMLDivElement | null>(null);
+	useGSAP(
+		() => {
+			if (!resizeIconRef.current) return;
+			gsap
+				.timeline({ delay: 3 })
+				.to(resizeIconRef.current, {
+					opacity: 1,
+					duration: 0.3,
+					ease: "power1.out",
+				})
+				.to(resizeIconRef.current, {
+					x: 10,
+					duration: 0.35,
+					ease: "power1.inOut",
+					repeat: 3,
+					yoyo: true,
+				})
+				.to(resizeIconRef.current, {
+					x: 0,
+					opacity: 0,
+					duration: 0.5,
+					ease: "power1.out",
+				});
+		},
+		{ scope: resizeIconRef },
+	);
+
 	// use state of note array list
 	const [noteList, setNoteList] = useState(notes ?? []);
 
@@ -39,7 +71,20 @@ const VideoDetailView = ({
 	).current;
 
 	return (
-		<div>
+		<div className="relative">
+			{/* resizable hinting icons with gsap animation */}
+			<div
+				ref={resizeIconRef}
+				className="pointer-events-none absolute top-1/2 z-10 -translate-y-1/2 opacity-0"
+				style={{ left: "65%" }}
+			>
+				<MoveHorizontal
+					className="text-base-content"
+					size={48}
+					strokeWidth={2}
+				/>
+			</div>
+			{/* resizable group panels */}
 			<Group className="flex flex-row gap-2 mt-1">
 				<Panel
 					defaultSize="65%"
