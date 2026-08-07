@@ -39,9 +39,7 @@ async function launchBrowser(): Promise<Browser> {
 			? await (async () => {
 					// vercel function
 					const { default: puppeteerCore } = await import("puppeteer-core");
-					const { default: chromium } = await import(
-						"@sparticuz/chromium-min"
-					);
+					const { default: chromium } = await import("@sparticuz/chromium-min");
 					console.log("serverless - Launching a warm browser instance...");
 					return puppeteerCore.launch({
 						args: chromium.args,
@@ -99,12 +97,17 @@ function generateSingleNoteHTMLStr(note: Note): string {
 	return noteHTMLStr;
 }
 
-export async function printNotesToPDF(notes: Note[], videoTitle?: string) {
+export async function printNotesToPDF(
+	notes: Note[],
+	youtubeVidID?: string,
+	videoTitle?: string,
+) {
 	let newPage: Page | null = null;
 	const notesHtmlArr = notes.map((note) => generateSingleNoteHTMLStr(note));
+	const srcYoutubeUrl = `https://www.youtube.com/watch?v=${youtubeVidID}`;
 	const cleanedVidTitle =
 		videoTitle &&
-		`<h1 style="text-align: center;">${escapeHtml(videoTitle)}</h1>`;
+		`<a href="${srcYoutubeUrl}" target="_blank" style="display: block; text-align: center; font-size: 24px; font-weight: bold;">${escapeHtml(videoTitle)}</a><br/>`;
 	const htmlContent = `<div>${cleanedVidTitle}${notesHtmlArr.join("<br/>")}</div>`;
 
 	// puppeteer generate pdf on chrome

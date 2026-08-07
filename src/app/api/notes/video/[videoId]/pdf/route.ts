@@ -61,7 +61,7 @@ export async function GET(
 	}
 
 	// call puppeteer method
-	const pdf = await printNotesToPDF(notes, video.title);
+	const pdf = await printNotesToPDF(notes, video.youtubeVidID, video.title);
 
 	// browser response to trigger download modal
 	return new Response(
