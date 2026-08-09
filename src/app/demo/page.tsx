@@ -6,7 +6,8 @@
  */
 
 import { Suspense } from "react";
-import { authClient } from "../../../lib/auth-client";
+import { auth } from "../../../lib/auth";
+import { parseSetCookieHeader, toCookieOptions } from "better-auth/cookies";
 import { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
 import { Note, User } from "../../../generated/prisma";
@@ -30,20 +31,44 @@ export const metadata: Metadata = {
 };
 
 // helper to get anonymous user
-async function getAnonymousUser(): Promise<DemoUser | null> {
+// Calls better-auth's server API directly instead of self-fetching /api/auth
+// over HTTP: the HTTP round-trip goes through better-auth's origin/CSRF check,
+// which intermittently 403s here because Next's fetch patch forwards the
+// request's cookies onto the same-origin self-fetch without an Origin header.
+async function getAnonymousUser(): Promise<
+	{ user: DemoUser | null; debugError: string | null }
+> {
 	try {
-		const user = (await authClient.signIn.anonymous()).data?.user;
-		return (user as DemoUser) ?? null;
+		const result = await auth.api.signInAnonymous({ returnHeaders: true });
+		if (!result?.response?.user) {
+			return { user: null, debugError: "signInAnonymous returned no user" };
+		}
+		const setCookieHeader = result.headers.get("set-cookie");
+		if (setCookieHeader) {
+			const cookieStore = await cookies();
+			for (const [name, attributes] of parseSetCookieHeader(
+				setCookieHeader,
+			)) {
+				cookieStore.set(name, attributes.value, toCookieOptions(attributes));
+			}
+		}
+		return { user: result.response.user as DemoUser, debugError: null };
 	} catch (err) {
 		console.error(err);
-		return null;
+		return {
+			user: null,
+			debugError: `signInAnonymous threw: ${err instanceof Error ? `${err.name}: ${err.message}\n${err.stack}` : String(err)}`,
+		};
 	}
 }
 
 // helper to seed demo video and note for the demo user
 async function seedDemo(
 	demoUser: DemoUser,
-): Promise<{ video: VideoDetailType; note: Note } | null> {
+): Promise<
+	| { ok: true; video: VideoDetailType; note: Note }
+	| { ok: false; debugError: string }
+> {
 	try {
 		// seed video
 		const demoVidCreation = await upsertYouTubeVideo(
@@ -64,10 +89,16 @@ async function seedDemo(
 		});
 		if (!demoNoteCreation) throw Error("failed to create demo note");
 
-		return { video: demoVidCreation, note: demoNoteCreation };
+		return { ok: true, video: demoVidCreation, note: demoNoteCreation };
 	} catch (err) {
 		console.error(err);
-		return null;
+		return {
+			ok: false,
+			debugError:
+				err instanceof Error
+					? `${err.name}: ${err.message}\n${err.stack}`
+					: String(err),
+		};
 	}
 }
 
@@ -86,7 +117,7 @@ export default async function DemoPage() {
 		);
 	}
 
-	const demoUser = await getAnonymousUser();
+	const { user: demoUser, debugError: userErr } = await getAnonymousUser();
 	const seedVidNote = demoUser ? await seedDemo(demoUser) : null;
 
 	return (
@@ -95,15 +126,19 @@ export default async function DemoPage() {
 			<Suspense
 				fallback={<span className="loading loading-spinner loading-xl"></span>}
 			>
-				{demoUser && seedVidNote ? (
+				{demoUser && seedVidNote && seedVidNote.ok ? (
 					<VideoDetailView
 						userId={demoUser.id}
 						video={seedVidNote.video}
 						notes={[seedVidNote.note]}
 					/>
 				) : (
-					<div className="alert alert-error text-xl text-error-content mb-4">
+					<div className="alert alert-error text-xl text-error-content mb-4 whitespace-pre-wrap">
 						Demo creation failed, please try again later
+						{"\n\nDEBUG: "}
+						{userErr ??
+							(seedVidNote && !seedVidNote.ok ? seedVidNote.debugError : null) ??
+							"unknown"}
 					</div>
 				)}
 			</Suspense>
