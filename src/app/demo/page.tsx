@@ -30,20 +30,35 @@ export const metadata: Metadata = {
 };
 
 // helper to get anonymous user
-async function getAnonymousUser(): Promise<DemoUser | null> {
+async function getAnonymousUser(): Promise<
+	{ user: DemoUser | null; debugError: string | null }
+> {
 	try {
-		const user = (await authClient.signIn.anonymous()).data?.user;
-		return (user as DemoUser) ?? null;
+		const res = await authClient.signIn.anonymous();
+		if (res.error) {
+			return {
+				user: null,
+				debugError: `signIn.anonymous error: ${JSON.stringify(res.error)}`,
+			};
+		}
+		const user = res.data?.user;
+		return { user: (user as DemoUser) ?? null, debugError: null };
 	} catch (err) {
 		console.error(err);
-		return null;
+		return {
+			user: null,
+			debugError: `signIn.anonymous threw: ${err instanceof Error ? `${err.name}: ${err.message}\n${err.stack}` : String(err)}`,
+		};
 	}
 }
 
 // helper to seed demo video and note for the demo user
 async function seedDemo(
 	demoUser: DemoUser,
-): Promise<{ video: VideoDetailType; note: Note } | null> {
+): Promise<
+	| { ok: true; video: VideoDetailType; note: Note }
+	| { ok: false; debugError: string }
+> {
 	try {
 		// seed video
 		const demoVidCreation = await upsertYouTubeVideo(
@@ -64,10 +79,16 @@ async function seedDemo(
 		});
 		if (!demoNoteCreation) throw Error("failed to create demo note");
 
-		return { video: demoVidCreation, note: demoNoteCreation };
+		return { ok: true, video: demoVidCreation, note: demoNoteCreation };
 	} catch (err) {
 		console.error(err);
-		return null;
+		return {
+			ok: false,
+			debugError:
+				err instanceof Error
+					? `${err.name}: ${err.message}\n${err.stack}`
+					: String(err),
+		};
 	}
 }
 
@@ -86,7 +107,7 @@ export default async function DemoPage() {
 		);
 	}
 
-	const demoUser = await getAnonymousUser();
+	const { user: demoUser, debugError: userErr } = await getAnonymousUser();
 	const seedVidNote = demoUser ? await seedDemo(demoUser) : null;
 
 	return (
@@ -95,15 +116,19 @@ export default async function DemoPage() {
 			<Suspense
 				fallback={<span className="loading loading-spinner loading-xl"></span>}
 			>
-				{demoUser && seedVidNote ? (
+				{demoUser && seedVidNote && seedVidNote.ok ? (
 					<VideoDetailView
 						userId={demoUser.id}
 						video={seedVidNote.video}
 						notes={[seedVidNote.note]}
 					/>
 				) : (
-					<div className="alert alert-error text-xl text-error-content mb-4">
+					<div className="alert alert-error text-xl text-error-content mb-4 whitespace-pre-wrap">
 						Demo creation failed, please try again later
+						{"\n\nDEBUG: "}
+						{userErr ??
+							(seedVidNote && !seedVidNote.ok ? seedVidNote.debugError : null) ??
+							"unknown"}
 					</div>
 				)}
 			</Suspense>

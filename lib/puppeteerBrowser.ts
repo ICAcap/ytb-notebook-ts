@@ -105,9 +105,9 @@ export async function printNotesToPDF(
 	let newPage: Page | null = null;
 	const notesHtmlArr = notes.map((note) => generateSingleNoteHTMLStr(note));
 	const srcYoutubeUrl = `https://www.youtube.com/watch?v=${youtubeVidID}`;
-	const cleanedVidTitle =
-		videoTitle &&
-		`<a href="${srcYoutubeUrl}" target="_blank" style="display: block; text-align: center; font-size: 24px; font-weight: bold;">${escapeHtml(videoTitle)}</a><br/>`;
+	const cleanedVidTitle = videoTitle
+		? `<a href="${srcYoutubeUrl}" target="_blank" style="display: block; text-align: center; font-size: 24px; font-weight: bold;">${escapeHtml(videoTitle)}</a><br/>`
+		: "";
 	const htmlContent = `<div>${cleanedVidTitle}${notesHtmlArr.join("<br/>")}</div>`;
 
 	// puppeteer generate pdf on chrome
