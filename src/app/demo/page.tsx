@@ -5,144 +5,21 @@
  * https://better-auth.com/docs/plugins/anonymous#migrate-the-database
  */
 
-import { Suspense } from "react";
-import { auth } from "../../../lib/auth";
-import { parseSetCookieHeader, toCookieOptions } from "better-auth/cookies";
 import { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
-import { Note, User } from "../../../generated/prisma";
-import { Omit } from "../../../generated/prisma/runtime/client";
-import { demoVid, demoNote } from "./_data/demoData";
-import {
-	upsertYouTubeVideo,
-	VideoDetailType,
-} from "../../../lib/dbTableAction/videoTableAction";
-import { createNote } from "../../../lib/dbTableAction/noteTableAction";
-import VideoDetailView from "../videos/[id]/_components/VideoDetailView";
-import { demoAccessRateLimit } from "../../../utils/ratelimiter";
-import { cookies } from "next/headers";
-import { DEMO_VISITOR_COOKIE } from "../../../middleware";
-
-type DemoUser = Omit<User, "image" | "isSuper">;
+import DemoBootstrap from "./_components/DemoBootstrap";
 
 export const metadata: Metadata = {
 	title: "YTB Demo",
 	description: "Live Demo Page",
 };
 
-// helper to get anonymous user
-// Calls better-auth's server API directly instead of self-fetching /api/auth
-// over HTTP: the HTTP round-trip is exposed to Vercel's edge layer (Deployment
-// Protection, firewall) and better-auth's own origin-check, both of which have
-// intermittently 403'd the self-fetch. Calling the API in-process avoids the
-// network hop entirely.
-async function getAnonymousUser(): Promise<
-	{ user: DemoUser | null; debugError: string | null }
-> {
-	try {
-		const result = await auth.api.signInAnonymous({ returnHeaders: true });
-		if (!result?.response?.user) {
-			return { user: null, debugError: "signInAnonymous returned no user" };
-		}
-		const setCookieHeader = result.headers.get("set-cookie");
-		if (setCookieHeader) {
-			const cookieStore = await cookies();
-			for (const [name, attributes] of parseSetCookieHeader(
-				setCookieHeader,
-			)) {
-				cookieStore.set(name, attributes.value, toCookieOptions(attributes));
-			}
-		}
-		return { user: result.response.user as DemoUser, debugError: null };
-	} catch (err) {
-		console.error(err);
-		return {
-			user: null,
-			debugError: `signInAnonymous threw: ${err instanceof Error ? `${err.name}: ${err.message}\n${err.stack}` : String(err)}`,
-		};
-	}
-}
-
-// helper to seed demo video and note for the demo user
-async function seedDemo(
-	demoUser: DemoUser,
-): Promise<
-	| { ok: true; video: VideoDetailType; note: Note }
-	| { ok: false; debugError: string }
-> {
-	try {
-		// seed video
-		const demoVidCreation = await upsertYouTubeVideo(
-			demoUser.id,
-			demoVid.youtubeVidID,
-			demoVid.title,
-			[],
-			true,
-		);
-		if (!demoVidCreation)
-			throw Error("failed to create demo video, note seeding canceled");
-
-		// seed note
-		const demoNoteCreation = await createNote({
-			userId: demoUser.id,
-			videoId: demoVidCreation.videoId,
-			...demoNote,
-		});
-		if (!demoNoteCreation) throw Error("failed to create demo note");
-
-		return { ok: true, video: demoVidCreation, note: demoNoteCreation };
-	} catch (err) {
-		console.error(err);
-		return {
-			ok: false,
-			debugError:
-				err instanceof Error
-					? `${err.name}: ${err.message}\n${err.stack}`
-					: String(err),
-		};
-	}
-}
-
 // html
-export default async function DemoPage() {
-	// rate limiting
-	const visitorId =
-		(await cookies()).get(DEMO_VISITOR_COOKIE)?.value ?? "unknown";
-	const { success } = await demoAccessRateLimit.limit(visitorId);
-
-	if (!success) {
-		return (
-			<div className="alert alert-error text-xl text-error-content mb-4">
-				Error 429: Too many demo requests, please try again later
-			</div>
-		);
-	}
-
-	const { user: demoUser, debugError: userErr } = await getAnonymousUser();
-	const seedVidNote = demoUser ? await seedDemo(demoUser) : null;
-
+export default function DemoPage() {
 	return (
 		<div>
 			<Toaster />
-			<Suspense
-				fallback={<span className="loading loading-spinner loading-xl"></span>}
-			>
-				{demoUser && seedVidNote && seedVidNote.ok ? (
-					<VideoDetailView
-						userId={demoUser.id}
-						video={seedVidNote.video}
-						notes={[seedVidNote.note]}
-					/>
-				) : (
-					<div className="alert alert-error text-xl text-error-content mb-4 whitespace-pre-wrap">
-						Demo creation failed, please try again later
-						{"\n\nDEBUG: "}
-						{userErr ??
-							(seedVidNote && !seedVidNote.ok ? seedVidNote.debugError : null) ??
-							"unknown"}
-					</div>
-				)}
-			</Suspense>
+			<DemoBootstrap />
 		</div>
 	);
 }
