@@ -6,7 +6,8 @@
  */
 
 import { Suspense } from "react";
-import { authClient } from "../../../lib/auth-client";
+import { auth } from "../../../lib/auth";
+import { parseSetCookieHeader, toCookieOptions } from "better-auth/cookies";
 import { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
 import { Note, User } from "../../../generated/prisma";
@@ -30,24 +31,34 @@ export const metadata: Metadata = {
 };
 
 // helper to get anonymous user
+// Calls better-auth's server API directly instead of self-fetching /api/auth
+// over HTTP: the HTTP round-trip is exposed to Vercel's edge layer (Deployment
+// Protection, firewall) and better-auth's own origin-check, both of which have
+// intermittently 403'd the self-fetch. Calling the API in-process avoids the
+// network hop entirely.
 async function getAnonymousUser(): Promise<
 	{ user: DemoUser | null; debugError: string | null }
 > {
 	try {
-		const res = await authClient.signIn.anonymous();
-		if (res.error) {
-			return {
-				user: null,
-				debugError: `signIn.anonymous error: ${JSON.stringify(res.error)}`,
-			};
+		const result = await auth.api.signInAnonymous({ returnHeaders: true });
+		if (!result?.response?.user) {
+			return { user: null, debugError: "signInAnonymous returned no user" };
 		}
-		const user = res.data?.user;
-		return { user: (user as DemoUser) ?? null, debugError: null };
+		const setCookieHeader = result.headers.get("set-cookie");
+		if (setCookieHeader) {
+			const cookieStore = await cookies();
+			for (const [name, attributes] of parseSetCookieHeader(
+				setCookieHeader,
+			)) {
+				cookieStore.set(name, attributes.value, toCookieOptions(attributes));
+			}
+		}
+		return { user: result.response.user as DemoUser, debugError: null };
 	} catch (err) {
 		console.error(err);
 		return {
 			user: null,
-			debugError: `signIn.anonymous threw: ${err instanceof Error ? `${err.name}: ${err.message}\n${err.stack}` : String(err)}`,
+			debugError: `signInAnonymous threw: ${err instanceof Error ? `${err.name}: ${err.message}\n${err.stack}` : String(err)}`,
 		};
 	}
 }
