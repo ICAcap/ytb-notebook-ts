@@ -232,6 +232,36 @@ export const getAllUniqueVideoTitles = cache(async function (
 	}
 });
 
+/**
+ * Retrieves the most recently watched videos for a user, ordered by lastWatchedAt descending.
+ * Videos that have never been played (lastWatchedAt is null) are excluded.
+ *
+ * @param userId - The unique identifier of the user.
+ * @param limit - The maximum number of videos to return.
+ * @returns A promise resolving to an array of {videoId, title} for the most recently watched videos.
+ */
+export const getRecentlyWatchedVideos = cache(async function (
+	userId: string,
+	limit: number = 5,
+): Promise<Pick<Video, "videoId" | "title">[]> {
+	if (!userId) {
+		console.error("Error fetching recently watched videos, user ID is undefined");
+		return [];
+	}
+
+	try {
+		return await prisma.video.findMany({
+			where: { userId, lastWatchedAt: { not: null } },
+			orderBy: { lastWatchedAt: "desc" },
+			take: limit,
+			select: { videoId: true, title: true },
+		});
+	} catch (error) {
+		console.error("Error fetching recently watched videos, fallback to empty array", error);
+		return [];
+	}
+});
+
 // --------- CREATE ------------------------------------------------------------------
 
 // --------- UPDATE ------------------------------------------------------------------
@@ -341,7 +371,7 @@ export const updateVideoPlayedTime = async function (
 	try {
 		await prisma.video.update({
 			where: { videoId, userId },
-			data: { lastPlayedTime: playedTime },
+			data: { lastPlayedTime: playedTime, lastWatchedAt: new Date() },
 		});
 	} catch (error) {
 		console.error("Error updating video played time:", error);

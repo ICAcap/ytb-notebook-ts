@@ -2,7 +2,10 @@ import Sidebar from "../../_components/sidebar";
 import requireSession from "../../../lib/requireSession";
 import { Metadata } from "next";
 import Image from "next/image";
-import { getVideoNumWithSearchParam } from "../../../lib/dbTableAction/videoTableAction";
+import {
+	getVideoNumWithSearchParam,
+	getRecentlyWatchedVideos,
+} from "../../../lib/dbTableAction/videoTableAction";
 import { getUserCollectionNameIDs } from "../../../lib/dbTableAction/collectionTableActions";
 import { getNoteCountByUser } from "../../../lib/dbTableAction/noteTableAction";
 import {
@@ -11,6 +14,7 @@ import {
 	Play,
 	CircleUserRound,
 	BookSearch,
+	History,
 } from "lucide-react";
 import SignOutButton from "@/_components/SignOutButton";
 import Link from "next/link";
@@ -23,11 +27,13 @@ export default async function DashboardPage() {
 	const session = await requireSession();
 	const userId = session.user.id;
 
-	const [totalVideos, collections, totalNotes] = await Promise.all([
-		getVideoNumWithSearchParam(userId, "", ""),
-		getUserCollectionNameIDs(userId),
-		getNoteCountByUser(userId),
-	]);
+	const [totalVideos, collections, totalNotes, recentlyWatched] =
+		await Promise.all([
+			getVideoNumWithSearchParam(userId, "", ""),
+			getUserCollectionNameIDs(userId),
+			getNoteCountByUser(userId),
+			getRecentlyWatchedVideos(userId),
+		]);
 
 	return (
 		<div className="flex min-h-screen">
@@ -85,7 +91,7 @@ export default async function DashboardPage() {
 							</div>
 						</div>
 					) : (
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 							{/* video counts */}
 							<Link
 								href="/videos"
@@ -125,6 +131,35 @@ export default async function DashboardPage() {
 							</Link>
 						</div>
 					)}
+
+					{/* Recently Watched */}
+					<div className="card bg-base-100 border border-base-200 shadow-sm">
+						<div className="card-body">
+							<h1 className="card-title gap-2">
+								<History size={30} />
+								Recently Watched
+							</h1>
+							{recentlyWatched.length === 0 ? (
+								<p className="text-base-content/60 text-sm">
+									Videos you watched recently will show up here.
+								</p>
+							) : (
+								<ul className="divide-y divide-base-200">
+									{recentlyWatched.map((video) => (
+										<li key={video.videoId}>
+											<Link
+												href={`/videos/${video.videoId}`}
+												title={video.title}
+												className="block py-2 hover:text-primary transition-colors truncate"
+											>
+												{video.title}
+											</Link>
+										</li>
+									))}
+								</ul>
+							)}
+						</div>
+					</div>
 				</div>
 			</main>
 		</div>
