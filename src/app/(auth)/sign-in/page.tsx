@@ -17,10 +17,10 @@ export default function SignIn() {
 	}, []);
 
 	useEffect(() => {
-		if (!isPending && session) {
+		if (!isPending && session && !session.user.isAnonymous) {
 			router.replace(redirectRoute);
 		}
-	}, [session, isPending, router]); // redirect to dashboard if already signed in when land on /sign-in
+	}, [session, isPending, router]); // redirect to dashboard if already signed in when land on /sign-in (but not for leftover anonymous demo sessions)
 
 	const handleLogin = async () => {
 		try {
@@ -62,7 +62,7 @@ export default function SignIn() {
 											{error}
 										</div>
 									)}
-									{isPending || session ? (
+									{isPending || (session && !session.user.isAnonymous) ? (
 										<div className="skeleton btn btn-lg w-56"></div>
 									) : (
 										<button

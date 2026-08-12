@@ -14,6 +14,8 @@ import { getNoteCountsByVideoIds } from "../../../lib/dbTableAction/noteTableAct
 import { Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 
+const PAGE_SIZE = 20;
+
 export const metadata: Metadata = {
 	title: "My Videos",
 	description: "This is the page showing all the videos",
@@ -31,8 +33,6 @@ export default async function VideoPage({
 }) {
 	const session = await requireSession();
 	const userId = session.user.id;
-
-	const PAGE_SIZE = 20;
 
 	const params = await searchParams;
 	const query = (params.query ?? "").trim();

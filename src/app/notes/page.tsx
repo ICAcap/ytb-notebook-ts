@@ -14,6 +14,8 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { StickyNoteOff } from "lucide-react";
 
+const PAGE_SIZE = 50;
+
 export const metadata: Metadata = {
 	title: "Find Notes",
 	description: "This is the page where user finds notes by searching",
@@ -31,8 +33,6 @@ export default async function NoteSearchPage({
 }) {
 	const session = await requireSession();
 	const userId = session.user.id;
-
-	const PAGE_SIZE = 50;
 
 	const params = await searchParams;
 	const query = (params.query ?? "").trim();
