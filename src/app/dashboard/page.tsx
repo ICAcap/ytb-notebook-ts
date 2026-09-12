@@ -14,8 +14,8 @@ import {
 	Play,
 	CircleUserRound,
 	BookSearch,
-	History,
 } from "lucide-react";
+import RecentWatched from "./_components/RecentWatched";
 import SignOutButton from "@/_components/SignOutButton";
 import Link from "next/link";
 
@@ -133,33 +133,7 @@ export default async function DashboardPage() {
 					)}
 
 					{/* Recently Watched */}
-					<div className="card bg-base-100 border border-base-200 shadow-sm">
-						<div className="card-body">
-							<h1 className="card-title gap-2">
-								<History size={30} />
-								Recently Watched
-							</h1>
-							{recentlyWatched.length === 0 ? (
-								<p className="text-base-content/60 text-sm">
-									Videos you watched recently will show up here.
-								</p>
-							) : (
-								<ul className="divide-y divide-base-200">
-									{recentlyWatched.map((video) => (
-										<li key={video.videoId}>
-											<Link
-												href={`/videos/${video.videoId}`}
-												title={video.title}
-												className="block py-2 hover:text-primary transition-colors truncate"
-											>
-												{video.title}
-											</Link>
-										</li>
-									))}
-								</ul>
-							)}
-						</div>
-					</div>
+					<RecentWatched vids={recentlyWatched} />
 				</div>
 			</main>
 		</div>

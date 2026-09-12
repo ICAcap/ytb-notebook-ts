@@ -242,10 +242,12 @@ export const getAllUniqueVideoTitles = cache(async function (
  */
 export const getRecentlyWatchedVideos = cache(async function (
 	userId: string,
-	limit: number = 5,
+	limit: number = 20,
 ): Promise<Pick<Video, "videoId" | "title">[]> {
 	if (!userId) {
-		console.error("Error fetching recently watched videos, user ID is undefined");
+		console.error(
+			"Error fetching recently watched videos, user ID is undefined",
+		);
 		return [];
 	}
 
@@ -257,7 +259,10 @@ export const getRecentlyWatchedVideos = cache(async function (
 			select: { videoId: true, title: true },
 		});
 	} catch (error) {
-		console.error("Error fetching recently watched videos, fallback to empty array", error);
+		console.error(
+			"Error fetching recently watched videos, fallback to empty array",
+			error,
+		);
 		return [];
 	}
 });
