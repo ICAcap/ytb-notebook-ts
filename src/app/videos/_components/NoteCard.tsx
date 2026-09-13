@@ -7,6 +7,7 @@ import { JSONContent } from "@tiptap/react";
 import { renderToReactElement } from "@tiptap/static-renderer/pm/react";
 import { formatTimeStamp } from "../../../../utils/formatTimeStamp";
 import { TiptapExtensions } from "@/_components/RichTextEditor/TiptapExtension";
+import { renderHighlightedCodeBlock } from "@/_components/RichTextEditor/highlightCodeBlock";
 import EditableNoteForm from "./EditableNoteForm";
 import { deleteNote } from "../../../../lib/dbTableAction/noteTableAction";
 import Modal from "@/_components/ModalSkeleton";
@@ -193,6 +194,7 @@ const NoteCard = (props: Props) => {
 						{renderToReactElement({
 							content: contentJson,
 							extensions: TiptapExtensions,
+							options: { nodeMapping: { codeBlock: renderHighlightedCodeBlock } },
 						})}
 					</div>
 				)}

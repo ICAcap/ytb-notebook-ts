@@ -203,7 +203,7 @@ Unauthenticated, instant "live demo" — no sign-in required, backed by better-a
   - `formatTimeStamp(seconds)` — Format seconds to MM:SS or H:MM:SS
   - `getH()`, `getM()`, `getS()` — Extract hours/minutes/seconds from a duration
 - **Note colors** (`utils/noteColors.ts`):
-  - `NOTE_COLORS` — Predefined color palette for notes (gray, blue, green, gold, red)
+  - `NOTE_COLORS` — Predefined color palette for notes (gray, blue, green, yellow, red)
 - **Note content flattening** (`utils/tiptapToText.ts`):
   - `tiptapToText(doc)` — Flattens Tiptap JSON to plain text (whitespace-joined, collapsed) for storage in `Note.contentText`, which powers note search
 - **React Hook Form**: Used for form management (register, Controller, watch, handleSubmit)

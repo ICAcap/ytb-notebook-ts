@@ -3,6 +3,7 @@ import { renderToReactElement } from "@tiptap/static-renderer";
 import { NoteWithVideo } from "../../../../lib/dbTableAction/noteTableAction";
 import { formatTimeStamp } from "../../../../utils/formatTimeStamp";
 import { TiptapExtensions } from "@/_components/RichTextEditor/TiptapExtension";
+import { renderHighlightedCodeBlock } from "@/_components/RichTextEditor/highlightCodeBlock";
 import { JSONContent } from "@tiptap/react";
 import { useRouter } from "next/navigation";
 
@@ -66,6 +67,7 @@ export default function NoteListItem({ note }: { note: NoteWithVideo }) {
 				{renderToReactElement({
 					content: note.content as JSONContent,
 					extensions: TiptapExtensions,
+					options: { nodeMapping: { codeBlock: renderHighlightedCodeBlock } },
 				})}
 			</div>
 		</div>

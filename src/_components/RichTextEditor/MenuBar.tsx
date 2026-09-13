@@ -23,11 +23,10 @@ import {
 	Baseline,
 	Ban,
 } from "lucide-react";
-import { useState } from "react";
 
 // styling for active/inactive setting button
 const activeClass =
-	"flex items-center justify-center w-4 h-4 bg-secondary text-secondary-content rounded-xs";
+	"flex items-center justify-center w-4 h-4 bg-info text-secondary-content rounded-xs";
 const inactiveClass = "flex items-center justify-center w-4 h-4 rounded-xs";
 
 // color picker sub-component
@@ -37,7 +36,7 @@ const TextColorPicker = ({ editor }: { editor: Editor | null }) => {
 	const colors = [
 		{ hex: "#E53935", key: "isTextRed", title: "Red" },
 		{ hex: "#F4511E", key: "isTextOrange", title: "Orange" },
-		{ hex: "#FF9026", key: "isTextGold", title: "Gold" },
+		{ hex: "#FFFF00", key: "isTextYellow", title: "Yellow" },
 		{ hex: "#1E88E5", key: "isTextBlue", title: "Blue" },
 		{ hex: "#00897B", key: "isTextTeal", title: "Teal" },
 		{ hex: "#43A047", key: "isTextGreen", title: "Green" },
@@ -49,7 +48,7 @@ const TextColorPicker = ({ editor }: { editor: Editor | null }) => {
 			// preset colors
 			isTextRed: editor?.isActive("textStyle", { color: "#E53935" }),
 			isTextOrange: editor?.isActive("textStyle", { color: "#F4511E" }),
-			isTextGold: editor?.isActive("textStyle", { color: "#FF9026" }),
+			isTextYellow: editor?.isActive("textStyle", { color: "#FFFF00" }),
 			isTextBlue: editor?.isActive("textStyle", { color: "#1E88E5" }),
 			isTextTeal: editor?.isActive("textStyle", { color: "#00897B" }),
 			isTextGreen: editor?.isActive("textStyle", { color: "#43A047" }),

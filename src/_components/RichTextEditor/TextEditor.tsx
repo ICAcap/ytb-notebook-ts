@@ -9,7 +9,8 @@ import {
 } from "@tiptap/react";
 import { useTheme } from "next-themes";
 import MenuBar from "./MenuBar";
-import { TiptapExtensions, limit } from "./TiptapExtension";
+import { limit } from "./TiptapExtension";
+import { TiptapEditorExtensions } from "./TiptapExtension.client";
 
 // main component
 const TextEditor = ({
@@ -30,7 +31,7 @@ const TextEditor = ({
 
 	// editor config
 	const editor = useEditor({
-		extensions: TiptapExtensions,
+		extensions: TiptapEditorExtensions,
 		content: contentJson,
 		immediatelyRender: false,
 		onUpdate: ({ editor }) => {
