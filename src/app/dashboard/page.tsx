@@ -2,6 +2,7 @@ import Sidebar from "../../_components/sidebar";
 import requireSession from "../../../lib/requireSession";
 import { Metadata } from "next";
 import Image from "next/image";
+import AddVideoButton from "../videos/_components/AddVideoButton";
 import {
 	getVideoNumWithSearchParam,
 	getRecentlyWatchedVideos,
@@ -82,12 +83,6 @@ export default async function DashboardPage() {
 								<p className="text-base-content/60 mb-4">
 									Add your first video to begin organizing your collection
 								</p>
-								<div className="card-actions justify-center">
-									<Link href="/videos" className="btn btn-primary gap-2">
-										<Play size={18} />
-										Add Your First Video
-									</Link>
-								</div>
 							</div>
 						</div>
 					) : (
@@ -131,7 +126,10 @@ export default async function DashboardPage() {
 							</Link>
 						</div>
 					)}
-
+					{/* Add new vid button */}
+					<div className="flex justify-center">
+						<AddVideoButton userId={userId} />
+					</div>
 					{/* Recently Watched */}
 					<RecentWatched vids={recentlyWatched} />
 				</div>
