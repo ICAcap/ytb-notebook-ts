@@ -7,6 +7,8 @@ import { TiptapExtensions } from "@/_components/RichTextEditor/TiptapExtension";
 import { formatTimeStamp } from "../utils/formatTimeStamp";
 import { Note } from "../generated/prisma";
 import { escapeHtml } from "../utils/escapeHtml";
+import { readdir, copyFile, mkdir } from "node:fs/promises";
+import { join } from "node:path";
 
 declare global {
 	var __puppeteerBrowserPromise: Promise<Browser> | undefined;
@@ -16,6 +18,25 @@ declare global {
 // tracing dropping it); it downloads this pack tar to /tmp on cold start.
 const CHROMIUM_PACK_URL =
 	"https://github.com/Sparticuz/chromium/releases/download/v149.0.0/chromium-v149.0.0-pack.x64.tar";
+
+// @sparticuz/chromium-min only bundles Open Sans. Fontconfig resolves glyphs
+// by scanning FONTCONFIG_PATH (set to /tmp/fonts by the package itself), so
+// our own non-Latin fonts (bundled via `outputFileTracingIncludes` in
+// next.config.ts) must be copied there before the browser launches, or
+// Chromium renders CJK/Arabic/etc. as tofu boxes.
+async function installCustomFonts() {
+	const fontconfigPath = process.env.FONTCONFIG_PATH;
+	if (!fontconfigPath) return;
+
+	const sourceDir = join(process.cwd(), "fonts");
+	await mkdir(fontconfigPath, { recursive: true });
+	const fontFiles = await readdir(sourceDir);
+	await Promise.all(
+		fontFiles.map((file) =>
+			copyFile(join(sourceDir, file), join(fontconfigPath, file)),
+		),
+	);
+}
 
 /**
  * Returns the shared warm browser instance, launching one if needed.
@@ -40,10 +61,14 @@ async function launchBrowser(): Promise<Browser> {
 					// vercel function
 					const { default: puppeteerCore } = await import("puppeteer-core");
 					const { default: chromium } = await import("@sparticuz/chromium-min");
+					const executablePath = await chromium.executablePath(
+						CHROMIUM_PACK_URL,
+					);
+					await installCustomFonts();
 					console.log("serverless - Launching a warm browser instance...");
 					return puppeteerCore.launch({
 						args: chromium.args,
-						executablePath: await chromium.executablePath(CHROMIUM_PACK_URL),
+						executablePath,
 						headless: true,
 					});
 				})()
