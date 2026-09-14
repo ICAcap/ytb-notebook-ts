@@ -153,8 +153,9 @@ Full Tiptap-based editor suite. Note content is stored as Tiptap JSON, not plain
   - `src/app/api/notes/video/[videoId]/pdf/route.ts` — All notes for a video, one PDF (`GET`)
 - **`lib/puppeteerBrowser.ts`**:
   - `getBrowser()` — Returns a shared warm `Browser` instance, cached on `globalThis` (survives dev Fast Refresh); caches the launch `Promise` itself so concurrent callers await one in-flight launch instead of racing separate launch calls; auto-clears the cache on `disconnected` so a crashed browser relaunches on next request
-  - Launch target branches on `process.env.VERCEL`: on Vercel, launches `puppeteer-core` with `@sparticuz/chromium`'s bundled Amazon-Linux binary (no Windows/macOS build available); locally, launches full `puppeteer`'s own downloaded Chromium
+  - Launch target branches on `process.env.VERCEL`: on Vercel, launches `puppeteer-core` with `@sparticuz/chromium-min` (remote pack tar, see `CHROMIUM_PACK_URL`) against Amazon Linux (no Windows/macOS build available); locally, launches full `puppeteer`'s own downloaded Chromium
   - `printNotesToPDF(notes, videoTitle?)` — Renders Tiptap JSON content to HTML (`@tiptap/static-renderer`), disables JS on the page (`setJavaScriptEnabled(false)`), and returns a PDF buffer
+  - **Non-Latin font support**: `@sparticuz/chromium-min` only bundles Open Sans and points fontconfig at `FONTCONFIG_PATH` (`/tmp/fonts`). Noto Sans fonts for other scripts (Arabic, CJK, Devanagari, etc.) live in the repo's `fonts/` directory, are bundled into the Vercel function via `outputFileTracingIncludes` in `next.config.ts`, and are copied into `FONTCONFIG_PATH` by `installCustomFonts()` after `chromium.executablePath()` extracts its own fonts there but before the browser launches — otherwise non-Latin glyphs render as tofu boxes in exported PDFs
 - **`utils/escapeHtml.ts`**: Escapes user-controlled strings (e.g. video title) before interpolating into the raw HTML string passed to `page.setContent()` — prevents stored XSS/SSRF via injected markup in the PDF render path
 
 ### Rate Limiting (`utils/ratelimiter.ts`)
