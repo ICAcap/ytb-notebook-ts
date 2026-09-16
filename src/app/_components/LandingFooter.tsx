@@ -24,8 +24,11 @@ export default function LandingFooter() {
 						</p>
 
 						<p className="mx-auto mt-4 max-w-lg text-center text-xl leading-relaxed text-base-content/60 lg:text-left">
-							Timestamped, rich-text notes for the videos you actually rewatch —
-							organized into collections, always picking up where you left off.
+							<strong className="text-[1.15em] underline">
+								Timestamped, Rich-Text Notes
+							</strong>{" "}
+							for the videos you actually rewatch — organized into
+							collections, always picking up where you left off.
 						</p>
 					</div>
 

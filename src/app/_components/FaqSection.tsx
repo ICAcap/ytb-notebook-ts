@@ -4,20 +4,37 @@ const faqs = [
 	{
 		icon: Gift,
 		title: "Free to use",
-		description:
-			"This is a side project, not a commercial product — sign in with Google and use it at no cost.",
+		description: (
+			<>
+				This is a side project, not a commercial product — sign in with
+				Google and use it at{" "}
+				<strong className="text-[1.1em] underline">No Cost</strong>.
+			</>
+		),
 	},
 	{
 		icon: Database,
 		title: "Only what's yours",
-		description:
-			"Just the essentials from Google sign-in, plus whatever you create yourself — your videos, collections, and notes.",
+		description: (
+			<>
+				Just the essentials from Google sign-in, plus whatever you create
+				yourself — your videos, collections, and notes.
+			</>
+		),
 	},
 	{
 		icon: Lock,
 		title: "Never shared",
-		description:
-			"Everything you add is stored securely and used only to run the app for you. Nothing is sold, shared, or repurposed.",
+		description: (
+			<>
+				Everything you add is stored{" "}
+				<strong className="text-[1.1em] underline">Securely</strong> and used
+				only to run the app for you.{" "}
+				<strong className="text-[1.1em] underline">
+					Nothing Is Sold, Shared, Or Repurposed.
+				</strong>
+			</>
+		),
 	},
 ];
 

@@ -16,11 +16,17 @@ export default function AboutSection() {
 						id="about-text"
 						className="mt-10 text-pretty text-2xl/relaxed text-base-content/80"
 					>
-						YouTube is a goldmine for learning, but it's a battle against the
-						algorithm. To combat doomscrolling through recommendations and
-						passively watching videos without retaining a thing. I built YTB
-						Notebook to stop the noise and bring back the power of active
-						note-taking learning.
+						YouTube is a goldmine for learning, but it&apos;s a battle against
+						the algorithm. To combat doomscrolling through recommendations and{" "}
+						<em className="underline">
+							Passively Watching Videos Without Retaining A Thing
+						</em>
+						. I built YTB Notebook to stop the noise and bring back the power
+						of{" "}
+						<strong className="text-[1.15em] underline">
+							Active Note-Taking Learning
+						</strong>
+						.
 					</p>
 
 					<div id="about-signature" className="mt-10 flex items-center gap-4">

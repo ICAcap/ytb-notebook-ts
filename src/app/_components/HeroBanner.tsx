@@ -21,9 +21,13 @@ export default function HeroBanner() {
 					</h1>
 
 					<p className="mx-auto mt-8 max-w-2xl text-xl text-pretty text-base-content/70 sm:text-2xl/relaxed lg:mx-0 lg:text-base xl:text-lg">
-						YTB Notebook lets you attach rich-text notes to exact moments in a
-						YouTube video, organize videos into collections, and jump straight
-						back to the moment that matters.
+						YTB Notebook lets you attach{" "}
+						<strong className="text-[1.15em] underline">Rich-Text Notes</strong>{" "}
+						to{" "}
+						<strong className="text-[1.15em] underline">Exact Moments</strong>{" "}
+						in a YouTube video, organize videos into{" "}
+						<strong className="text-[1.15em] underline">Collections</strong>,
+						and jump straight back to the moment that matters.
 					</p>
 
 					<div className="mt-10 flex flex-wrap justify-center gap-4 lg:flex-col lg:items-start lg:justify-start xl:flex-row xl:items-center">
