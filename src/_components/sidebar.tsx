@@ -47,26 +47,14 @@ export default function Sidebar({
 		<aside
 			className={`${isCollapsed ? "w-20" : "w-56"} flex flex-col bg-accent text-accent-content min-h-screen z-10 transition-all duration-300 ease-out`}
 		>
-			<div className="flex flex-col p-3 mb-2 gap-2">
-				<div className="flex items-center justify-between">
-					<img
-						src="/logo.svg"
-						alt="YTB Notebook"
-						width={32}
-						height={32}
-						className="shrink-0"
-					/>
-					<button
-						onClick={toggleSidebar}
-						aria-label="Toggle Sidebar"
-						className="p-1 rounded-lg hover:bg-neutral-content/10"
-						title={isCollapsed ? "Expand" : "Collapse"}
-					>
-						<PanelRightOpen
-							className={`w-6 h-6 cursor-pointer transition-transform duration-100 ${isCollapsed ? "rotate-180" : ""}`}
-						/>
-					</button>
-				</div>
+			<div className="flex flex-col items-center p-3 mb-2 gap-2">
+				<img
+					src="/logo.svg"
+					alt="YTB Notebook"
+					width={32}
+					height={32}
+					className="shrink-0"
+				/>
 			</div>
 
 			<ul
@@ -110,6 +98,21 @@ export default function Sidebar({
 						</div>
 					)}
 				</li>
+				<li>
+					<button
+						onClick={toggleSidebar}
+						aria-label="Toggle Sidebar"
+						title={isCollapsed ? "Expand" : "Collapse"}
+						className="rounded-lg hover:bg-neutral-content/10 w-full flex items-center gap-2"
+					>
+						<PanelRightOpen
+							className={`w-6 h-6 shrink-0 cursor-pointer transition-transform duration-100 ${isCollapsed ? "rotate-180" : ""}`}
+						/>
+						{!isCollapsed && (
+							<span className="text-base font-semibold truncate">Collapse</span>
+						)}
+					</button>
+				</li>
 				{navigation.map((item) => {
 					const IconComponent = item.icon;
 					const isActive =
@@ -140,7 +143,7 @@ export default function Sidebar({
 			<div className="p-3 space-y-2 border-t border-base-content/20">
 				{!isCollapsed && (
 					<p className="text-xs font-semibold text-center">
-						© {new Date().getFullYear()} YTB Notebook - By Tdub
+						© {new Date().getFullYear()} YTB Notebook
 					</p>
 				)}
 			</div>

@@ -61,9 +61,8 @@ async function launchBrowser(): Promise<Browser> {
 					// vercel function
 					const { default: puppeteerCore } = await import("puppeteer-core");
 					const { default: chromium } = await import("@sparticuz/chromium-min");
-					const executablePath = await chromium.executablePath(
-						CHROMIUM_PACK_URL,
-					);
+					const executablePath =
+						await chromium.executablePath(CHROMIUM_PACK_URL);
 					await installCustomFonts();
 					console.log("serverless - Launching a warm browser instance...");
 					return puppeteerCore.launch({
@@ -115,9 +114,10 @@ function generateSingleNoteHTMLStr(note: Note): string {
 	const startTime = formatTimeStamp(note.startTime);
 	const endTime =
 		note.startTime === note.endTime ? "" : formatTimeStamp(note.endTime);
+	const noteColor = note.color;
 	const timeStampText = endTime ? `${startTime} - ${endTime}` : startTime;
 	const timeStampSpan = `<span style="display: block; text-align: center; font-weight: bold;">${timeStampText}</span><hr/>`;
-	const noteHTMLStr = `<div style="padding: 20px; box-sizing: border-box;">${timeStampSpan}${noteHtml}</div>`;
+	const noteHTMLStr = `<div style="padding: 20px; box-sizing: border-box; border-left: 6px solid ${noteColor};">${timeStampSpan}${noteHtml}</div>`;
 
 	return noteHTMLStr;
 }
@@ -144,6 +144,13 @@ export async function printNotesToPDF(
 		const pdf = await newPage.pdf({
 			printBackground: true,
 			scale: 1,
+			format: "A4",
+			margin: {
+				top: "0.5in",
+				bottom: "0.5in",
+				left: "0.5in",
+				right: "0.5in",
+			},
 		});
 		return pdf; // return the pdf buffer
 	} finally {
