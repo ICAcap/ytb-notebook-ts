@@ -45,14 +45,14 @@ export default function Sidebar({
 
 	return (
 		<aside
-			className={`${isCollapsed ? "w-20" : "w-56"} flex flex-col bg-accent text-accent-content min-h-screen z-10 transition-all duration-300 ease-out`}
+			className={`${isCollapsed ? "w-20" : "w-45"} flex flex-col bg-accent text-accent-content min-h-screen z-10 transition-all duration-100 ease-out`}
 		>
 			<div className="flex flex-col items-center p-3 mb-2 gap-2">
 				<img
 					src="/logo.svg"
 					alt="YTB Notebook"
-					width={32}
-					height={32}
+					width={48}
+					height={48}
 					className="shrink-0"
 				/>
 			</div>
@@ -115,7 +115,7 @@ export default function Sidebar({
 				</li>
 				{navigation.map((item) => {
 					const IconComponent = item.icon;
-					const isActive =
+					const isActivePath =
 						currentPath !== undefined && currentPath === item.href;
 					return (
 						<li key={item.href}>
@@ -123,7 +123,7 @@ export default function Sidebar({
 								href={item.href}
 								title={isCollapsed ? item.name : undefined}
 								className={`rounded-lg ${
-									isActive
+									isActivePath
 										? "bg-secondary text-secondary-content font-semibold"
 										: "hover:bg-neutral-content/10"
 								}`}

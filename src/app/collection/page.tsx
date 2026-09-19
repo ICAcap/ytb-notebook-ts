@@ -25,13 +25,13 @@ export default async function CollectionPage() {
 			<div className="flex min-h-screen">
 				<Sidebar currentPath="/collection" />
 				<main className="flex-1 p-6">
-					<div className="max-w-6xl mx-auto">
+					<div className="max-w-[1600px] mx-auto">
 						<header className="flex items-center justify-between mb-8">
-							<h1 className="text-3xl font-bold">My Collections</h1>
+							<h1 className="text-5xl font-semibold">My Collections</h1>
 							<AddCollectionButton />
 						</header>
 						{userCollections.length > 0 ? (
-							<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-2 gap-y-4.5">
+							<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 gap-y-4.5">
 								{userCollections.map((c) => (
 									<CollectionCard
 										key={c.value}

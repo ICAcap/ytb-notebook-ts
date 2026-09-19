@@ -10,7 +10,7 @@ export default function GlobalError({
 	reset: () => void; // reset error-boundary to trigger re-render
 }) {
 	return (
-		<html data-theme="cmyk">
+		<html data-theme="retro">
 			<body>
 				<div className="min-h-screen flex items-center justify-center bg-base-200 p-4">
 					<div className="card w-full max-w-md bg-base-100 shadow-xl">

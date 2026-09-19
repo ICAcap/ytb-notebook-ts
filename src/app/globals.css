@@ -1,4 +1,4 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-  themes: cmyk --default, dark;
+  themes: retro --default, dark;
 }

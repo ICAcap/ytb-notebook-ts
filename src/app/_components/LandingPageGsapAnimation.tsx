@@ -72,6 +72,28 @@ export default function LandingPageGsapAnimation() {
 				"-=0.2",
 			);
 
+		// How it works: heading pops in, then the whole panel fades/slides up
+		gsap
+			.timeline({
+				scrollTrigger: {
+					trigger: "#how-it-works-section",
+					start: "top 70%",
+					toggleActions: "play none none reverse",
+				},
+			})
+			.from("#how-it-works-heading", {
+				opacity: 0,
+				scale: 0.6,
+				y: 20,
+				duration: 0.6,
+				ease: "back.out(1.7)",
+			})
+			.from(
+				"#how-it-works-panel",
+				{ opacity: 0, y: 24, duration: 0.6, ease: "power2.out" },
+				"-=0.3",
+			);
+
 		// FAQ: heading first, then each question staggers in
 		gsap
 			.timeline({

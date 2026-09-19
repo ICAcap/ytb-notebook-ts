@@ -11,7 +11,7 @@ export function ThemeProviders({ children }: { children: React.ReactNode }) {
 			defaultTheme="system"
 			enableSystem={true}
 			storageKey="theme"
-			value={{ light: "cmyk", dark: "dark" }}
+			value={{ light: "retro", dark: "dark" }}
 		>
 			{children}
 		</ThemeProvider>

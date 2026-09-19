@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import VideoPlayer from "./VideoPlayer";
 import NoteContainer from "./NoteContainer";
-import { MoveHorizontal } from "lucide-react";
+import { MoveHorizontal, Download } from "lucide-react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { VideoDetailType } from "../../../../../lib/dbTableAction/videoTableAction";
@@ -137,6 +137,7 @@ const VideoDetailView = ({
 								}
 								rel="noopener noreferrer"
 							>
+								<Download className="w-5 h-5" />
 								Export All Notes
 							</button>
 						</span>

@@ -56,7 +56,7 @@ export default async function NoteSearchPage({
 		<div className="flex min-h-screen">
 			<Sidebar currentPath="/notes" />
 			<main className="flex-1 p-3">
-				<header className="flex items-center justify-center mb-8">
+				<header className="flex items-center justify-between mb-8">
 					<h1 className="text-5xl font-semibold">My Notes</h1>
 				</header>
 

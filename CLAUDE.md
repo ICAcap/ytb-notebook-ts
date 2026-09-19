@@ -97,11 +97,11 @@ See `node_modules/next/dist/docs/` — this version has breaking changes in APIs
 - `src/app/layout.tsx` — Root layout with Tailwind + Geist font
 
 ### Shared Components (`src/_components/`)
-- `sidebar.tsx` — Navigation sidebar with collapse/expand, theme toggle (light: cmyk, dark: dark via DaisyUI)
+- `sidebar.tsx` — Navigation sidebar with collapse/expand, theme toggle (light: retro, dark: dark via DaisyUI)
 - `ModalSkeleton.tsx` — Reusable modal wrapper using HTML `<dialog>` element
 - `pagination.tsx` — Pagination controls
 - `SignOutButton.tsx` — Sign-out action button
-- `src/app/themeProvider.tsx` — `ThemeProviders` wrapper using `next-themes`; sets `data-theme` attribute (light: "cmyk", dark: "dark"); prevents theme flash on load
+- `src/app/themeProvider.tsx` — `ThemeProviders` wrapper using `next-themes`; sets `data-theme` attribute (light: "retro", dark: "dark"); prevents theme flash on load
 
 ### Rich Text Editor (`src/_components/RichTextEditor/`)
 Full Tiptap-based editor suite. Note content is stored as Tiptap JSON, not plain text.
@@ -190,7 +190,7 @@ Unauthenticated, instant "live demo" — no sign-in required, backed by better-a
 - **Tailwind CSS v4** (via `@tailwindcss/postcss`)
 - **DaisyUI**: Tailwind component library for buttons, cards, modals, etc.
 - **Font**: Geist (auto-optimized via `next/font`)
-- **Theme System**: `next-themes` via `ThemeProviders` (`src/app/themeProvider.tsx`); `data-theme` attribute on `<html>` (light: "cmyk", dark: "dark"); prevents flash on load
+- **Theme System**: `next-themes` via `ThemeProviders` (`src/app/themeProvider.tsx`); `data-theme` attribute on `<html>` (light: "retro", dark: "dark"); prevents flash on load
 - **Sass**: Used for rich text editor styles (`styles.scss`)
 - React Compiler enabled in `next.config.ts`
 

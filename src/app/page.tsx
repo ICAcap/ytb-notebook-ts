@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import HeroBanner from "./_components/HeroBanner";
 import FeatureRow from "./_components/FeatureRow";
+import HowItWorksSection from "./_components/HowItWorksSection";
 import AboutSection from "./_components/AboutSection";
 import TechStackSection from "./_components/TechStackSection";
 import FaqSection from "./_components/FaqSection";
@@ -25,6 +26,10 @@ export default function Home() {
 
 			<div id="features" className="mt-8 sm:mt-14">
 				<FeatureRow />
+			</div>
+
+			<div id="how-it-works" className="mt-8 sm:mt-14">
+				<HowItWorksSection />
 			</div>
 
 			<div id="faq" className="mt-8 sm:mt-14">
