@@ -74,24 +74,38 @@ export default function HowItWorksSection() {
 			>
 				<div className="grid gap-12 p-10 sm:p-14 lg:grid-cols-5 lg:items-center lg:p-16">
 					<div className="lg:col-span-2">
-						<span className="text-sm font-extrabold tracking-widest text-base-content/40 uppercase">
-							Step {activeIndex + 1} of {STEPS.length}
-						</span>
+						{/* Every step's text is stacked in the same grid cell and only the
+						    active one is visible, so the cell is always as tall as the
+						    longest step and the panel height never changes between steps. */}
+						<div className="grid">
+							{STEPS.map((step, index) => (
+								<div
+									key={step.title}
+									className={`col-start-1 row-start-1 ${
+										index === activeIndex ? "" : "invisible"
+									}`}
+								>
+									<span className="text-sm font-extrabold tracking-widest text-base-content/40 uppercase">
+										Step {index + 1} of {STEPS.length}
+									</span>
 
-						<h3 className="mt-4 text-4xl font-bold text-base-content">
-							{activeStep.title}
-						</h3>
+									<h3 className="mt-4 text-4xl font-bold text-base-content">
+										{step.title}
+									</h3>
 
-						<p className="mt-4 text-pretty text-xl text-base-content/70">
-							{activeStep.description}
-						</p>
+									<p className="mt-4 text-pretty text-xl text-base-content/70">
+										{step.description}
+									</p>
+								</div>
+							))}
+						</div>
 
 						<div className="mt-10 flex items-center gap-4">
 							<button
 								type="button"
 								onClick={goToPrev}
 								aria-label="Previous step"
-								className="inline-flex size-13 items-center justify-center rounded-full border border-base-300 text-base-content transition-colors hover:bg-base-200"
+								className="inline-flex size-13 items-center justify-center rounded-full bg-primary text-primary-content shadow-md transition hover:scale-105 hover:bg-primary/90 active:scale-95"
 							>
 								<ChevronLeft className="size-6" />
 							</button>
@@ -100,7 +114,7 @@ export default function HowItWorksSection() {
 								type="button"
 								onClick={goToNext}
 								aria-label="Next step"
-								className="inline-flex size-13 items-center justify-center rounded-full border border-base-300 text-base-content transition-colors hover:bg-base-200"
+								className="inline-flex size-13 items-center justify-center rounded-full bg-primary text-primary-content shadow-md transition hover:scale-105 hover:bg-primary/90 active:scale-95"
 							>
 								<ChevronRight className="size-6" />
 							</button>
@@ -113,6 +127,8 @@ export default function HowItWorksSection() {
 							src={activeStep.image}
 							alt={activeStep.alt}
 							fill
+							sizes="(min-width: 1024px) 60vw, 100vw"
+							loading="eager"
 							className="object-contain"
 						/>
 					</div>

@@ -2,10 +2,7 @@ import Link from "next/link";
 
 export default function HeroBanner() {
 	return (
-		<section
-			id="MainContent"
-			className="bg-linear-to-b from-primary/15 via-primary/5 to-base-100"
-		>
+		<section className="bg-linear-to-b from-primary/15 via-primary/5 to-base-100">
 			<div className="mx-auto grid max-w-[1800px] grid-cols-1 items-center gap-16 px-4 py-28 sm:px-6 sm:py-36 lg:grid-cols-12 lg:gap-8 lg:px-8 xl:px-12">
 				<div className="text-center lg:col-span-3 lg:text-left">
 					<img
@@ -35,11 +32,11 @@ export default function HeroBanner() {
 							className="btn btn-primary btn-lg rounded-full px-10 text-lg lg:btn-md lg:px-6 lg:text-base xl:btn-lg xl:px-10 xl:text-lg"
 							href="/sign-in"
 						>
-							Try It Out
+							Get Started Free
 						</Link>
 
 						<Link
-							className="btn btn-outline btn-lg rounded-full px-10 text-lg lg:btn-md lg:px-6 lg:text-base xl:btn-lg xl:px-10 xl:text-lg"
+							className="btn btn-secondary btn-lg rounded-full px-10 text-lg lg:btn-md lg:px-6 lg:text-base xl:btn-lg xl:px-10 xl:text-lg"
 							href="/demo"
 							target="_blank"
 							rel="noopener noreferrer"

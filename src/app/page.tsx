@@ -20,29 +20,30 @@ export default function Home() {
 
 			<HeroBanner />
 
-			<div className="mt-8 sm:mt-14">
-				<AboutSection />
+			{/* Alternating section bands: base-300 / base-100 (base-200 is too close to base-100 in dark) */}
+			<div className="bg-base-300 py-16 sm:py-24">
+				<div
+					id="features"
+					className="mx-auto grid max-w-[1800px] gap-8 px-4 sm:px-6 lg:grid-cols-5 lg:gap-10 lg:px-8"
+				>
+					<AboutSection />
+					<FeatureRow />
+				</div>
 			</div>
 
-			<div id="features" className="mt-8 sm:mt-14">
-				<FeatureRow />
-			</div>
-
-			<div id="how-it-works" className="mt-8 sm:mt-14">
+			<div id="how-it-works" className="bg-base-100 py-16 sm:py-24">
 				<HowItWorksSection />
 			</div>
 
-			<div id="faq" className="mt-8 sm:mt-14">
+			<div id="faq" className="bg-base-300 py-16 sm:py-24">
 				<FaqSection />
 			</div>
 
-			<div className="mt-8 sm:mt-14">
+			<div className="bg-base-100 py-16 sm:py-24">
 				<TechStackSection />
 			</div>
 
-			<div className="mt-8 sm:mt-14">
-				<LandingFooter />
-			</div>
+			<LandingFooter />
 		</>
 	);
 }

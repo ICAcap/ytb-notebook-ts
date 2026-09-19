@@ -45,8 +45,8 @@ export default function SignIn() {
 		<div>
 			<section>
 				<div className="mx-auto max-w-full my-auto max-h-dvh h-dvh">
-					<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-						<div className="bg-base-200 p-8 md:p-12 lg:px-16 lg:py-24">
+					<div className="grid h-full grid-rows-2 grid-cols-1 gap-4 md:grid-rows-1 md:grid-cols-2">
+						<div className="bg-base-200 p-8 md:p-12 lg:px-16 lg:py-24 flex items-center overflow-y-auto">
 							<div className="mx-auto max-w-xl text-center">
 								<h2 className="text-5xl font-bold text-base-content">
 									Start by Google Sign-In
@@ -85,11 +85,11 @@ export default function SignIn() {
 							</div>
 						</div>
 
-						<div className="hidden md:block">
+						<div className="h-full overflow-hidden">
 							<img
 								alt=""
 								src="https://images.unsplash.com/photo-1615107899082-044cc1133649?q=80&w=956&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-								className="h-64 w-full object-cover sm:h-80 md:h-full"
+								className="h-full w-full object-cover"
 							/>
 						</div>
 					</div>

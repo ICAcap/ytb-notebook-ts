@@ -55,7 +55,7 @@ export default function FaqSection() {
 					<div
 						key={title}
 						data-faq-item
-						className="rounded-3xl bg-base-200 p-12 text-center shadow-sm"
+						className="rounded-3xl bg-base-100 p-12 text-center shadow-sm"
 					>
 						<div className="mx-auto inline-flex size-18 items-center justify-center rounded-full bg-primary/10 text-primary">
 							<Icon className="size-9" strokeWidth={2} />
