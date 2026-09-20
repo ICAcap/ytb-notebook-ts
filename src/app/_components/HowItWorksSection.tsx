@@ -2,9 +2,17 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Lightbulb } from "lucide-react";
 
-const STEPS = [
+type Step = {
+	title: string;
+	description: React.ReactNode;
+	// null means the step has no screenshot yet and shows a placeholder instead
+	image: string | null;
+	alt: string;
+};
+
+const STEPS: Step[] = [
 	{
 		title: "Take notes as you watch",
 		description: (
@@ -22,8 +30,8 @@ const STEPS = [
 		description: (
 			<>
 				Group related videos into{" "}
-				<strong className="text-[1.1em] underline">Collections</strong> to
-				keep research, courses, or projects tidy.
+				<strong className="text-[1.1em] underline">Collections</strong> to keep
+				research, courses, or projects tidy.
 			</>
 		),
 		image: "/collection-example.png",
@@ -34,14 +42,23 @@ const STEPS = [
 		description: (
 			<>
 				Turn a video&apos;s notes into a clean,{" "}
-				<strong className="text-[1.1em] underline">
-					Ready-to-Share PDF
-				</strong>{" "}
+				<strong className="text-[1.1em] underline">Ready-to-Share PDF</strong>{" "}
 				in one click.
 			</>
 		),
 		image: "/pdf-export-example.png",
 		alt: "An exported PDF of a note with its timestamp and formatted text",
+	},
+	{
+		title: "More functions coming…",
+		description: (
+			<>
+				I am still building. Expect{" "}
+				<strong className="text-[1.1em] underline">More Features</strong> soon.
+			</>
+		),
+		image: null,
+		alt: "",
 	},
 ];
 
@@ -122,15 +139,21 @@ export default function HowItWorksSection() {
 					</div>
 
 					<div className="relative h-80 overflow-hidden rounded-2xl border border-base-300 bg-base-200 sm:h-96 lg:col-span-3 lg:h-128">
-						<Image
-							key={activeStep.image}
-							src={activeStep.image}
-							alt={activeStep.alt}
-							fill
-							sizes="(min-width: 1024px) 60vw, 100vw"
-							loading="eager"
-							className="object-contain"
-						/>
+						{activeStep.image ? (
+							<Image
+								key={activeStep.image}
+								src={activeStep.image}
+								alt={activeStep.alt}
+								fill
+								sizes="(min-width: 1024px) 60vw, 100vw"
+								loading="eager"
+								className="object-contain"
+							/>
+						) : (
+							<div className="flex h-full items-center justify-center">
+								<Lightbulb className="size-36 text-base-content/30" />
+							</div>
+						)}
 					</div>
 				</div>
 			</div>

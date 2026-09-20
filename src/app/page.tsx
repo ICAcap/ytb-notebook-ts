@@ -10,7 +10,8 @@ import LandingPageGsapAnimation from "./_components/LandingPageGsapAnimation";
 
 export const metadata: Metadata = {
 	title: "Welcome to YTB NoteBook",
-	description: "This is the home page for YTB Notebook",
+	description:
+		"Save YouTube video links, take timestamped rich-text notes, organize them into collections, and export your notes to PDF. Try the live demo, no sign-up.",
 };
 
 export default function Home() {
