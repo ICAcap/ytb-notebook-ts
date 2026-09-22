@@ -1,15 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import VideoPlayer from "./VideoPlayer";
 import NoteContainer from "./NoteContainer";
-import { MoveHorizontal, Download } from "lucide-react";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
+import { Download } from "lucide-react";
 import { VideoDetailType } from "../../../../../lib/dbTableAction/videoTableAction";
 import { Note } from "../../../../../generated/prisma";
 import CollectionBadgeList from "../../_components/CollectionBadgeList";
-import { Group, Panel } from "react-resizable-panels";
+import { Group, Panel, Separator } from "react-resizable-panels";
 import { usePathname } from "next/navigation";
 import { Toaster } from "react-hot-toast";
 const _ = require("lodash"); // for throttle purpose
@@ -27,34 +25,29 @@ const VideoDetailView = ({
 	// ref to bridge the player and the notes container to enable timestamp seeking
 	const playerRef = useRef<HTMLVideoElement | null>(null);
 
-	// resize icon overlaid between the two panels, wiggles then fades on mount
-	const resizeIconRef = useRef<HTMLDivElement | null>(null);
-	useGSAP(
-		() => {
-			if (!resizeIconRef.current) return;
-			gsap
-				.timeline({ delay: 3 })
-				.to(resizeIconRef.current, {
-					opacity: 1,
-					duration: 0.3,
-					ease: "power1.out",
-				})
-				.to(resizeIconRef.current, {
-					x: 10,
-					duration: 0.35,
-					ease: "power1.inOut",
-					repeat: 3,
-					yoyo: true,
-				})
-				.to(resizeIconRef.current, {
-					x: 0,
-					opacity: 0,
-					duration: 0.5,
-					ease: "power1.out",
-				});
-		},
-		{ scope: resizeIconRef },
-	);
+	// check if window is portrait or vertical
+	const [isPortrait, setIsPortrait] = useState<boolean>(false);
+	useEffect(() => {
+		function checkPortrait() {
+			// Source - https://stackoverflow.com/a/16567475
+			// Posted by crmpicco, modified by community. See post 'Timeline' for change history
+			// Retrieved 2026-09-22, License - CC BY-SA 3.0
+
+			if (window.matchMedia("(orientation: portrait)").matches) {
+				// you're in PORTRAIT mode
+				setIsPortrait(true);
+			}
+
+			if (window.matchMedia("(orientation: landscape)").matches) {
+				// you're in LANDSCAPE mode
+				setIsPortrait(false);
+			}
+		}
+
+		checkPortrait(); //init
+		addEventListener("resize", checkPortrait); //event listener
+		return () => removeEventListener("resize", checkPortrait); //cleanup
+	}, []);
 
 	// use state of note array list
 	const [noteList, setNoteList] = useState(notes ?? []);
@@ -72,26 +65,12 @@ const VideoDetailView = ({
 
 	return (
 		<div className="relative">
-			{/* resizable hinting icons with gsap animation */}
-			<div
-				ref={resizeIconRef}
-				className="pointer-events-none absolute top-1/2 z-10 -translate-y-1/2 opacity-0"
-				style={{ left: "65%" }}
-			>
-				<MoveHorizontal
-					className="text-base-content"
-					size={48}
-					strokeWidth={2}
-				/>
-			</div>
 			{/* resizable group panels */}
-			<Group className="flex flex-row gap-2 mt-1">
-				<Panel
-					defaultSize="65%"
-					maxSize="80%"
-					minSize="20%"
-					className="border rounded-lg"
-				>
+			<Group
+				className="gap-2 mt-1 min-h-dvh"
+				orientation={isPortrait ? "vertical" : "horizontal"}
+			>
+				<Panel defaultSize="65%" maxSize="80%" minSize="20%">
 					<Toaster />
 					<div className="flex flex-col w-full gap-1">
 						<VideoPlayer
@@ -143,6 +122,13 @@ const VideoDetailView = ({
 						</span>
 					</div>
 				</Panel>
+				<Separator
+					className={
+						isPortrait
+							? "h-2 border-y-4 border-double border-base-content hover:bg-base-200 hover:border-base-content/150 cursor-row-resize transition-colors"
+							: "w-2 border-x-4 border-double border-base-content hover:bg-base-200 hover:border-base-content/150 cursor-col-resize transition-colors"
+					}
+				/>
 				<Panel>
 					<NoteContainer
 						userId={userId}
