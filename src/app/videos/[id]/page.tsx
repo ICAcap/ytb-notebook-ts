@@ -51,7 +51,7 @@ export default async function VidViewPage({
 		<>
 			<div className="flex min-h-screen">
 				<Sidebar currentPath="/videos" />
-				<main className="flex-1 p-1">
+				<main className="flex-1 min-w-0 h-dvh flex flex-col p-1">
 					<Toaster />
 
 					<VideoDetailView

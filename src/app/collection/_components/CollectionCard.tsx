@@ -64,12 +64,13 @@ export default function CollectionCard({
 				onClick={onClick}
 				className="card-body items-center text-center gap-3"
 			>
-				<Folder className="w-28 h-28 text-warning" />
+				<Folder className="w-16 h-16 sm:w-28 sm:h-28 text-warning" />
 				<span className="card-title text-sm font-semibold justify-center w-full min-w-0">
 					<span className="truncate min-w-0">{name}</span>
 				</span>
 			</div>
-			<div className="flex gap-2 justify-center opacity-0 group-hover:opacity-100 group-hover:bg-accent transition-all">
+			{/* actions: reveal on hover for mouse users, always visible on touch screens (no hover) */}
+			<div className="flex gap-2 justify-center py-1 rounded-b-box opacity-0 group-hover:opacity-100 group-hover:bg-accent pointer-coarse:opacity-100 pointer-coarse:bg-accent transition-all">
 				<button
 					className="btn btn-square btn-sm btn-info"
 					onClick={() => setPencilModalOpen(true)}

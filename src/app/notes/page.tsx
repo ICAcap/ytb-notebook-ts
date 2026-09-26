@@ -55,16 +55,18 @@ export default async function NoteSearchPage({
 	return (
 		<div className="flex min-h-screen">
 			<Sidebar currentPath="/notes" />
-			<main className="flex-1 p-3">
-				<header className="flex items-center justify-between mb-8">
-					<h1 className="text-5xl font-semibold">My Notes</h1>
+			<main className="flex-1 min-w-0 p-3">
+				<header className="flex items-center justify-between mb-6 sm:mb-8">
+					<h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold">
+						My Notes
+					</h1>
 				</header>
 
 				{/* searchbar with filtering */}
 				<NoteSearchBar collections={collections} />
 
 				{searchedNotes.length > 0 && (
-					<div className="label mb-3">
+					<div className="label mb-3 text-xs sm:text-sm whitespace-normal">
 						Page {page} of {totalPagesNum}, showing {1 + (page - 1) * PAGE_SIZE}{" "}
 						to{" "}
 						{(page - 1) * PAGE_SIZE + Math.min(searchedNotes.length, PAGE_SIZE)}{" "}
@@ -96,16 +98,16 @@ export default async function NoteSearchPage({
 										open
 									>
 										{/* video title */}
-										<summary className="collapse-title font-semibold text-xl min-w-0 flex flex-col items-start">
+										<summary className="collapse-title font-semibold text-base sm:text-xl min-w-0 flex flex-col items-start">
 											<Link
 												href={`/videos/${videoId}`}
-												className="link link-hover text-blue-400 text-xl truncate inline-block max-w-full"
+												className="link link-hover text-blue-400 text-base sm:text-xl truncate inline-block max-w-full"
 											>
 												{notes[0].video.title}
 											</Link>
 										</summary>
 										{/* note list for that video, accordion grouped */}
-										<div className="collapse-content flex flex-col gap-2">
+										<div className="collapse-content flex flex-col gap-2 px-2 sm:px-4">
 											{notes.map((note) => (
 												<NoteListItem key={note.noteId} note={note} />
 											))}

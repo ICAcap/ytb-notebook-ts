@@ -24,10 +24,12 @@ export default async function CollectionPage() {
 			<Toaster />
 			<div className="flex min-h-screen">
 				<Sidebar currentPath="/collection" />
-				<main className="flex-1 p-6">
+				<main className="flex-1 min-w-0 p-3 md:p-6">
 					<div className="max-w-[1600px] mx-auto">
-						<header className="flex items-center justify-between mb-8">
-							<h1 className="text-5xl font-semibold">My Collections</h1>
+						<header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8">
+							<h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold">
+								My Collections
+							</h1>
 							<AddCollectionButton />
 						</header>
 						{userCollections.length > 0 ? (

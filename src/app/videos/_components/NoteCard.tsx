@@ -99,13 +99,13 @@ const NoteCard = (props: Props) => {
 					>
 						<button
 							disabled={editable || isDemoRoute}
-							className="btn btn-square btn-ghost btn-md"
+							className="btn btn-square btn-ghost btn-sm @md:btn-md"
 							onClick={() => {
 								window.open(`/api/notes/${props.noteId}/pdf`, "_blank");
 							}}
 							rel="noopener noreferrer"
 						>
-							<Download className="w-6 h-6" color="white" />
+							<Download className="w-5 h-5 @md:w-6 @md:h-6" color="white" />
 						</button>
 					</span>
 					<span
@@ -119,9 +119,9 @@ const NoteCard = (props: Props) => {
 								setEditable(true);
 								props.onOpenEdit?.();
 							}}
-							className="btn btn-square btn-ghost btn-md"
+							className="btn btn-square btn-ghost btn-sm @md:btn-md"
 						>
-							<PencilLine className="w-6 h-6" color="white" />
+							<PencilLine className="w-5 h-5 @md:w-6 @md:h-6" color="white" />
 						</button>
 					</span>
 
@@ -132,26 +132,26 @@ const NoteCard = (props: Props) => {
 					>
 						<button
 							disabled={isDemoRoute}
-							className="btn btn-square btn-ghost btn-md"
+							className="btn btn-square btn-ghost btn-sm @md:btn-md"
 							onClick={() => {
 								props.playerRef?.current && props.playerRef.current.pause(); // pause vid
 								setTrashModalOpen(true);
 							}}
 						>
-							<Shredder className="w-6 h-6" color="white" />
+							<Shredder className="w-5 h-5 @md:w-6 @md:h-6" color="white" />
 						</button>
 					</span>
 				</div>
 			</div>
-			<div className="border-b border-accent px-4 py-2">
-				<div className="flex gap-2 items-center justify-between">
+			<div className="border-b border-accent px-2 @md:px-4 py-2">
+				<div className="flex flex-wrap gap-x-2 gap-y-1 items-center justify-between">
 					<span
-						className="text-xs text-base-content/60 truncate"
+						className="text-xs text-base-content/60 truncate min-w-0"
 						title={updatedAtLabel}
 					>
 						updated {updatedAtLabel}
 					</span>
-					<div className="flex gap-2 items-center">
+					<div className="flex gap-2 items-center shrink-0">
 						<button
 							onClick={() => handleTimeBadgeSeekTo(props.startTime)}
 							className="btn btn-xs btn-primary"
@@ -172,7 +172,7 @@ const NoteCard = (props: Props) => {
 					</div>
 				</div>
 			</div>
-			<div className="card-body">
+			<div className="card-body p-3 @md:p-6">
 				{editable ? (
 					<EditableNoteForm
 						key={props.updatedAt.getTime()}

@@ -32,14 +32,14 @@ export default function NoteListItem({ note }: { note: NoteWithVideo }) {
 				className="card-title rounded-t-lg flex gap-2 justify-end"
 				style={{ backgroundColor: note.color }}
 			>
-				<div className="flex flex-row w-full justify-between gap-1 p-2 border-b border-base-300">
+				<div className="flex flex-row flex-wrap w-full justify-between items-center gap-1 p-2 border-b border-base-300">
 					<span
-						className="text-sm  truncate justify-center"
+						className="text-xs sm:text-sm truncate min-w-0"
 						title={updatedAtLabel}
 					>
 						updated {updatedAtLabel}
 					</span>
-					<div className="flex flex-row gap-2 items-center">
+					<div className="flex flex-row gap-2 items-center shrink-0">
 						<button
 							className="btn btn-xs btn-primary"
 							onClick={() => handleClick(note.videoId, note.startTime)}
@@ -61,7 +61,7 @@ export default function NoteListItem({ note }: { note: NoteWithVideo }) {
 					</div>
 				</div>
 			</div>
-			<div className="tiptap prose p-3 prose-sm max-w-full min-w-0 wrap-break-word text-wrap overflow-x-auto">
+			<div className="tiptap prose p-2 sm:p-3 prose-sm max-w-full min-w-0 wrap-break-word text-wrap overflow-x-auto">
 				{/* Render static content here - */}
 				{/* reference: https://tiptap.dev/docs/editor/api/utilities/static-renderer#generating-react-components-from-json */}
 				{renderToReactElement({

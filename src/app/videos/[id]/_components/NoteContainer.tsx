@@ -308,14 +308,14 @@ const NoteContainer = ({
 	return (
 		<div
 			ref={scrollRef}
-			className="flex flex-col items-center flex-1 min-w-0 lg:min-w-full overflow-auto"
-			style={{ height: "98dvh" }}
+			className="@container flex flex-col items-center h-full min-w-0 overflow-auto"
 		>
 			<Toaster toasterId="note-container" />
 			{/* current note position + Notes count + Add note collapsible (by daisy UI) */}
 			<div className="sticky top-0 grow-0 w-full min-w-0 bg-accent rounded-t-lg z-10 px-1">
 				<div className="flex flex-col py-2 gap-2">
-					<div className="flex flex-row gap-2 justify-between">
+					{/* wraps when the panel (not the viewport) is narrow: search input drops to its own full-width line */}
+					<div className="flex flex-row flex-wrap @md:flex-nowrap gap-2 justify-between items-center">
 						<button
 							title="click to jump to current note"
 							className="btn btn-sm btn-info ml-1 font-bold"
@@ -324,7 +324,7 @@ const NoteContainer = ({
 							{activeIndex + 1}/{noteCount} Notes
 						</button>
 						<div
-							className="input input-sm w-full"
+							className="input input-sm w-full min-w-0 order-last basis-full @md:order-0 @md:basis-auto"
 							title="Search Notes, results ranked by relevance"
 						>
 							<Search className="h-[1em]" />
@@ -335,7 +335,7 @@ const NoteContainer = ({
 								onChange={(e) => handleSearchNote.current(e.target.value)}
 							/>
 						</div>
-						<div className="flex flex-row gap-1">
+						<div className="flex flex-row gap-1 shrink-0 mr-1">
 							<label className="label text-sm text-info-content">
 								Auto-follow
 							</label>

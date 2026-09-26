@@ -39,12 +39,12 @@ export default async function DashboardPage() {
 	return (
 		<div className="flex min-h-screen">
 			<Sidebar currentPath="/dashboard" />
-			<main className="flex-1 p-6">
-				<div className="max-w-4xl mx-auto space-y-8">
+			<main className="flex-1 min-w-0 p-3 md:p-6">
+				<div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
 					{/* Welcome Card */}
 					<div className="card bg-linear-to-br from-primary/10 to-accent/10 border border-primary/20 shadow-md">
-						<div className="card-body flex-row items-center gap-6 justify-between">
-							<div>
+						<div className="card-body flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 justify-between">
+							<div className="flex items-center gap-4 min-w-0">
 								<div className="relative w-16 h-16 overflow-hidden rounded-full border-2 border-primary/30 shrink-0">
 									{session.user.image ? (
 										<Image
@@ -60,8 +60,10 @@ export default async function DashboardPage() {
 										</div>
 									)}
 								</div>
-								<div>
-									<h1 className="card-title text-4xl">Welcome back!</h1>
+								<div className="min-w-0">
+									<h1 className="card-title text-2xl sm:text-4xl">
+										Welcome back!
+									</h1>
 									<p className="text-base-content/60 mt-1">
 										{collections.length === 0 && totalVideos === 0
 											? "Start by adding your first video & collection"
@@ -86,16 +88,18 @@ export default async function DashboardPage() {
 							</div>
 						</div>
 					) : (
-						<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+						<div className="grid grid-cols-3 gap-2 sm:gap-4">
 							{/* video counts */}
 							<Link
 								href="/videos"
 								className="card bg-info/15 border border-info/30 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
 							>
-								<div className="card-body items-center text-center py-10">
-									<Tv className="w-16 h-16 text-info" />
-									<p className="text-5xl font-bold">{totalVideos}</p>
-									<p className="text-base-content/60 text-sm">Videos</p>
+								<div className="card-body items-center text-center gap-1 sm:gap-2 px-2 py-4 sm:py-10">
+									<Tv className="w-10 h-10 sm:w-16 sm:h-16 text-info" />
+									<p className="text-3xl sm:text-5xl font-bold">{totalVideos}</p>
+									<p className="text-base-content/60 text-xs sm:text-sm">
+										Videos
+									</p>
 								</div>
 							</Link>
 							{/* collection counts */}
@@ -103,10 +107,14 @@ export default async function DashboardPage() {
 								href="/collection"
 								className="card bg-warning/15 border border-warning/30 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
 							>
-								<div className="card-body items-center text-center py-10">
-									<FolderBookmark className="w-16 h-16 text-warning" />
-									<p className="text-5xl font-bold">{collections.length}</p>
-									<p className="text-base-content/60 text-sm">Collections</p>
+								<div className="card-body items-center text-center gap-1 sm:gap-2 px-2 py-4 sm:py-10">
+									<FolderBookmark className="w-10 h-10 sm:w-16 sm:h-16 text-warning" />
+									<p className="text-3xl sm:text-5xl font-bold">
+										{collections.length}
+									</p>
+									<p className="text-base-content/60 text-xs sm:text-sm">
+										Collections
+									</p>
 								</div>
 							</Link>
 							{/* Note Count */}
@@ -114,14 +122,12 @@ export default async function DashboardPage() {
 								href="/notes"
 								className="card bg-success/15 border border-success/30 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
 							>
-								<div className="card-body items-center justify-center gap-2 py-10">
-									<div className="flex items-center justify-center w-20 h-20 ">
-										<BookSearch className="w-16 h-16 text-success" />
-									</div>
-									<div>
-										<p className="text-5xl font-bold">{totalNotes}</p>
-										<p className="text-base-content/60 text-center">Notes</p>
-									</div>
+								<div className="card-body items-center text-center gap-1 sm:gap-2 px-2 py-4 sm:py-10">
+									<BookSearch className="w-10 h-10 sm:w-16 sm:h-16 text-success" />
+									<p className="text-3xl sm:text-5xl font-bold">{totalNotes}</p>
+									<p className="text-base-content/60 text-xs sm:text-sm">
+										Notes
+									</p>
 								</div>
 							</Link>
 						</div>

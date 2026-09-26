@@ -59,9 +59,9 @@ export default async function VideoPage({
 			<Toaster />
 			<Sidebar currentPath="/videos" />
 
-			<main className="flex-1 p-3">
-				<header className="flex items-center justify-between mb-8">
-					<h1 className="text-5xl font-semibold">
+			<main className="flex-1 min-w-0 p-3">
+				<header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8">
+					<h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold wrap-break-word min-w-0">
 						My Videos {collection ? ` - ${collection}` : ""}
 					</h1>
 					<AddVideoButton userId={userId} />
@@ -74,7 +74,7 @@ export default async function VideoPage({
 				/>
 
 				{videoCards.length > 0 && (
-					<div className="label mb-3">
+					<div className="label mb-3 text-xs sm:text-sm whitespace-normal">
 						Page {page} of {totalPagesNum}, showing {1 + (page - 1) * PAGE_SIZE}{" "}
 						to {(page - 1) * PAGE_SIZE + Math.min(videoCards.length, PAGE_SIZE)}{" "}
 						out of {totalCount} results

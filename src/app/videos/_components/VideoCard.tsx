@@ -66,7 +66,7 @@ export default memo(function VideoCard({
 								alt={title}
 								width={200}
 								height={113}
-								className="rounded-xl w-50 h-28.25"
+								className="rounded-xl object-cover w-28 h-16 sm:w-50 sm:h-28.25"
 								loading="eager"
 							/>
 						) : (
@@ -88,11 +88,11 @@ export default memo(function VideoCard({
 			</Link>
 
 			{/* Details */}
-			<div className="list-col-grow">
+			<div className="list-col-grow min-w-0">
 				<Link
 					href={`/videos/${videoId}`}
 					title={title}
-					className="font-semibold text-base hover:text-primary transition-colors duration-150 line-clamp-2"
+					className="font-semibold text-sm sm:text-base wrap-break-word hover:text-primary transition-colors duration-150 line-clamp-2"
 				>
 					{title}
 				</Link>
@@ -112,7 +112,7 @@ export default memo(function VideoCard({
 			</div>
 
 			{/* Actions */}
-			<div className="flex gap-2">
+			<div className="flex flex-col sm:flex-row gap-2">
 				<button
 					title="Delete Video"
 					type="button"

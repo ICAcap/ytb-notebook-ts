@@ -30,7 +30,7 @@ const Modal = ({ isOpen, onClose, children }: Props) => {
 			}}
 			className="modal cursor-default backdrop:bg-transparent"
 		>
-			<div className="relative modal-box">
+			<div className="relative modal-box max-h-[90dvh] overflow-y-auto">
 				<button
 					onClick={onClose}
 					type="button"

@@ -159,7 +159,7 @@ const EditableNoteForm = (props: Props) => {
 				<label className="label">
 					<span className="label-text font-semibold">Note Color Tag</span>
 				</label>
-				<div className="flex gap-4">
+				<div className="flex flex-wrap gap-3">
 					{NOTE_COLORS.map((c) => (
 						<label key={c.label} className="cursor-pointer" title={c.label}>
 							<input
@@ -196,7 +196,7 @@ const EditableNoteForm = (props: Props) => {
 						</span>
 					</label>
 					{/* Individual HH MM SS input */}
-					<div className="flex gap-1 items-center min-w-0">
+					<div className="flex flex-wrap gap-1 items-center min-w-0">
 						<input
 							disabled={isSubmitting}
 							type="number"
@@ -256,7 +256,7 @@ const EditableNoteForm = (props: Props) => {
 							}}
 							type="button"
 							title="sync current time"
-							className="btn btn-info btn-xs font-semibold min-w-2 shrink truncate block text-left"
+							className="btn btn-info btn-xs font-semibold"
 						>
 							sync current time
 						</button>
@@ -281,7 +281,7 @@ const EditableNoteForm = (props: Props) => {
 						</span>
 					</label>
 					{/* Individual HH MM SS input */}
-					<div className="flex gap-1 items-center min-w-0">
+					<div className="flex flex-wrap gap-1 items-center min-w-0">
 						<input
 							disabled={isSubmitting}
 							type="number"
@@ -355,7 +355,7 @@ const EditableNoteForm = (props: Props) => {
 							}}
 							type="button"
 							title="sync current time"
-							className="btn btn-info btn-xs font-semibold min-w-2 shrink truncate block text-left"
+							className="btn btn-info btn-xs font-semibold"
 						>
 							sync current time
 						</button>

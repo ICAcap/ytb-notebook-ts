@@ -28,7 +28,7 @@ export default function RecentWatched({ vids }: { vids: Props[] }) {
 									<Link
 										href={`/videos/${video.videoId}`}
 										title={video.title}
-										className="block py-2 hover:text-primary text-lg transition-colors truncate"
+										className="block py-2 hover:text-primary text-base sm:text-lg transition-colors truncate"
 									>
 										{video.title}
 									</Link>
@@ -39,7 +39,7 @@ export default function RecentWatched({ vids }: { vids: Props[] }) {
 							<button
 								onClick={() => setLoadMore(!loadMore)}
 								hidden={vids.length <= 5}
-								className="btn btn-lg"
+								className="btn btn-sm sm:btn-lg"
 							>
 								{loadMore ? "Show Fewer" : "Show More"}
 							</button>

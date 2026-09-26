@@ -89,9 +89,9 @@ const NoteSearchBar = ({
 					onChange={(e) => setInputQuery(e.target.value)}
 					placeholder="Type Note Content to Search..."
 					defaultValue={inputQuery}
-					className="input input-xl input-bordered flex-1 focus:outline-none"
+					className="input input-md sm:input-xl input-bordered flex-1 min-w-0 focus:outline-none"
 				/>
-				<button type="submit" className="btn btn-info btn-lg">
+				<button type="submit" className="btn btn-info btn-md sm:btn-lg">
 					Search
 				</button>
 			</form>

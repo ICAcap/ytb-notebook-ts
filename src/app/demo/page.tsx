@@ -106,7 +106,7 @@ export default async function DemoPage() {
 	const result = await initDemoSession();
 
 	return (
-		<div>
+		<div className="h-dvh flex flex-col p-1">
 			<Toaster />
 			{result.ok ? (
 				<VideoDetailView
