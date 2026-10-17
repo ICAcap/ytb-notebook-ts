@@ -1,11 +1,10 @@
 import requireSession from "../../../lib/requireSession";
 import Sidebar from "../../_components/sidebar";
 import { Metadata } from "next";
-import { getUserCollectionNameIDs } from "../../../lib/dbTableAction/collectionTableActions";
-import { FolderOpen } from "lucide-react";
-import CollectionCard from "./_components/CollectionCard";
+import { getUserCollectionInfos } from "../../../lib/dbTableAction/collectionTableActions";
 import AddCollectionButton from "./_components/AddCollectionButton";
 import CollectionContextProvider from "./_components/CollectionContextProvider";
+import CollectionGrid from "./_components/CollectionGrid";
 import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
@@ -17,7 +16,7 @@ export default async function CollectionPage() {
 	const session = await requireSession();
 	const userId = session.user.id;
 
-	const userCollections = await getUserCollectionNameIDs(userId);
+	const userCollectionInfos = await getUserCollectionInfos(userId);
 
 	return (
 		<CollectionContextProvider userId={userId}>
@@ -32,27 +31,7 @@ export default async function CollectionPage() {
 							</h1>
 							<AddCollectionButton />
 						</header>
-						{userCollections.length > 0 ? (
-							<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 gap-y-4.5">
-								{userCollections.map((c) => (
-									<CollectionCard
-										key={c.value}
-										id={c.value}
-										name={c.label}
-										videoCount={c.videoNum}
-									/>
-								))}
-							</div>
-						) : (
-							<div className="hero py-16">
-								<div className="hero-content flex-col text-center">
-									<FolderOpen className="w-20 h-20 text-base-content/30" />
-									<h2 className="text-lg font-semibold text-base-content/60">
-										No collections yet
-									</h2>
-								</div>
-							</div>
-						)}
+						<CollectionGrid userCollectionInfos={userCollectionInfos} />
 					</div>
 				</main>
 			</div>

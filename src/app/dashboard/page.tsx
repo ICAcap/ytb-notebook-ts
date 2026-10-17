@@ -7,17 +7,10 @@ import {
 	getVideoNumWithSearchParam,
 	getRecentlyWatchedVideos,
 } from "../../../lib/dbTableAction/videoTableAction";
-import { getUserCollectionNameIDs } from "../../../lib/dbTableAction/collectionTableActions";
+import { getUserCollectionInfos } from "../../../lib/dbTableAction/collectionTableActions";
 import { getNoteCountByUser } from "../../../lib/dbTableAction/noteTableAction";
-import {
-	Tv,
-	FolderBookmark,
-	Play,
-	CircleUserRound,
-	BookSearch,
-} from "lucide-react";
+import { Tv, FolderBookmark, CircleUserRound, BookSearch } from "lucide-react";
 import RecentWatched from "./_components/RecentWatched";
-import SignOutButton from "@/_components/SignOutButton";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -31,7 +24,7 @@ export default async function DashboardPage() {
 	const [totalVideos, collections, totalNotes, recentlyWatched] =
 		await Promise.all([
 			getVideoNumWithSearchParam(userId, "", ""),
-			getUserCollectionNameIDs(userId),
+			getUserCollectionInfos(userId),
 			getNoteCountByUser(userId),
 			getRecentlyWatchedVideos(userId),
 		]);
@@ -62,7 +55,7 @@ export default async function DashboardPage() {
 								</div>
 								<div className="min-w-0">
 									<h1 className="card-title text-2xl sm:text-4xl">
-										Welcome back!
+										Hello {session.user.name}
 									</h1>
 									<p className="text-base-content/60 mt-1">
 										{collections.length === 0 && totalVideos === 0
@@ -71,7 +64,6 @@ export default async function DashboardPage() {
 									</p>
 								</div>
 							</div>
-							<SignOutButton />
 						</div>
 					</div>
 
@@ -96,7 +88,9 @@ export default async function DashboardPage() {
 							>
 								<div className="card-body items-center text-center gap-1 sm:gap-2 px-2 py-4 sm:py-10">
 									<Tv className="w-10 h-10 sm:w-16 sm:h-16 text-info" />
-									<p className="text-3xl sm:text-5xl font-bold">{totalVideos}</p>
+									<p className="text-3xl sm:text-5xl font-bold">
+										{totalVideos}
+									</p>
 									<p className="text-base-content/60 text-xs sm:text-sm">
 										Videos
 									</p>

@@ -49,7 +49,7 @@ export default function SignIn() {
 						<div className="bg-base-200 p-8 md:p-12 lg:px-16 lg:py-24 flex items-center overflow-y-auto">
 							<div className="mx-auto max-w-xl text-center">
 								<h2 className="text-5xl font-bold text-base-content">
-									Start by Google Sign-In
+									Google Sign-In/Sign-Up
 								</h2>
 
 								<p className="hidden text-2xl text-base-content/70 sm:mt-4 sm:block">

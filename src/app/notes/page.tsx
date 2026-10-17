@@ -1,5 +1,5 @@
 import requireSession from "../../../lib/requireSession";
-import { getUserCollectionNameIDs } from "../../../lib/dbTableAction/collectionTableActions";
+import { getUserCollectionInfos } from "../../../lib/dbTableAction/collectionTableActions";
 import {
 	getNoteCountWithSearchParams,
 	getNotesWithSearchParam,
@@ -41,7 +41,7 @@ export default async function NoteSearchPage({
 	const color = (params.color ?? "").trim();
 
 	const [collections, searchedNotes, searchedNotesCnt] = await Promise.all([
-		(await getUserCollectionNameIDs(userId)).filter((c) => c.videoNum > 0),
+		(await getUserCollectionInfos(userId)).filter((c) => c.videoNum > 0),
 		getNotesWithSearchParam(userId, page, PAGE_SIZE, query, collection, color),
 		getNoteCountWithSearchParams(userId, query, collection, color),
 	]);

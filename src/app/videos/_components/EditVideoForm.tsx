@@ -7,7 +7,7 @@ import { AlertCircle, FolderBookmark, Pencil, Save } from "lucide-react";
 import { upsertYouTubeVideo } from "../../../../lib/dbTableAction/videoTableAction";
 import {
 	CollectionOptions,
-	getUserCollectionNameIDs,
+	getUserCollectionInfos,
 } from "../../../../lib/dbTableAction/collectionTableActions";
 import { useEffect, Dispatch, SetStateAction, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -39,7 +39,7 @@ const EditVideoForm = ({
 	const router = useRouter();
 	useEffect(() => {
 		if (modalOpen) {
-			getUserCollectionNameIDs(userId).then((options) => {
+			getUserCollectionInfos(userId).then((options) => {
 				setCollectionOptions(
 					options.toSorted((a, b) => a.label.localeCompare(b.label)),
 				);

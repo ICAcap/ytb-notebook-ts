@@ -63,7 +63,7 @@ See `node_modules/next/dist/docs/` — this version has breaking changes in APIs
   - `updateVideoPlayedTime(videoId, userId, playedTime)` — Persist playback position in seconds
   - `deleteVideo(videoId, userId)` — Delete video and cascade-delete its notes; revalidates `/videos`
 - **Collection queries** (`lib/dbTableAction/collectionTableActions.ts`):
-  - `getUserCollectionNameIDs(userId)` — All collections as `{label, value}` pairs for react-select
+  - `getUserCollectionInfos(userId)` — All collections as `{label, value, createdAt, updatedAt, videoNum}` (`label`/`value` for react-select; the rest for `CollectionGrid`'s client-side sorting)
   - `getUserCollectionByName(userId, collectionName)` — Lookup by composite unique key
   - `createCollection({userId, collectionName})` — Create; handles P2002 unique violation
   - `updateCollection({collectionId, collectionName})` — Rename collection

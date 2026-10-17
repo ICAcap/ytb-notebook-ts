@@ -22,14 +22,22 @@ export type CollectionOptions = { label: string; value: string }[];
 
 // --------- GET ------------------------------------------------------------------
 /**
- * Retrieves a list of collection names and their corresponding identifiers owned by a specific user.
+ * Retrieves a list of collection infos owned by a specific user.
  *
  * @param userId - The unique identifier of the user.
  * @returns A promise resolving to an array of collections formatted for react-select.
  */
-export const getUserCollectionNameIDs = cache(async function (
+export const getUserCollectionInfos = cache(async function (
 	userId: string,
-): Promise<{ label: string; value: string; videoNum: number }[]> {
+): Promise<
+	{
+		label: string;
+		value: string;
+		createdAt: Date;
+		updatedAt: Date;
+		videoNum: number;
+	}[]
+> {
 	if (!userId) {
 		console.error("Error Fetching Collection by user, user id is undefined");
 		return [];
@@ -40,6 +48,8 @@ export const getUserCollectionNameIDs = cache(async function (
 			select: {
 				collectionName: true,
 				collectionId: true,
+				createdAt: true,
+				updatedAt: true,
 				_count: { select: { videos: true } },
 			},
 			orderBy: { collectionName: "asc" },
@@ -47,6 +57,8 @@ export const getUserCollectionNameIDs = cache(async function (
 		return collections.map((c) => ({
 			label: c.collectionName,
 			value: c.collectionId,
+			createdAt: c.createdAt,
+			updatedAt: c.updatedAt,
 			videoNum: c._count.videos,
 		}));
 	} catch (error) {

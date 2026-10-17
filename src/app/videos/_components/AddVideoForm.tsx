@@ -20,7 +20,7 @@ import {
 	getExistingVideo,
 	upsertYouTubeVideo,
 } from "../../../../lib/dbTableAction/videoTableAction";
-import { getUserCollectionNameIDs } from "../../../../lib/dbTableAction/collectionTableActions";
+import { getUserCollectionInfos } from "../../../../lib/dbTableAction/collectionTableActions";
 
 // video upsert type for react hook form
 type UpsertVideo = {
@@ -44,7 +44,7 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 	const [isNavigating, setIsNavigating] = useState(false); // to block double clicking save button while router is pushing
 
 	useEffect(() => {
-		getUserCollectionNameIDs(userId).then((options) => {
+		getUserCollectionInfos(userId).then((options) => {
 			collectionOptions.current = options.toSorted((a, b) =>
 				a.label.localeCompare(b.label),
 			);
@@ -251,98 +251,100 @@ export default function AddVideoForm({ userId }: { userId: string }) {
 				)}
 
 				{/* if not existing in user profile*/}
-				{showDetailForm && YouTubeIdToAdd.current && !foundExistingVid.current && (
-					<div className="card bg-base-100 shadow-lg border border-base-200">
-						<div className="card-body space-y-6">
-							<div className="flex items-center gap-3">
-								<Save size={28} className="text-success" />
-								<h2 className="card-title text-2xl font-bold">
-									Almost There...
-								</h2>
-							</div>
+				{showDetailForm &&
+					YouTubeIdToAdd.current &&
+					!foundExistingVid.current && (
+						<div className="card bg-base-100 shadow-lg border border-base-200">
+							<div className="card-body space-y-6">
+								<div className="flex items-center gap-3">
+									<Save size={28} className="text-success" />
+									<h2 className="card-title text-2xl font-bold">
+										Almost There...
+									</h2>
+								</div>
 
-							<div className="form-control w-full">
-								<label className="label">
-									<span className="label-text font-semibold">
-										Custom Video Title
-									</span>
-								</label>
-								<input
-									type="text"
-									defaultValue={fetchedTitle.current}
-									placeholder="My Awesome Custom Video Title..."
-									className={`input input-bordered w-full ${
-										errors?.customTitle ? "input-error" : ""
-									}`}
-									{...register("customTitle", {
-										required: true,
-										maxLength: 255,
-									})}
-									title="Input Custom Title Here"
-								/>
-								{errors.customTitle && (
-									<div className="label mt-2">
-										<span className="label-text-alt text-error flex items-center gap-2">
-											<AlertCircle size={16} />
-											{errors.customTitle?.type === "required" &&
-												"Video title is required"}
-											{errors.customTitle?.type === "maxLength" &&
-												"Video title cannot exceed 255 characters"}
+								<div className="form-control w-full">
+									<label className="label">
+										<span className="label-text font-semibold">
+											Custom Video Title
 										</span>
-									</div>
-								)}
-							</div>
-							<div className="form-control w-full">
-								<label className="label">
-									<span className="label-text font-semibold flex items-center gap-2">
-										<FolderBookmark size={18} />
-										Add to Collection(s)
-									</span>
-									<span className="label-text-alt text-xs opacity-70">
-										Optional
-									</span>
-								</label>
-								<Controller
-									name="collections"
-									control={control}
-									render={({ field }) => (
-										<Select
-											{...field}
-											isMulti
-											isSearchable
-											options={collectionOptions.current}
-											placeholder="Select Collection(s)..."
-											classNamePrefix="react-select"
-											className="text-black"
-										/>
+									</label>
+									<input
+										type="text"
+										defaultValue={fetchedTitle.current}
+										placeholder="My Awesome Custom Video Title..."
+										className={`input input-bordered w-full ${
+											errors?.customTitle ? "input-error" : ""
+										}`}
+										{...register("customTitle", {
+											required: true,
+											maxLength: 255,
+										})}
+										title="Input Custom Title Here"
+									/>
+									{errors.customTitle && (
+										<div className="label mt-2">
+											<span className="label-text-alt text-error flex items-center gap-2">
+												<AlertCircle size={16} />
+												{errors.customTitle?.type === "required" &&
+													"Video title is required"}
+												{errors.customTitle?.type === "maxLength" &&
+													"Video title cannot exceed 255 characters"}
+											</span>
+										</div>
 									)}
-								/>
-							</div>
+								</div>
+								<div className="form-control w-full">
+									<label className="label">
+										<span className="label-text font-semibold flex items-center gap-2">
+											<FolderBookmark size={18} />
+											Add to Collection(s)
+										</span>
+										<span className="label-text-alt text-xs opacity-70">
+											Optional
+										</span>
+									</label>
+									<Controller
+										name="collections"
+										control={control}
+										render={({ field }) => (
+											<Select
+												{...field}
+												isMulti
+												isSearchable
+												options={collectionOptions.current}
+												placeholder="Select Collection(s)..."
+												classNamePrefix="react-select"
+												className="text-black"
+											/>
+										)}
+									/>
+								</div>
 
-							<button
-								className="btn btn-primary w-full gap-2"
-								type="submit"
-								disabled={isSubmitting || isNavigating}
-							>
-								{isSubmitting || isNavigating ? (
-									<span className="loading loading-spinner loading-sm"></span>
-								) : (
-									<Save size={20} />
-								)}
-								Save Video
-							</button>
-							<button
-								onClick={() => {
-									setShowDetailForm(false);
-								}}
-								className="btn btn-accent gap-2 w-full"
-							>
-								<ArrowLeftCircle size={25} strokeWidth={2} />
-								Go Back To URL Input
-							</button>
+								<button
+									className="btn btn-primary w-full gap-2"
+									type="submit"
+									disabled={isSubmitting || isNavigating}
+								>
+									{isSubmitting || isNavigating ? (
+										<span className="loading loading-spinner loading-sm"></span>
+									) : (
+										<Save size={20} />
+									)}
+									Save Video
+								</button>
+								<button
+									onClick={() => {
+										setShowDetailForm(false);
+									}}
+									className="btn btn-accent gap-2 w-full"
+								>
+									<ArrowLeftCircle size={25} strokeWidth={2} />
+									Go Back To URL Input
+								</button>
+							</div>
 						</div>
-					</div>
-				)}
+					)}
 			</form>
 		</>
 	);
