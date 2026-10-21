@@ -22,6 +22,7 @@ import {
 	Underline,
 	Baseline,
 	Ban,
+	ListTodo,
 } from "lucide-react";
 
 // styling for active/inactive setting button
@@ -112,6 +113,11 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 			isOrderedList: editor?.isActive("orderedList") ?? false,
 			isUnderline: editor?.isActive("underline") ?? false,
 			textColor: editor?.getAttributes("textStyle").color,
+			// task list related
+			isTaskList: editor?.isActive("taskList") ?? false,
+			canSplitListItem: editor?.can().splitListItem("taskItem") ?? false,
+			canSinkListItem: editor?.can().sinkListItem("taskItem") ?? false,
+			canLiftListItem: editor?.can().liftListItem("taskItem") ?? false,
 		}),
 	})!;
 
@@ -336,6 +342,18 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 						className={editorState.isOrderedList ? activeClass : inactiveClass}
 					>
 						<ListOrdered size={20} strokeWidth={2.5} />
+					</span>
+				</button>
+				<button
+					type="button"
+					onClick={() => editor.chain().focus().toggleTaskList().run()}
+					className="btn btn-xs btn-square"
+					title="Task List (Ctrl+Shift+9 / ⌘+Shift+9)"
+				>
+					<span
+						className={editorState.isTaskList ? activeClass : inactiveClass}
+					>
+						<ListTodo size={20} strokeWidth={2.5} />
 					</span>
 				</button>
 			</div>

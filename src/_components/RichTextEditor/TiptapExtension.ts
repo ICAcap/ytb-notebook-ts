@@ -3,10 +3,10 @@ import Heading from "@tiptap/extension-heading";
 import Highlight from "@tiptap/extension-highlight";
 import TextAlign from "@tiptap/extension-text-align";
 import { Color, TextStyle } from "@tiptap/extension-text-style";
-
 import StarterKit from "@tiptap/starter-kit";
 import { createLowlight, all } from "lowlight";
 import { CharacterCount, Placeholder } from "@tiptap/extensions";
+import { TaskItem, TaskList } from "@tiptap/extension-list";
 
 /**
  * Base Tiptap extensions — safe to import anywhere, including server code
@@ -36,6 +36,10 @@ export const TiptapExtensions = [
 		defaultLanguage: "js",
 	}),
 	TextStyle,
+	TaskList,
+	TaskItem.configure({
+		nested: true,
+	}),
 	Color,
 	CharacterCount.configure({ limit }),
 	Placeholder.configure({
