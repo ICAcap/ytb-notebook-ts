@@ -11,6 +11,7 @@ import { useTheme } from "next-themes";
 import MenuBar from "./MenuBar";
 import { limit } from "./TiptapExtension";
 import { TiptapEditorExtensions } from "./TiptapExtension.client";
+import { DragHandle } from "@tiptap/extension-drag-handle-react";
 
 // main component
 const TextEditor = ({
@@ -62,10 +63,15 @@ const TextEditor = ({
 			<div className="max-w-full">
 				{/* static menu tool bar */}
 				<MenuBar editor={editor} />
+				{editor && (
+					<DragHandle editor={editor} nested={true}>
+						<div className="custom-drag-handle" />
+					</DragHandle>
+				)}
 				{/* editor */}
 				<EditorContent
 					editor={editor}
-					className={`tiptap border m-0.5 p-1 w-full max-w-full grow-0 ${currentStyle === "light" ? themeStyles.light : themeStyles.dark}`}
+					className={`tiptap border m-0.5 p-5 w-full max-w-full grow-0 ${currentStyle === "light" ? themeStyles.light : themeStyles.dark}`}
 					style={{ minHeight: "7.5rem" }}
 					suppressHydrationWarning
 				/>

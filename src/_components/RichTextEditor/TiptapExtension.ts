@@ -18,7 +18,7 @@ import { CharacterCount, Placeholder } from "@tiptap/extensions";
  */
 
 export const lowlight = createLowlight(all); // create a lowlight instance with all prog languages loaded
-export const limit = 2000;
+export const limit = 3000;
 
 export const TiptapExtensions = [
 	StarterKit.configure({
@@ -39,6 +39,6 @@ export const TiptapExtensions = [
 	Color,
 	CharacterCount.configure({ limit }),
 	Placeholder.configure({
-		placeholder: "Please avoid inputting sensitive information …",
+		placeholder: "Please avoid inputting sensitive information",
 	}),
 ];

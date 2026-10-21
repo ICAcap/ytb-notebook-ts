@@ -143,3 +143,19 @@
     }
   }
 }
+
+.custom-drag-handle {
+  &::after {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.6rem;
+    content: '⠿';
+    font-weight: 700;
+    cursor: grab;
+    background: #0d0d0d10;
+    color: #b0b2b2;
+    border-radius: 0.25rem;
+  }
+}
