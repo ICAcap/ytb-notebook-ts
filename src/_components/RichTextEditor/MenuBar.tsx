@@ -322,18 +322,6 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 				</button>
 				<button
 					type="button"
-					onClick={() => editor.chain().focus().toggleBulletList().run()}
-					className="btn btn-xs btn-square"
-					title="Bullet List (Ctrl+Shift+8 / ⌘+Shift+8)"
-				>
-					<span
-						className={editorState.isBulletList ? activeClass : inactiveClass}
-					>
-						<List size={20} strokeWidth={2.5} />
-					</span>
-				</button>
-				<button
-					type="button"
 					onClick={() => editor.chain().focus().toggleOrderedList().run()}
 					className="btn btn-xs btn-square"
 					title="Ordered List (Ctrl+Shift+7 / ⌘+Shift+7)"
@@ -342,6 +330,18 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 						className={editorState.isOrderedList ? activeClass : inactiveClass}
 					>
 						<ListOrdered size={20} strokeWidth={2.5} />
+					</span>
+				</button>
+				<button
+					type="button"
+					onClick={() => editor.chain().focus().toggleBulletList().run()}
+					className="btn btn-xs btn-square"
+					title="Bullet List (Ctrl+Shift+8 / ⌘+Shift+8)"
+				>
+					<span
+						className={editorState.isBulletList ? activeClass : inactiveClass}
+					>
+						<List size={20} strokeWidth={2.5} />
 					</span>
 				</button>
 				<button
