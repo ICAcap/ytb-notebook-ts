@@ -176,7 +176,7 @@ const NoteContainer = ({
 		estimateSize: () => 0,
 		getScrollElement: () => scrollRef.current,
 		getItemKey: (index) => searchedNoteList[index]?.noteId ?? index,
-		overscan: 3,
+		overscan: 6,
 	});
 	const virtualItems = virtualizer.getVirtualItems();
 
